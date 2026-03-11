@@ -254,8 +254,49 @@ setExp(p=>{const n=new Set(p);n.add(pad+'|'+ec);if(isDekking)n.add(pad+'/MP|MP')
 msg(`${ec} — ${e.nm}${isDekking?' + standaard attributen + MP':''}`);},[dcM,dcA,msg]);
 const addA=useCallback((ec,ac,tp)=>{const a=(dcA[ec]||[]).find(x=>x.ac===ac);if(!a)return;const lb=`${ec}_${ac}`;if(schema.some(s=>s.pad===tp&&s.label===lb)){msg(`${lb} bestaat al`,'warn');return;}const it={_id:uid(),pad:tp,label:lb,oms:a.nm,cl:a.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false};setSchema(prev=>{const c=[...prev];let idx=c.length;for(let i=c.length-1;i>=0;i--){if(c[i].pad===tp){idx=i+1;break;}}c.splice(idx,0,it);return c;});msg(`${lb}`);},[dcA,schema,msg]);
 
-const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg(`${f.name} — ${items.length} items`);}catch(err){msg('Fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
+const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);setDirty(false);msg(`${f.name} — ${items.length} items`);}catch(err){msg('Fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
 const doExp=useCallback(async()=>{try{const wb=expTpl(meta,schema);const buf=await wb.xlsx.writeBuffer();const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${meta.afdNaam||'productdefinitie'}.xlsx`;a.click();URL.revokeObjectURL(url);msg('Geëxporteerd');}catch(err){msg('Fout: '+err.message,'err');}},[meta,schema,msg]);
+
+// ── Save/Load project as JSON ──
+const doSave=useCallback(()=>{
+    try{
+        const project={v:1,meta,schema:schema.map(({_id,...rest})=>rest),savedAt:new Date().toISOString()};
+        const json=JSON.stringify(project,null,2);
+        const blob=new Blob([json],{type:'application/json'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;a.download=`${meta.afdNaam||'productdefinitie'}.json`;a.click();
+        URL.revokeObjectURL(url);
+        setDirty(false);
+        msg(`Opgeslagen als ${meta.afdNaam||'productdefinitie'}.json`);
+    }catch(err){msg('Fout bij opslaan: '+err.message,'err');}
+},[meta,schema,msg]);
+
+const doLoad=useCallback((e)=>{
+    const f=e.target?.files?.[0];if(!f)return;
+    const rd=new FileReader();
+    rd.onload=ev=>{try{
+        const project=JSON.parse(ev.target.result);
+        if(!project.schema)throw new Error('Ongeldig projectbestand');
+        setMeta(m=>({...m,...(project.meta||{})}));
+        const items=project.schema.map(s=>({...s,_id:uid()}));
+        setSchema(items);
+        setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));
+        setVw('editor');setSel(null);setDirty(false);
+        msg(`${f.name} geladen — ${items.length} items`);
+    }catch(err){msg('Ongeldig bestand: '+err.message,'err');}};
+    rd.readAsText(f);if(e.target)e.target.value='';
+},[msg]);
+
+// Track unsaved changes
+const [dirty,setDirty]=useState(false);
+useEffect(()=>{if(vw==='editor')setDirty(true);},[schema,meta]);
+useEffect(()=>{
+    if(vw!=='editor'||!dirty)return;
+    const handler=(e)=>{e.preventDefault();e.returnValue='';};
+    window.addEventListener('beforeunload',handler);
+    return()=>window.removeEventListener('beforeunload',handler);
+},[vw,dirty]);
 const doNew=useCallback(()=>{
 const [A,B,C,D,E,F]=FN;
 const b=[
@@ -371,8 +412,9 @@ if(vw==='start')return <div style={{display:'flex',alignItems:'center',justifyCo
 <p style={{color:'var(--tx3)',marginBottom:24,fontSize:12}}>SIVI AOS productdefinities in AFD 1.0{dc.length>0&&` • ${dc.length.toLocaleString()} items`}</p>
 {de&&<div style={{background:'#fee2e2',color:'var(--err)',padding:'8px 14px',borderRadius:6,marginBottom:14,fontSize:12}}>⚠️ {de}</div>}
 <div style={{display:'flex',flexDirection:'column',gap:8}}><button className="b bp" style={{justifyContent:'center',padding:'12px',fontSize:14}} onClick={doNew}>🆕 Nieuw project</button>
+<label className="b bs" style={{justifyContent:'center',padding:'12px',fontSize:14,cursor:'pointer'}}>📂 Project openen (.json)<input type="file" accept=".json" onChange={doLoad} style={{display:'none'}}/></label>
 <label className="b bs" style={{justifyContent:'center',padding:'12px',fontSize:14,cursor:'pointer'}}>📥 Template importeren (.xlsx)<input type="file" accept=".xlsx" onChange={doImp} style={{display:'none'}}/></label></div>
-<div style={{marginTop:20,fontSize:11,color:'var(--tx3)'}}><a href="https://martinhoog.github.io/afd-datacatalogus/" style={{color:'var(--acc)',textDecoration:'none'}}>🔍 Datacatalogus</a> • © 2025 Martin Hoogerbrugge</div>
+<div style={{marginTop:20,fontSize:11,color:'var(--tx3)'}}><a href="https://inpactsolutions.github.io/afd-datacatalogus/" style={{color:'var(--acc)',textDecoration:'none'}}>🔍 Datacatalogus</a> • © 2025 Martin Hoogerbrugge</div>
 </div></div>;
 
 // ══════════ EDITOR ══════════
@@ -383,9 +425,11 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <button className="bg" onClick={()=>{if(confirm('Terug?'))setVw('start')}} style={{fontSize:14}}>←</button>
 <strong style={{fontSize:13}}>{meta.afdNaam||'Nieuw product'}</strong>
 {meta.branche&&<span style={{fontSize:10,padding:'1px 6px',background:'var(--bg3)',borderRadius:3,color:'var(--tx2)'}}>{meta.branche}</span>}
-<span style={{fontSize:11,color:'var(--tx3)',flex:1}}>{schema.length} items</span>
+<span style={{fontSize:11,color:'var(--tx3)',flex:1}}>{schema.length} items{dirty&&<span style={{color:'var(--warn)',marginLeft:4}}>● niet opgeslagen</span>}</span>
 <button className="b bs" style={{padding:'3px 10px'}} onClick={()=>setMl({t:'meta'})}>⚙ Meta</button>
-<label className="b bs" style={{padding:'3px 10px',cursor:'pointer'}}>📥<input type="file" accept=".xlsx" onChange={doImp} style={{display:'none'}}/></label>
+<button className="b bs" style={{padding:'3px 10px'}} onClick={doSave}>💾 Opslaan</button>
+<label className="b bs" style={{padding:'3px 10px',cursor:'pointer'}}>📂<input type="file" accept=".json" onChange={doLoad} style={{display:'none'}}/></label>
+<label className="b bs" style={{padding:'3px 10px',cursor:'pointer'}}>📥 .xlsx<input type="file" accept=".xlsx" onChange={doImp} style={{display:'none'}}/></label>
 <button className="b bp" style={{padding:'3px 10px'}} onClick={doExp} disabled={!schema.length}>📤 Export</button>
 </div>
 
