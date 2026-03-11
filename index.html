@@ -9,6 +9,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         :root{--bg:#f5f6f8;--bg2:#fff;--bg3:#f0f1f4;--bg4:#e8eaef;--tx:#1a1d27;--tx2:#4a4f63;--tx3:#8890a4;--bdr:#dfe1e8;--acc:#1a6bff;--acc2:#0d4fcc;--accBg:#eef4ff;--ent:#0066cc;--attr:#16803c;--deck:#8b5cf6;--ok:#16a34a;--warn:#d97706;--err:#dc2626;--sh:0 1px 3px rgba(0,0,0,.06);--sh2:0 4px 16px rgba(0,0,0,.08)}
@@ -63,12 +64,130 @@ if(wb.SheetNames.includes('Schema')){const rows=XLSX.utils.sheet_to_json(wb.Shee
 for(let i=0;i<hi;i++){const k=String(rows[i][0]||'').replace(':','').trim(),v=rows[i][1]||'';if(k==='Branche')r.meta.branche=v;if(k==='POR maatschappij aanduiding')r.meta.porCode=v;if(k==='AFD-definitie naam')r.meta.afdNaam=v;if(k==='AFD-definitie versienummer')r.meta.afdVersie=v;if(k==='AFD-definitie tag')r.meta.afdTag=v;if(k.includes('Productsegment'))r.meta.segment=v;}
 for(let i=hi+1;i<rows.length;i++){const row=rows[i],pad=String(row[0]||'').trim(),label=String(row[1]||'').trim();if(!pad||!label)continue;const pl=pad.split('/').pop(),isE=label===pl&&!label.includes('_');const fv={};FN.forEach((fn,j)=>{const v=String(row[10+j]||'').trim();if(v)fv[fn]=v;});r.schema.push({pad,label,oms:String(row[2]||'').trim(),cl:String(row[3]||'').trim(),acl:String(row[4]||'').trim(),scl:String(row[5]||'').trim(),ol:String(row[6]||'').trim(),mn:row[7]!=null&&row[7]!==''?String(row[7]):'',mx:row[8]!=null&&row[8]!==''?String(row[8]):'',eo:String(row[9]||'').trim(),fn:fv,isE});}}return r;}
 
-function expTpl(meta,schema){const wb=XLSX.utils.book_new();
-const mr=[[null,'Metagegevens AFD-definitie'],[],['Naam organisatie:',meta.organisatie||''],['Commerciele productnaam:',meta.productnaam||''],['Bronnen:',''],['Contactpersoon:',meta.contactpersoon||''],['E-mail / Telefoon:',meta.email||''],['Datum:',meta.datum||'']];const wm=XLSX.utils.aoa_to_sheet(mr);wm['!cols']=[{wch:28},{wch:40}];XLSX.utils.book_append_sheet(wb,wm,'Metagegevens en Updates');
-const sr=[['Eigenschappen AFD-definitie'],[],['Branche:',meta.branche||''],['POR maatschappij aanduiding:',meta.porCode||''],['AFD-definitie naam:',meta.afdNaam||''],['AFD-definitie versienummer:',meta.afdVersie||''],['AFD-definitie tag:',meta.afdTag||''],['Productsegment Particulier/Zakelijk:',meta.segment||''],[],['Pad','Label','Omschrijving','Codelijst','Actuele codelijst','Subset codelijst','Optielijst','Minimum','Maximum','Eigen omschrijving',...FN]];
-for(const s of schema)sr.push([s.pad,s.label,s.oms,s.cl,s.acl||'',s.scl||'',s.ol||'',s.mn||'',s.mx||'',s.eo||'',...FN.map(f=>s.fn[f]||'')]);
-const ws=XLSX.utils.aoa_to_sheet(sr);ws['!cols']=[{wch:16},{wch:16},{wch:42},{wch:12},{wch:14},{wch:16},{wch:14},{wch:10},{wch:10},{wch:24},...FN.map(()=>({wch:10}))];XLSX.utils.book_append_sheet(wb,ws,'Schema');
-XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Functielijst'],...FN.map(f=>[f])]),'Functielijst');return wb;}
+function expTpl(meta,schema){
+    // Use ExcelJS for styled export matching SIVI template format
+    const wb=new ExcelJS.Workbook();
+    wb.creator='AFD Productdefinitie Builder';
+
+    // ── Sheet 1: Metagegevens en Updates ──
+    const wm=wb.addWorksheet('Metagegevens en Updates');
+    wm.getColumn(1).width=29;wm.getColumn(2).width=15;wm.getColumn(3).width=76;
+    const baseFont={name:'Calibri',size:10};const titleFont={name:'Calibri',size:14,bold:true};const labelFont={name:'Calibri',size:12};const sectionFont={name:'Calibri',size:10,bold:true};
+    wm.getRow(2).getCell(2).value='Metagegevens AFD-definitie en Updates Excel-template en product';wm.getRow(2).getCell(2).font=titleFont;wm.getRow(2).height=17.4;
+    wm.mergeCells('A3:C3');wm.getCell('A3').value='Metagegevens AFD-definitie';wm.getCell('A3').font=sectionFont;
+    const metaFields=[['Naam organisatie:',meta.organisatie],['Commerciele productnaam:',meta.productnaam],['Bronnen:',''],['Contactpersoon:',meta.contactpersoon],['E-mail / Telefoon:',meta.email],['Datum:',meta.datum]];
+    metaFields.forEach(([k,v],i)=>{const r=wm.getRow(5+i);r.getCell(1).value=k;r.getCell(1).font=labelFont;if(v){r.getCell(2).value=v;r.getCell(2).font=labelFont;}});
+    wm.mergeCells('A12:C12');wm.getCell('A12').value='Updates product (voor eigen gebruik)';wm.getCell('A12').font=sectionFont;
+    const updHdr=wm.getRow(14);['Versie','Datum','Omschrijving aanpassing'].forEach((h,i)=>{updHdr.getCell(i+1).value=h;updHdr.getCell(i+1).font=sectionFont;});
+    wm.mergeCells('A27:C27');wm.getCell('A27').value='Updates Excel-template (beheer door SIVI)';wm.getCell('A27').font=sectionFont;
+    const updHdr2=wm.getRow(29);['Versie','Datum','Omschrijving aanpassing'].forEach((h,i)=>{updHdr2.getCell(i+1).value=h;updHdr2.getCell(i+1).font=sectionFont;});
+
+    // ── Sheet 2: Schema ──
+    const ws=wb.addWorksheet('Schema');
+    const colWidths=[19.66,17.33,44.33,10.33,5.66,15.66,10,10.66,10,30.66,9.66,9.66,9.66,9.66,9.66,9.66];
+    colWidths.forEach((w,i)=>{ws.getColumn(i+1).width=w;});
+
+    const propFont={name:'Calibri',size:12};const propBoldFont={name:'Calibri',size:12,bold:true};
+    const dataFont={name:'Calibri',size:10};const dataBoldFont={name:'Calibri',size:10,bold:true};
+    const hdrFont={name:'Calibri',size:10,bold:true};
+    const centerAlign={horizontal:'center',vertical:'middle',wrapText:true};
+    const leftAlign={horizontal:'left',vertical:'middle'};
+
+    // Purple fills for polisbladGegevens (col O=15) and kunnenAanleveren (col P=16)
+    const fillO={type:'pattern',pattern:'solid',fgColor:{argb:'FFE1CCF0'}}; // light purple
+    const fillP={type:'pattern',pattern:'solid',fgColor:{argb:'FFB889DB'}}; // medium purple  
+    const fillPHdr={type:'pattern',pattern:'solid',fgColor:{argb:'FF7030A0'}}; // dark purple header
+
+    // Row 1: Title
+    ws.mergeCells('A1:C1');ws.getCell('A1').value='Eigenschappen AFD-definitie';ws.getCell('A1').font=propBoldFont;
+    ws.getRow(1).height=15.6;
+
+    // Rows 3-8: Properties
+    const props=[['Branche:',meta.branche],['POR maatschappij aanduiding:',meta.porCode],['AFD-definitie naam:',meta.afdNaam],['AFD-definitie versienummer:',meta.afdVersie],['AFD-definitie tag:',meta.afdTag],['Productsegment Particulier/Zakelijk:',meta.segment]];
+    props.forEach(([k,v],i)=>{const r=ws.getRow(3+i);r.getCell(1).value=k;r.getCell(1).font=propFont;if(v){r.getCell(2).value=v;r.getCell(2).font=propFont;}});
+
+    // Row 10: Header
+    const headers=['Pad','Label','Omschrijving','Codelijst','Actuele codelijst','Subset codelijst','Optielijst','Minimum','Maximum','Eigen omschrijving',...FN];
+    const hdrRow=ws.getRow(10);
+    hdrRow.height=141.75;
+    headers.forEach((h,i)=>{
+        const cell=hdrRow.getCell(i+1);cell.value=h;cell.font=hdrFont;cell.alignment=centerAlign;
+        // Column O (15) and P (16) get purple fills
+        if(i===14)cell.fill=fillO;
+        if(i===15)cell.fill=fillPHdr;
+    });
+
+    // Freeze panes at A11
+    ws.views=[{state:'frozen',xSplit:0,ySplit:10,topLeftCell:'A11'}];
+
+    // Data rows starting at row 11
+    let rowNum=11;
+    let prevPad=null;
+    for(const s of schema){
+        // Insert separator row between entity groups (when pad changes at entity level)
+        if(s.isE&&prevPad!==null&&s.pad!==prevPad){
+            const sepRow=ws.getRow(rowNum);
+            sepRow.height=11.4;
+            // Apply purple fills on separator row too
+            sepRow.getCell(15).fill=fillO;
+            sepRow.getCell(16).fill=fillP;
+            rowNum++;
+        }
+        if(s.isE)prevPad=s.pad;
+
+        const row=ws.getRow(rowNum);
+        const vals=[s.pad,s.label,s.oms,s.cl,s.acl||'',s.scl||'',s.ol||'',s.mn||'',s.mx||'',s.eo||'',...FN.map(f=>s.fn[f]||'')];
+        vals.forEach((v,i)=>{
+            const cell=row.getCell(i+1);
+            cell.value=v||null;
+            cell.font=s.isE&&i===2?dataBoldFont:dataFont;
+            // Function columns (K-P, indices 10-15) centered
+            if(i>=10)cell.alignment={horizontal:'center'};
+            // Purple fills on col O and P
+            if(i===14)cell.fill=fillO;
+            if(i===15)cell.fill=fillP;
+        });
+        rowNum++;
+    }
+
+    // ── Sheet 3: Verbandscontrole ──
+    const wv=wb.addWorksheet(' Verbandscontrole');
+    wv.getColumn(1).width=65;wv.getColumn(2).width=40;wv.getColumn(3).width=32;wv.getColumn(5).width=34;wv.getColumn(6).width=23;wv.getColumn(7).width=50;
+    const redFill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFF0000'}};const redHdrFont={name:'Calibri',size:10,bold:true};const greyFont={name:'Calibri',size:10,color:{argb:'FF808080'}};
+    // Template blocks
+    for(let block=0;block<3;block++){
+        const startRow=block*4+(block===0?7:7+block*4-4+3);
+        const baseR=7+block*4;
+        const hdr=wv.getRow(baseR);
+        ['Beschrijving verbandscontrole','Naam','Bron','Conditie',null,'Else','Foutmelding'].forEach((h,i)=>{
+            if(h){hdr.getCell(i+1).value=h;hdr.getCell(i+1).font=redHdrFont;hdr.getCell(i+1).fill=redFill;}
+        });
+        wv.mergeCells(baseR,4,baseR,5);
+        const ifRow=wv.getRow(baseR+1);
+        ifRow.height=26.4;
+        ifRow.getCell(1).value='<Vul hier de conditie in>';ifRow.getCell(1).font=greyFont;
+        ifRow.getCell(2).value='<Naam>';ifRow.getCell(2).font=greyFont;
+        ifRow.getCell(3).value='<Bron>';ifRow.getCell(3).font=greyFont;
+        ifRow.getCell(4).value='If';ifRow.getCell(4).font=dataFont;
+        ifRow.getCell(5).value='<Pseudocode>';ifRow.getCell(5).font=greyFont;
+        ifRow.getCell(6).value='<True/False>';ifRow.getCell(6).font=greyFont;
+        ifRow.getCell(7).value='<Foutmelding>';ifRow.getCell(7).font=greyFont;
+        const thenRow=wv.getRow(baseR+2);
+        thenRow.height=26.4;
+        thenRow.getCell(1).value='<Vul hier de validatie in>';thenRow.getCell(1).font=greyFont;
+        thenRow.getCell(4).value='Then';thenRow.getCell(4).font=dataFont;
+        thenRow.getCell(5).value='<Pseudocode>';thenRow.getCell(5).font=greyFont;
+    }
+
+    // ── Sheet 4: Functielijst ──
+    const wf=wb.addWorksheet('Functielijst');
+    wf.getColumn(1).width=25;
+    wf.getCell('A1').value='Kolom1';wf.getCell('A1').font=dataFont;
+    wf.getCell('A2').value='Functielijst';wf.getCell('A2').font=dataFont;
+    FN.forEach((f,i)=>{wf.getCell(`A${3+i}`).value=f;wf.getCell(`A${3+i}`).font=dataFont;});
+
+    return wb;
+}
 
 function App(){
 const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=useState({});const [ld,setLd]=useState(true);const [de,setDe]=useState(null);
@@ -99,7 +218,7 @@ const it={_id:uid(),pad:tp,label:lb,oms:a.nm,cl:a.cl||'',acl:'',scl:'',ol:'',mn:
 setSchema(prev=>{const c=[...prev];let idx=c.length;for(let i=c.length-1;i>=0;i--){if(c[i].pad===tp){idx=i+1;break;}}c.splice(idx,0,it);return c;});msg(`${lb} toegevoegd`);},[dcA,schema,msg]);
 
 const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg(`"${f.name}" — ${items.length} items geladen`);}catch(err){msg('Import fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
-const doExp=useCallback(()=>{try{XLSX.writeFile(expTpl(meta,schema),`${meta.afdNaam||'productdefinitie'}.xlsx`);msg('Geëxporteerd');}catch(err){msg('Fout: '+err.message,'err');}},[meta,schema,msg]);
+const doExp=useCallback(async()=>{try{const wb=expTpl(meta,schema);const buf=await wb.xlsx.writeBuffer();const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${meta.afdNaam||'productdefinitie'}.xlsx`;a.click();URL.revokeObjectURL(url);msg('Geëxporteerd');}catch(err){msg('Fout: '+err.message,'err');}},[meta,schema,msg]);
 const doNew=useCallback(()=>{const b=[{pad:'AL',label:'AL',oms:'BERICHT ALGEMEEN',isE:true,fn:{premieBerekening_aanroep:'1-1',premieBerekening_resultaat:'1-1',acceptatie_aanroep:'1-1',acceptatie_resultaat:'1-1',polisbladGegevens:'1-1',kunnenAanleveren:'1-1'}},{pad:'AL',label:'AL_DATACAT',oms:'Versie datacatalogus',cl:'ADNAFM',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'AL',label:'AL_FUNCTIE',oms:'Berichtfunctie, code',cl:'ADNFUN',isE:false,fn:{}},{pad:'AL',label:'AL_VRWRKCD',oms:'Verwerkingscode entiteit',cl:'ADNVRC',isE:false,fn:{}},{pad:'PP',label:'PP',oms:'CONTRACT POLIS/ONDERDEEL',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP',label:'PP_AFDDEFN',oms:'AFD definitienaam',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_BRANCHE',oms:'ADN branchecode',cl:'ADNBRA',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_INGDAT',oms:'Ingangsdatum',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_NUMMER',oms:'Contractnummer',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP/VP',label:'VP',oms:'PARTIJ VERZEKERINGNEMER',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP/VE',label:'VE',oms:'PARTIJ VOLMACHTNEMER',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP/VL',label:'VL',oms:'PARTIJ VOLMACHTGEVER',isE:true,fn:{kunnenAanleveren:'1-1'}}].map(s=>({...s,_id:uid(),cl:s.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:''}));setSchema(b);setExp(new Set(b.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg('Nieuw project');},[msg]);
 
 if(ld)return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:12}}><div className="sp" style={{width:36,height:36,border:'3px solid var(--bdr)',borderTopColor:'var(--acc)',borderRadius:'50%'}}/><span style={{color:'var(--tx3)'}}>Laden...</span></div>;
