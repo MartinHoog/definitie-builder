@@ -189,6 +189,64 @@ function expTpl(meta,schema){
     return wb;
 }
 
+// ══════════ SUBSET PICKER ══════════
+function SubsetPicker({codes,value,onChange}){
+    const [search,setSearch]=useState('');
+    const [open,setOpen]=useState(false);
+    const selected=useMemo(()=>new Set((value||'').split(';').map(s=>s.trim()).filter(Boolean)),[value]);
+    const filtered=useMemo(()=>{
+        if(!search)return codes;
+        const t=search.toLowerCase();
+        return codes.filter(c=>String(c.code).toLowerCase().includes(t)||String(c.oms).toLowerCase().includes(t));
+    },[codes,search]);
+
+    const toggle=useCallback((code)=>{
+        const s=new Set(selected);
+        if(s.has(code))s.delete(code);else s.add(code);
+        onChange(Array.from(s).join(';'));
+    },[selected,onChange]);
+
+    const selAll=useCallback(()=>{onChange(filtered.map(c=>c.code).join(';'));},[filtered,onChange]);
+    const selNone=useCallback(()=>{onChange('');},[onChange]);
+
+    return <div className="fg">
+        <div className="fl" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <span>Subset codelijst</span>
+            <button className="btn-g" style={{fontSize:11,textTransform:'none',letterSpacing:0}} onClick={()=>setOpen(!open)}>{open?'▲ Inklappen':'▼ Selecteren'}</button>
+        </div>
+        {selected.size>0&&<div style={{display:'flex',flexWrap:'wrap',gap:3,marginBottom:6}}>
+            {Array.from(selected).map(code=><span key={code} style={{display:'inline-flex',alignItems:'center',gap:3,padding:'1px 6px',borderRadius:4,fontSize:11,background:'#dbeafe',color:'#1e40af',cursor:'pointer'}}
+                onClick={()=>toggle(code)}>{code} <span style={{fontSize:9}}>✕</span></span>)}
+        </div>}
+        {selected.size>0&&!open&&<div style={{fontSize:11,color:'var(--tx3)'}}>{selected.size} van {codes.length} geselecteerd</div>}
+        {open&&<div style={{border:'1px solid var(--bdr)',borderRadius:6,overflow:'hidden',marginTop:4}}>
+            <div style={{padding:4,borderBottom:'1px solid var(--bdr)',background:'var(--bg3)'}}>
+                <input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Zoek code..." style={{width:'100%',fontSize:12,padding:'4px 8px'}}/>
+            </div>
+            <div style={{display:'flex',gap:4,padding:'4px 6px',borderBottom:'1px solid var(--bdr)'}}>
+                <button className="btn-g" style={{fontSize:10}} onClick={selAll}>Alles</button>
+                <button className="btn-g" style={{fontSize:10}} onClick={selNone}>Geen</button>
+                <span style={{flex:1}}/>
+                <span style={{fontSize:10,color:'var(--tx3)',alignSelf:'center'}}>{selected.size}/{codes.length}</span>
+            </div>
+            <div style={{maxHeight:200,overflow:'auto'}}>
+                {filtered.map(c=>{
+                    const isSel=selected.has(c.code);
+                    return <div key={c.code} style={{display:'flex',alignItems:'center',gap:6,padding:'3px 8px',cursor:'pointer',background:isSel?'var(--accBg)':'transparent',fontSize:12}}
+                        onClick={()=>toggle(c.code)}>
+                        <span style={{width:16,height:16,borderRadius:3,border:'1.5px solid '+(isSel?'var(--acc)':'var(--bdr)'),background:isSel?'var(--acc)':'var(--bg2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                            {isSel&&<span style={{color:'#fff',fontSize:10,fontWeight:700}}>✓</span>}
+                        </span>
+                        <code style={{fontSize:11,minWidth:40,color:'var(--acc)'}}>{c.code}</code>
+                        <span style={{flex:1,color:'var(--tx2)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.oms}</span>
+                    </div>;
+                })}
+                {filtered.length===0&&<div style={{padding:12,textAlign:'center',color:'var(--tx3)',fontSize:12}}>Geen codes gevonden</div>}
+            </div>
+        </div>}
+    </div>;
+}
+
 function App(){
 const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=useState({});const [ld,setLd]=useState(true);const [de,setDe]=useState(null);
 const [meta,setMeta]=useState({branche:'',porCode:'',afdNaam:'',afdVersie:'',afdTag:'',segment:'Zakelijk',organisatie:'',productnaam:'',contactpersoon:'',email:'',datum:''});
@@ -284,10 +342,11 @@ return <div key={ent._id} className={`eb ${dk?'dk':''}`}>
 <div className="fg"><span className={`bg ${si.isE?(si.oms?.toUpperCase().includes('DEKKING')?'bg-d':'bg-e'):'bg-a'}`}>{si.isE?'Entiteit':'Attribuut'}</span></div>
 <div className="fg"><div className="fl">Label</div><code style={{fontSize:13}}>{si.label}</code></div>
 <div className="fg"><div className="fl">Pad</div><code style={{fontSize:12}}>{si.pad}</code></div>
-<div className="fg"><div className="fl">Omschrijving</div><input type="text" value={si.oms||''} onChange={e=>upd(sel,{oms:e.target.value})} style={{width:'100%'}}/></div>
-<div className="fg"><div className="fl">Codelijst</div><div style={{display:'flex',gap:6}}><input type="text" value={si.cl||''} onChange={e=>upd(sel,{cl:e.target.value})} style={{flex:1}} placeholder="bijv. ADNBRA"/>{si.cl&&cg[si.cl]&&<button className="btn btn-s btn-sm" onClick={()=>setMl({t:'cl',n:si.cl})}>👁 {cg[si.cl].length}</button>}</div></div>
+<div className="fg"><div className="fl">Omschrijving</div><div style={{fontSize:13,color:'var(--tx2)',padding:'6px 0'}}>{si.oms||'—'}</div></div>
+{si.cl?<div className="fg"><div className="fl">Codelijst</div><div style={{display:'flex',gap:6,alignItems:'center'}}><code style={{fontSize:12}}>{si.cl}</code>{cg[si.cl]&&<span style={{fontSize:11,color:'var(--tx3)'}}>({cg[si.cl].length} codes)</span>}{cg[si.cl]&&<button className="btn btn-s btn-sm" onClick={()=>setMl({t:'cl',n:si.cl})}>👁</button>}</div></div>:
+<div className="fg"><div className="fl">Codelijst</div><div style={{fontSize:12,color:'var(--tx3)',padding:'6px 0',fontStyle:'italic'}}>Geen codelijst</div></div>}
 <div className="fg"><div className="fl">Actuele codelijst</div><select value={si.acl||''} onChange={e=>upd(sel,{acl:e.target.value})} style={{width:'100%'}}><option value="">—</option><option value="Ja">Ja</option><option value="Nee">Nee</option></select></div>
-<div className="fg"><div className="fl">Subset codelijst</div><input type="text" value={si.scl||''} onChange={e=>upd(sel,{scl:e.target.value})} style={{width:'100%'}} placeholder="bijv. B;D;G;H"/></div>
+{si.cl&&cg[si.cl]?<SubsetPicker codes={cg[si.cl]} value={si.scl||''} onChange={v=>upd(sel,{scl:v})}/>:null}
 <div className="fg"><div className="fl">Optielijst</div><input type="text" value={si.ol||''} onChange={e=>upd(sel,{ol:e.target.value})} style={{width:'100%'}} placeholder="bijv. 250;500;1000"/></div>
 <div className="fg"><div className="fl">Minimum / Maximum</div><div style={{display:'flex',gap:6}}><input type="text" value={si.mn||''} onChange={e=>upd(sel,{mn:e.target.value})} placeholder="Min" style={{flex:1}}/><input type="text" value={si.mx||''} onChange={e=>upd(sel,{mx:e.target.value})} placeholder="Max" style={{flex:1}}/></div></div>
 <div className="fg"><div className="fl">Eigen omschrijving</div><textarea value={si.eo||''} onChange={e=>upd(sel,{eo:e.target.value})} style={{width:'100%',minHeight:50,resize:'vertical',border:'1px solid var(--bdr)',borderRadius:6,padding:'6px 10px',fontSize:13,fontFamily:'inherit'}} placeholder="Eigen omschrijving..."/></div>
