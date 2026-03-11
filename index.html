@@ -40,22 +40,25 @@ code{font-family:'SF Mono',Consolas,monospace;font-size:11px;background:var(--bg
 .md{background:var(--bg2);border-radius:10px;box-shadow:var(--sh2);width:100%;display:flex;flex-direction:column;overflow:hidden}
 
 /* Schema table */
-.st{width:100%;border-collapse:collapse;table-layout:fixed}
-.st th{position:sticky;top:0;z-index:2;background:var(--bg3);padding:4px 6px;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid var(--bdr);border-right:1px solid var(--bdr);white-space:nowrap;text-align:center}
+.st{width:100%;border-collapse:separate;border-spacing:0;table-layout:auto}
+.st th{position:sticky;top:0;z-index:2;background:var(--bg3);padding:4px 8px;font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--bdr);border-right:1px solid var(--bdr);white-space:nowrap;text-align:center}
 .st th:last-child{border-right:none}
 .st th.l{text-align:left}
 .st th.pol{background:var(--polBg);color:#6b21a8}
 .st th.ka{background:var(--kaHdr);color:#fff}
-.st td{padding:3px 6px;border-bottom:1px solid #eef0f3;border-right:1px solid #f0f1f4;font-size:12px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st td{padding:3px 8px;border-bottom:1px solid #e8eaef;border-right:1px solid #edf0f4;font-size:11px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .st td:last-child{border-right:none}
-.st tr:hover td{background:#f8f9fb}
+.st tr:hover td{background:#f6f8fb}
 .st tr.sel td{background:var(--accBg)}
-.st tr.ent td{background:#f0f4fa;font-weight:600;border-bottom:1px solid var(--bdr)}
-.st tr.ent.dk td{background:#f5f0ff}
+.st tr.ent td{background:#edf2fb;font-weight:600;border-bottom:1px solid var(--bdr)}
+.st tr.ent.dk td{background:#f3eefa}
 .st tr.sep td{padding:0;height:5px;border:none;background:var(--bg)}
-/* Value columns get subtle background */
-.st td.vc{background:#fafbfd;font-size:10px;color:var(--tx2)}.st tr:hover td.vc{background:#f3f5f9}.st tr.sel td.vc{background:#dde7fd}
+/* Value columns */
+.st td.vc{background:#f8f9fc;font-size:10px;color:var(--tx2)}.st tr:hover td.vc{background:#f0f3f8}.st tr.sel td.vc{background:#dde7fd}
 .st tr.ent td.vc{background:transparent}
+/* Func columns compact */
+.st th.fc-h{padding:4px 2px;width:34px;min-width:34px;max-width:34px}
+.st td.fc-c{padding:1px 0;text-align:center;width:34px;min-width:34px;max-width:34px}
 .fx{width:28px;height:22px;text-align:center;font-size:10px;font-weight:700;border-radius:3px;cursor:pointer;user-select:none;border:none;background:transparent;padding:0}
 .fx:hover{background:var(--bg4)}
 .fx.fv{background:#dcfce7;color:#166534}.fx.fo{background:#fef9c3;color:#854d0e}.fx.fk{background:#d6e4ff;color:#1e40af}
@@ -183,32 +186,61 @@ const displayRows=useMemo(()=>{
 const upd=useCallback((id,u)=>setSchema(p=>p.map(s=>s._id===id?{...s,...u}:s)),[]);
 const del=useCallback((id)=>{setSchema(prev=>{const it=prev.find(s=>s._id===id);if(!it)return prev;if(!it.isE)return prev.filter(s=>s._id!==id);const idx=prev.indexOf(it);const ep=it.pad;const res=[];let skip=false;for(let i=0;i<prev.length;i++){if(i===idx){skip=true;continue;}if(skip){const s=prev[i];if(!s.isE&&s.pad===ep)continue;if(s.pad.startsWith(ep+'/'))continue;skip=false;}res.push(prev[i]);}return res;});if(sel===id)setSel(null);msg('Verwijderd');},[sel,msg]);
 const tgF=useCallback((id,fn,isE)=>{setSchema(p=>p.map(s=>{if(s._id!==id)return s;const c=s.fn[fn]||'';const o=isE?CDS:VOS;return{...s,fn:{...s.fn,[fn]:o[(o.indexOf(c)+1)%o.length]}};}));},[]);
-// Default attributes for dekking entities
-const DEK_DEFAULTS=['BTP','CODE','COLFACT','PRCPKKT','PAFWST','BAFWST','TCORBDR','RJRCOR','PPRC','VOLGNUM','GADEKCD','GADEKCO','NJP','PRCTEKC','PRMPROM','RELVRH','RELVVNR','VGBRA','WPREMBP'];
-// Default MP sub-entity attributes for dekking entities
-const MP_DEFAULTS=['MYAAND','PLLEAD','POOLNUM','POOLPRC'];
+// Default dekking attributes with prefilled function values
+// fn keys: a=premieBerekening_aanroep, b=premieBerekening_resultaat, c=acceptatie_aanroep, d=acceptatie_resultaat, e=polisbladGegevens, f=kunnenAanleveren
+const DEK_DEFAULTS=[
+{ac:'BTP',fn:{a:'O',b:'O',c:'O',d:'O',f:'V'}},
+{ac:'CODE',fn:{a:'V',b:'V',c:'V',d:'V',f:'V'}},
+{ac:'COLFACT',fn:{f:'O'}},
+{ac:'PRCPKKT',fn:{f:'O'}},
+{ac:'PAFWST',fn:{f:'O'}},
+{ac:'BAFWST',fn:{f:'O'}},
+{ac:'TCORBDR',fn:{f:'O'}},
+{ac:'RJRCOR',fn:{f:'O'}},
+{ac:'PPRC',fn:{a:'O',b:'O',c:'O',d:'O',f:'V'},mn:'0',mx:'20'},
+{ac:'VOLGNUM',fn:{a:'O',b:'O',c:'O',d:'O',f:'O'}},
+{ac:'GADEKCD',fn:{f:'V'}},
+{ac:'GADEKCO',fn:{f:'V'}},
+{ac:'NJP',fn:{f:'V'}},
+{ac:'PRCTEKC',fn:{f:'V'}},
+{ac:'PRMPROM',fn:{f:'O'}},
+{ac:'RELVRH',fn:{f:'O'}},
+{ac:'RELVVNR',fn:{f:'O'}},
+{ac:'VGBRA',fn:{f:'V'}},
+{ac:'WPREMBP',fn:{f:'V'}},
+];
+const MP_DEFAULTS=[
+{ac:'MYAAND',fn:{f:'V'}},
+{ac:'PLLEAD',fn:{f:'V'}},
+{ac:'POOLNUM',fn:{f:'V'}},
+{ac:'POOLPRC',fn:{f:'V'}},
+];
+// Map short fn keys to full function names
+const _fk={a:FN[0],b:FN[1],c:FN[2],d:FN[3],e:FN[4],f:FN[5]};
+const _mapFn=(short)=>{const r={};for(const[k,v]of Object.entries(short)){if(_fk[k])r[_fk[k]]=v;}return r;};
 
 const addE=useCallback((ec,pp)=>{const e=dcM[ec];if(!e)return;const pad=pp?`${pp}/${ec}`:ec;
-const entItem={_id:uid(),pad,label:ec,oms:e.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:true};
-// Check if this is a dekking entity (naam contains DEKKING)
 const isDekking=e.nm.toUpperCase().includes('DEKKING');
+// Dekking entity gets all 6 functions set to 1-1
+const entFn=isDekking?{[FN[0]]:'1-1',[FN[1]]:'1-1',[FN[2]]:'1-1',[FN[3]]:'1-1',[FN[4]]:'1-1',[FN[5]]:'1-1'}:{};
+const entItem={_id:uid(),pad,label:ec,oms:e.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:entFn,isE:true};
 const items=[entItem];
 if(isDekking){
-    // Add default dekking attributes
     const entAttrs=dcA[ec]||[];
-    for(const ac of DEK_DEFAULTS){
-        const dcAttr=entAttrs.find(a=>a.ac===ac);
-        if(dcAttr)items.push({_id:uid(),pad,label:`${ec}_${ac}`,oms:dcAttr.nm,cl:dcAttr.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false});
+    for(const def of DEK_DEFAULTS){
+        const dcAttr=entAttrs.find(a=>a.ac===def.ac);
+        if(dcAttr)items.push({_id:uid(),pad,label:`${ec}_${def.ac}`,oms:dcAttr.nm,cl:dcAttr.cl||'',acl:'',scl:'',ol:'',
+            mn:def.mn||'',mx:def.mx||'',eo:'',fn:_mapFn(def.fn),isE:false});
     }
-    // Add MP sub-entity with defaults
+    // Add MP sub-entity
     const mpEnt=dcM['MP'];
     if(mpEnt){
         const mpPad=`${pad}/MP`;
-        items.push({_id:uid(),pad:mpPad,label:'MP',oms:mpEnt.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{kunnenAanleveren:'0-9'},isE:true});
+        items.push({_id:uid(),pad:mpPad,label:'MP',oms:mpEnt.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{[FN[5]]:'0-9'},isE:true});
         const mpAttrs=dcA['MP']||[];
-        for(const ac of MP_DEFAULTS){
-            const dcAttr=mpAttrs.find(a=>a.ac===ac);
-            if(dcAttr)items.push({_id:uid(),pad:mpPad,label:`MP_${ac}`,oms:dcAttr.nm,cl:dcAttr.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false});
+        for(const def of MP_DEFAULTS){
+            const dcAttr=mpAttrs.find(a=>a.ac===def.ac);
+            if(dcAttr)items.push({_id:uid(),pad:mpPad,label:`MP_${def.ac}`,oms:dcAttr.nm,cl:dcAttr.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:_mapFn(def.fn),isE:false});
         }
     }
 }
@@ -218,7 +250,6 @@ setSchema(prev=>{
     for(let i=prev.length-1;i>=0;i--){if(prev[i].pad===pp||prev[i].pad.startsWith(pp+'/')){idx=i+1;break;}}
     const c=[...prev];c.splice(idx,0,...items);return c;
 });
-// Expand both the dekking entity and its MP child
 setExp(p=>{const n=new Set(p);n.add(pad+'|'+ec);if(isDekking)n.add(pad+'/MP|MP');return n;});
 msg(`${ec} — ${e.nm}${isDekking?' + standaard attributen + MP':''}`);},[dcM,dcA,msg]);
 const addA=useCallback((ec,ac,tp)=>{const a=(dcA[ec]||[]).find(x=>x.ac===ac);if(!a)return;const lb=`${ec}_${ac}`;if(schema.some(s=>s.pad===tp&&s.label===lb)){msg(`${lb} bestaat al`,'warn');return;}const it={_id:uid(),pad:tp,label:lb,oms:a.nm,cl:a.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false};setSchema(prev=>{const c=[...prev];let idx=c.length;for(let i=c.length-1;i>=0;i--){if(c[i].pad===tp){idx=i+1;break;}}c.splice(idx,0,it);return c;});msg(`${lb}`);},[dcA,schema,msg]);
@@ -256,19 +287,19 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <div style={{flex:1,overflow:'auto'}}>
 <table className="st">
 <thead><tr>
-<th className="l" style={{width:90}}>Pad</th>
-<th className="l" style={{width:100}}>Label</th>
-<th className="l">Omschrijving</th>
-<th style={{width:65}}>Codelijst</th>
-<th style={{width:100}}>Subset</th>
-<th style={{width:90}}>Optielijst</th>
-<th style={{width:55}}>Min</th>
-<th style={{width:55}}>Max</th>
-<th style={{width:100}}>Eigen oms.</th>
-{FS.slice(0,4).map((f,i)=><th key={i} style={{width:30}} title={FN[i]}>{f}</th>)}
-<th className="pol" style={{width:30}} title={FN[4]}>{FS[4]}</th>
-<th className="ka" style={{width:30}} title={FN[5]}>{FS[5]}</th>
-<th style={{width:44}}></th>
+<th className="l" style={{width:80}}>Pad</th>
+<th className="l" style={{width:95}}>Label</th>
+<th className="l" style={{minWidth:120}}>Omschrijving</th>
+<th style={{width:62}}>Codelijst</th>
+<th style={{width:110}}>Subset</th>
+<th style={{width:95}}>Optielijst</th>
+<th style={{width:46}}>Min</th>
+<th style={{width:46}}>Max</th>
+<th style={{width:110}}>Eigen oms.</th>
+{FS.slice(0,4).map((f,i)=><th key={i} className="fc-h" title={FN[i]}>{f}</th>)}
+<th className="fc-h pol" title={FN[4]}>{FS[4]}</th>
+<th className="fc-h ka" title={FN[5]}>{FS[5]}</th>
+<th style={{width:50}}></th>
 </tr></thead>
 <tbody>
 {displayRows.map((r,i)=>{
@@ -278,11 +309,11 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
         return <tr key={r._id} className={`ent ${dk?'dk':''} ${isSel?'sel':''}`} onClick={()=>setSel(isSel?null:r._id)}>
             <td><span style={{fontSize:9,color:'var(--tx3)',cursor:'pointer',marginRight:4,display:'inline-block',transform:open?'rotate(90deg)':'none',transition:'transform .1s'}} onClick={e=>{e.stopPropagation();setExp(p=>{const n=new Set(p);n.has(key)?n.delete(key):n.add(key);return n;});}}>▶</span><code style={{fontSize:10,background:'none'}}>{r.pad}</code></td>
             <td><span className={`tg ${dk?'td':'te'}`}>{r.label}</span></td>
-            <td style={{fontWeight:600,fontSize:12}}>{r.oms}</td>
-            <td></td><td></td><td></td><td></td><td></td><td></td>
-            {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} style={{textAlign:'center'}}><button className={`fx ${v?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,true);}}>{v||'·'}</button></td>;})}
-            <td className="pol" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[4]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],true);}}>{r.fn[FN[4]]||'·'}</button></td>
-            <td className="ka" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[5]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],true);}}>{r.fn[FN[5]]||'·'}</button></td>
+            <td style={{fontWeight:600,fontSize:11}}>{r.oms}</td>
+            <td className="vc"></td><td className="vc"></td><td className="vc"></td><td className="vc"></td><td className="vc"></td><td className="vc"></td>
+            {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} className="fc-c"><button className={`fx ${v?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,true);}}>{v||'·'}</button></td>;})}
+            <td className="fc-c pol"><button className={`fx ${r.fn[FN[4]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],true);}}>{r.fn[FN[4]]||'·'}</button></td>
+            <td className="fc-c ka"><button className={`fx ${r.fn[FN[5]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],true);}}>{r.fn[FN[5]]||'·'}</button></td>
             <td style={{textAlign:'right'}}><button className="bg" onClick={e=>{e.stopPropagation();setMl({t:'addA',ec:r.label,pad:r.pad,eo:r.oms});}} title="Attribuut toevoegen" style={{fontSize:11}}>+A</button><button className="bd" onClick={e=>{e.stopPropagation();if(confirm(`${r.label} verwijderen?`))del(r._id);}} style={{fontSize:10}}>✕</button></td>
         </tr>;
     }
@@ -298,9 +329,9 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
         <td className="vc" style={{textAlign:'center'}}>{r.mn!=null&&r.mn!==''?r.mn:''}</td>
         <td className="vc" style={{textAlign:'center'}}>{r.mx!=null&&r.mx!==''?r.mx:''}</td>
         <td className="vc" title={r.eo||''}>{r.eo||''}</td>
-        {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} style={{textAlign:'center'}}><button className={`fx ${v==='V'?'fv':v==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,false);}}>{v||'·'}</button></td>;})}
-        <td className="pol" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[4]]==='V'?'fv':r.fn[FN[4]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],false);}}>{r.fn[FN[4]]||'·'}</button></td>
-        <td className="ka" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[5]]==='V'?'fv':r.fn[FN[5]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],false);}}>{r.fn[FN[5]]||'·'}</button></td>
+        {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} className="fc-c"><button className={`fx ${v==='V'?'fv':v==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,false);}}>{v||'·'}</button></td>;})}
+        <td className="fc-c pol"><button className={`fx ${r.fn[FN[4]]==='V'?'fv':r.fn[FN[4]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],false);}}>{r.fn[FN[4]]||'·'}</button></td>
+        <td className="fc-c ka"><button className={`fx ${r.fn[FN[5]]==='V'?'fv':r.fn[FN[5]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],false);}}>{r.fn[FN[5]]||'·'}</button></td>
         <td style={{textAlign:'right'}}><button className="bd" onClick={e=>{e.stopPropagation();del(r._id);}} style={{fontSize:10,visibility:'inherit'}}>✕</button></td>
     </tr>;
 })}
