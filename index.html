@@ -185,30 +185,42 @@ const del=useCallback((id)=>{setSchema(prev=>{const it=prev.find(s=>s._id===id);
 const tgF=useCallback((id,fn,isE)=>{setSchema(p=>p.map(s=>{if(s._id!==id)return s;const c=s.fn[fn]||'';const o=isE?CDS:VOS;return{...s,fn:{...s.fn,[fn]:o[(o.indexOf(c)+1)%o.length]}};}));},[]);
 // Default attributes for dekking entities
 const DEK_DEFAULTS=['BTP','CODE','COLFACT','PRCPKKT','PAFWST','BAFWST','TCORBDR','RJRCOR','PPRC','VOLGNUM','GADEKCD','GADEKCO','NJP','PRCTEKC','PRMPROM','RELVRH','RELVVNR','VGBRA','WPREMBP'];
+// Default MP sub-entity attributes for dekking entities
+const MP_DEFAULTS=['MYAAND','PLLEAD','POOLNUM','POOLPRC'];
 
 const addE=useCallback((ec,pp)=>{const e=dcM[ec];if(!e)return;const pad=pp?`${pp}/${ec}`:ec;
 const entItem={_id:uid(),pad,label:ec,oms:e.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:true};
 // Check if this is a dekking entity (naam contains DEKKING)
 const isDekking=e.nm.toUpperCase().includes('DEKKING');
-const defaultAttrs=[];
+const items=[entItem];
 if(isDekking){
+    // Add default dekking attributes
     const entAttrs=dcA[ec]||[];
     for(const ac of DEK_DEFAULTS){
         const dcAttr=entAttrs.find(a=>a.ac===ac);
-        if(dcAttr){
-            defaultAttrs.push({_id:uid(),pad,label:`${ec}_${ac}`,oms:dcAttr.nm,cl:dcAttr.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false});
+        if(dcAttr)items.push({_id:uid(),pad,label:`${ec}_${ac}`,oms:dcAttr.nm,cl:dcAttr.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false});
+    }
+    // Add MP sub-entity with defaults
+    const mpEnt=dcM['MP'];
+    if(mpEnt){
+        const mpPad=`${pad}/MP`;
+        items.push({_id:uid(),pad:mpPad,label:'MP',oms:mpEnt.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{kunnenAanleveren:'0-9'},isE:true});
+        const mpAttrs=dcA['MP']||[];
+        for(const ac of MP_DEFAULTS){
+            const dcAttr=mpAttrs.find(a=>a.ac===ac);
+            if(dcAttr)items.push({_id:uid(),pad:mpPad,label:`MP_${ac}`,oms:dcAttr.nm,cl:dcAttr.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false});
         }
     }
 }
 setSchema(prev=>{
-    const items=[entItem,...defaultAttrs];
     if(!pp)return[...prev,...items];
     let idx=prev.length;
     for(let i=prev.length-1;i>=0;i--){if(prev[i].pad===pp||prev[i].pad.startsWith(pp+'/')){idx=i+1;break;}}
     const c=[...prev];c.splice(idx,0,...items);return c;
 });
-setExp(p=>{const n=new Set(p);n.add(pad+'|'+ec);return n;});
-msg(`${ec} — ${e.nm}${isDekking?' + '+defaultAttrs.length+' standaard attributen':''}`);},[dcM,dcA,msg]);
+// Expand both the dekking entity and its MP child
+setExp(p=>{const n=new Set(p);n.add(pad+'|'+ec);if(isDekking)n.add(pad+'/MP|MP');return n;});
+msg(`${ec} — ${e.nm}${isDekking?' + standaard attributen + MP':''}`);},[dcM,dcA,msg]);
 const addA=useCallback((ec,ac,tp)=>{const a=(dcA[ec]||[]).find(x=>x.ac===ac);if(!a)return;const lb=`${ec}_${ac}`;if(schema.some(s=>s.pad===tp&&s.label===lb)){msg(`${lb} bestaat al`,'warn');return;}const it={_id:uid(),pad:tp,label:lb,oms:a.nm,cl:a.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false};setSchema(prev=>{const c=[...prev];let idx=c.length;for(let i=c.length-1;i>=0;i--){if(c[i].pad===tp){idx=i+1;break;}}c.splice(idx,0,it);return c;});msg(`${lb}`);},[dcA,schema,msg]);
 
 const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg(`${f.name} — ${items.length} items`);}catch(err){msg('Fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
