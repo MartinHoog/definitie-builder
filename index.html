@@ -1,49 +1,73 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AFD Productdefinitie Builder</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        :root{--bg:#f5f6f8;--bg2:#fff;--bg3:#f0f1f4;--bg4:#e8eaef;--tx:#1a1d27;--tx2:#4a4f63;--tx3:#8890a4;--bdr:#dfe1e8;--acc:#1a6bff;--acc2:#0d4fcc;--accBg:#eef4ff;--ent:#0066cc;--attr:#16803c;--deck:#8b5cf6;--ok:#16a34a;--warn:#d97706;--err:#dc2626;--sh:0 1px 3px rgba(0,0,0,.06);--sh2:0 4px 16px rgba(0,0,0,.08)}
-        body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5}
-        input,select,textarea{font-family:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--bg2);color:var(--tx);outline:none;transition:border-color .15s}
-        input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(26,107,255,.12)}
-        input::placeholder,textarea::placeholder{color:var(--tx3)}
-        button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:13px}
-        button:disabled{opacity:.4;cursor:not-allowed}
-        code{font-family:'Cascadia Code',Consolas,monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px}
-        .btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:6px;font-weight:500;transition:all .15s}
-        .btn-p{background:var(--acc);color:#fff}.btn-p:hover:not(:disabled){background:var(--acc2)}
-        .btn-s{background:var(--bg3);color:var(--tx2);border:1px solid var(--bdr)}.btn-s:hover:not(:disabled){background:var(--bg4)}
-        .btn-d{background:#fee2e2;color:var(--err)}.btn-d:hover:not(:disabled){background:#fecaca}
-        .btn-g{color:var(--tx3);padding:4px 8px;border-radius:4px}.btn-g:hover{color:var(--tx);background:var(--bg3)}
-        .btn-sm{padding:4px 10px;font-size:12px}
-        .bg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;white-space:nowrap}
-        .bg-e{background:#dbeafe;color:var(--ent)}.bg-a{background:#dcfce7;color:var(--attr)}.bg-d{background:#ede9fe;color:var(--deck)}
-        .mo{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
-        .md{background:var(--bg2);border-radius:12px;box-shadow:var(--sh2);width:100%;display:flex;flex-direction:column;overflow:hidden}
-        .eb{border:1px solid var(--bdr);border-radius:8px;margin-bottom:5px;background:var(--bg2);border-left:3px solid var(--ent)}
-        .eb.dk{border-left-color:var(--deck)}
-        .eh{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;user-select:none}.eh:hover{background:var(--bg3)}
-        .ec{padding:0 0 4px 16px}
-        .ar{display:flex;align-items:center;gap:6px;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:13px}.ar:hover{background:var(--bg3)}.ar.sl{background:var(--accBg)}
-        .fc{display:grid;grid-template-columns:repeat(6,28px);gap:1px;font-size:10px}
-        .fc>div{text-align:center;padding:2px 0;border-radius:3px;cursor:pointer;user-select:none;font-weight:600}.fc>div:hover{background:var(--bg4)}
-        .fv{background:#dcfce7;color:#166534}.fo{background:#fef9c3;color:#854d0e}.fk{background:#dbeafe;color:#1e40af;font-size:9px}
-        .sb{width:340px;background:var(--bg2);border-left:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0}
-        .fg{margin-bottom:12px}.fl{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
-        @keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}.fi{animation:fi .12s ease-out}
-        @keyframes sp{to{transform:rotate(360deg)}}.sp{animation:sp .8s linear infinite}
-        .tt{position:fixed;bottom:20px;right:20px;z-index:200;padding:10px 18px;border-radius:8px;color:#fff;font-size:13px;font-weight:500;box-shadow:var(--sh2)}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFD Productdefinitie Builder</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#f4f5f7;--bg2:#fff;--bg3:#eef0f4;--bg4:#e2e5eb;--tx:#1a1d27;--tx2:#4a4f63;--tx3:#8890a4;
+--bdr:#d8dce4;--acc:#1a6bff;--acc2:#0d4fcc;--accBg:#e8f0ff;--ent:#0052cc;--attr:#1a7f37;--deck:#7c3aed;
+--ok:#16a34a;--warn:#b45309;--err:#dc2626;--sh:0 1px 2px rgba(0,0,0,.05);--sh2:0 6px 20px rgba(0,0,0,.1);
+--polBg:#f3ecf8;--kaBg:#e8d5f5;--kaHdr:#7030a0}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:13px;line-height:1.4}
+input,select,textarea{font-family:inherit;font-size:12px;padding:4px 8px;border:1px solid var(--bdr);border-radius:4px;background:var(--bg2);color:var(--tx);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);box-shadow:0 0 0 2px rgba(26,107,255,.15)}
+input::placeholder,textarea::placeholder{color:var(--tx3)}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:12px}
+button:disabled{opacity:.35;cursor:not-allowed}
+code{font-family:'SF Mono',Consolas,monospace;font-size:11px;background:var(--bg3);padding:1px 4px;border-radius:3px}
+
+/* Buttons */
+.b{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:5px;font-weight:500;font-size:12px;transition:all .12s}
+.bp{background:var(--acc);color:#fff}.bp:hover:not(:disabled){background:var(--acc2)}
+.bs{background:var(--bg3);color:var(--tx2);border:1px solid var(--bdr)}.bs:hover:not(:disabled){background:var(--bg4)}
+.bd{color:var(--err);padding:2px 6px}.bd:hover{background:#fee2e2;border-radius:3px}
+.bg{color:var(--tx3);padding:2px 6px;border-radius:3px}.bg:hover{color:var(--tx);background:var(--bg3)}
+
+/* Tags */
+.tg{display:inline-flex;align-items:center;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.2px}
+.te{background:#d6e4ff;color:var(--ent)}.ta{background:#d4edda;color:var(--attr)}.td{background:#ede9fe;color:var(--deck)}
+
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(2px)}
+.md{background:var(--bg2);border-radius:10px;box-shadow:var(--sh2);width:100%;display:flex;flex-direction:column;overflow:hidden}
+
+/* Schema table */
+.st{width:100%;border-collapse:collapse}
+.st th{position:sticky;top:0;z-index:2;background:var(--bg3);padding:3px 6px;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid var(--bdr);white-space:nowrap;text-align:center}
+.st th.l{text-align:left}
+.st th.pol{background:var(--polBg);color:#6b21a8}
+.st th.ka{background:var(--kaHdr);color:#fff}
+.st td{padding:2px 6px;border-bottom:1px solid #eef0f3;font-size:12px;vertical-align:middle;white-space:nowrap}
+.st tr:hover td{background:#f8f9fb}
+.st tr.sel td{background:var(--accBg)}
+.st tr.ent td{background:#f0f4fa;font-weight:600;border-bottom:1px solid var(--bdr)}
+.st tr.ent.dk td{background:#f5f0ff}
+.st tr.sep td{padding:0;height:6px;border:none;background:var(--bg)}
+/* Func cells */
+.fx{width:28px;height:22px;text-align:center;font-size:10px;font-weight:700;border-radius:3px;cursor:pointer;user-select:none;border:none;background:transparent;padding:0}
+.fx:hover{background:var(--bg4)}
+.fx.fv{background:#dcfce7;color:#166534}.fx.fo{background:#fef9c3;color:#854d0e}.fx.fk{background:#d6e4ff;color:#1e40af}
+/* Func in polisblad/KA columns */
+td.pol{background:var(--polBg)}td.ka{background:var(--kaBg)}
+tr.ent td.pol{background:#e8d5f5}tr.ent td.ka{background:#d4b8ed}
+
+/* Sidebar */
+.sb{width:320px;background:var(--bg2);border-left:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0;font-size:12px}
+.sf{margin-bottom:10px}.sl{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px}
+
+/* Animations */
+@keyframes fi{from{opacity:0}to{opacity:1}}.fi{animation:fi .1s ease-out}
+@keyframes sp{to{transform:rotate(360deg)}}.sp{animation:sp .8s linear infinite}
+.tt{position:fixed;bottom:16px;right:16px;z-index:200;padding:8px 16px;border-radius:6px;color:#fff;font-size:12px;font-weight:500;box-shadow:var(--sh2)}
+</style>
 </head>
 <body>
 <div id="root"></div>
@@ -51,8 +75,7 @@
 const {useState,useEffect,useMemo,useCallback,useRef}=React;
 const FN=['premieBerekening_aanroep','premieBerekening_resultaat','acceptatie_aanroep','acceptatie_resultaat','polisbladGegevens','kunnenAanleveren'];
 const FS=['PB_A','PB_R','AC_A','AC_R','POL','KA'];
-const CDS=['','0-1','1-1','0-9','1-9'];
-const VOS=['','V','O'];
+const CDS=['','0-1','1-1','0-9','1-9'];const VOS=['','V','O'];
 let _u=0;const uid=()=>'_'+(++_u);
 
 function parseDC(t){const ls=t.split(/\r?\n/).filter(l=>l.length>=64),r=[];for(const l of ls){const tp=l[0];if(tp!=='E'&&tp!=='A')continue;const ec=l.substring(1,3).trim(),nm=l.substring(28,64).trim(),om=l.substring(64).trim();if(tp==='E')r.push({type:'E',ec,ac:'',nm,om,dt:'',fm:'',cl:''});else{const ac=l.substring(5,12).trim(),pd=l.substring(12,14).trim(),fm=l.substring(14,19).trim(),sd=l.substring(19,21).trim(),cl=l.substring(21,28).trim();r.push({type:'A',ec,ac,nm,om,dt:sd||pd,fm:fm?pd+fm:pd,cl});}}return r;}
@@ -65,188 +88,64 @@ for(let i=0;i<hi;i++){const k=String(rows[i][0]||'').replace(':','').trim(),v=ro
 for(let i=hi+1;i<rows.length;i++){const row=rows[i],pad=String(row[0]||'').trim(),label=String(row[1]||'').trim();if(!pad||!label)continue;const pl=pad.split('/').pop(),isE=label===pl&&!label.includes('_');const fv={};FN.forEach((fn,j)=>{const v=String(row[10+j]||'').trim();if(v)fv[fn]=v;});r.schema.push({pad,label,oms:String(row[2]||'').trim(),cl:String(row[3]||'').trim(),acl:String(row[4]||'').trim(),scl:String(row[5]||'').trim(),ol:String(row[6]||'').trim(),mn:row[7]!=null&&row[7]!==''?String(row[7]):'',mx:row[8]!=null&&row[8]!==''?String(row[8]):'',eo:String(row[9]||'').trim(),fn:fv,isE});}}return r;}
 
 function expTpl(meta,schema){
-    // Use ExcelJS for styled export matching SIVI template format
-    const wb=new ExcelJS.Workbook();
-    wb.creator='AFD Productdefinitie Builder';
-
-    // ── Sheet 1: Metagegevens en Updates ──
+    const wb=new ExcelJS.Workbook();wb.creator='AFD Productdefinitie Builder';
     const wm=wb.addWorksheet('Metagegevens en Updates');
     wm.getColumn(1).width=29;wm.getColumn(2).width=15;wm.getColumn(3).width=76;
-    const baseFont={name:'Calibri',size:10};const titleFont={name:'Calibri',size:14,bold:true};const labelFont={name:'Calibri',size:12};const sectionFont={name:'Calibri',size:10,bold:true};
-    wm.getRow(2).getCell(2).value='Metagegevens AFD-definitie en Updates Excel-template en product';wm.getRow(2).getCell(2).font=titleFont;wm.getRow(2).height=17.4;
-    wm.mergeCells('A3:C3');wm.getCell('A3').value='Metagegevens AFD-definitie';wm.getCell('A3').font=sectionFont;
-    const metaFields=[['Naam organisatie:',meta.organisatie],['Commerciele productnaam:',meta.productnaam],['Bronnen:',''],['Contactpersoon:',meta.contactpersoon],['E-mail / Telefoon:',meta.email],['Datum:',meta.datum]];
-    metaFields.forEach(([k,v],i)=>{const r=wm.getRow(5+i);r.getCell(1).value=k;r.getCell(1).font=labelFont;if(v){r.getCell(2).value=v;r.getCell(2).font=labelFont;}});
-    wm.mergeCells('A12:C12');wm.getCell('A12').value='Updates product (voor eigen gebruik)';wm.getCell('A12').font=sectionFont;
-    const updHdr=wm.getRow(14);['Versie','Datum','Omschrijving aanpassing'].forEach((h,i)=>{updHdr.getCell(i+1).value=h;updHdr.getCell(i+1).font=sectionFont;});
-    wm.mergeCells('A27:C27');wm.getCell('A27').value='Updates Excel-template (beheer door SIVI)';wm.getCell('A27').font=sectionFont;
-    const updHdr2=wm.getRow(29);['Versie','Datum','Omschrijving aanpassing'].forEach((h,i)=>{updHdr2.getCell(i+1).value=h;updHdr2.getCell(i+1).font=sectionFont;});
-
-    // ── Sheet 2: Schema ──
+    const tf={name:'Calibri',size:14,bold:true},lf={name:'Calibri',size:12},sf={name:'Calibri',size:10,bold:true},df={name:'Calibri',size:10},dbf={name:'Calibri',size:10,bold:true};
+    wm.getRow(2).getCell(2).value='Metagegevens AFD-definitie en Updates Excel-template en product';wm.getRow(2).getCell(2).font=tf;wm.getRow(2).height=17.4;
+    wm.mergeCells('A3:C3');wm.getCell('A3').value='Metagegevens AFD-definitie';wm.getCell('A3').font=sf;
+    [['Naam organisatie:',meta.organisatie],['Commerciele productnaam:',meta.productnaam],['Bronnen:',''],['Contactpersoon:',meta.contactpersoon],['E-mail / Telefoon:',meta.email],['Datum:',meta.datum]].forEach(([k,v],i)=>{const r=wm.getRow(5+i);r.getCell(1).value=k;r.getCell(1).font=lf;if(v){r.getCell(2).value=v;r.getCell(2).font=lf;}});
+    wm.mergeCells('A12:C12');wm.getCell('A12').value='Updates product (voor eigen gebruik)';wm.getCell('A12').font=sf;
+    const uh=wm.getRow(14);['Versie','Datum','Omschrijving aanpassing'].forEach((h,i)=>{uh.getCell(i+1).value=h;uh.getCell(i+1).font=sf;});
+    wm.mergeCells('A27:C27');wm.getCell('A27').value='Updates Excel-template (beheer door SIVI)';wm.getCell('A27').font=sf;
+    const uh2=wm.getRow(29);['Versie','Datum','Omschrijving aanpassing'].forEach((h,i)=>{uh2.getCell(i+1).value=h;uh2.getCell(i+1).font=sf;});
     const ws=wb.addWorksheet('Schema');
-    const colWidths=[19.66,17.33,44.33,10.33,5.66,15.66,10,10.66,10,30.66,9.66,9.66,9.66,9.66,9.66,9.66];
-    colWidths.forEach((w,i)=>{ws.getColumn(i+1).width=w;});
-
-    const propFont={name:'Calibri',size:12};const propBoldFont={name:'Calibri',size:12,bold:true};
-    const dataFont={name:'Calibri',size:10};const dataBoldFont={name:'Calibri',size:10,bold:true};
-    const hdrFont={name:'Calibri',size:10,bold:true};
-    const centerAlign={horizontal:'center',vertical:'middle',wrapText:true};
-    const leftAlign={horizontal:'left',vertical:'middle'};
-
-    // Purple fills for polisbladGegevens (col O=15) and kunnenAanleveren (col P=16)
-    const fillO={type:'pattern',pattern:'solid',fgColor:{argb:'FFE1CCF0'}}; // light purple
-    const fillP={type:'pattern',pattern:'solid',fgColor:{argb:'FFB889DB'}}; // medium purple  
-    const fillPHdr={type:'pattern',pattern:'solid',fgColor:{argb:'FF7030A0'}}; // dark purple header
-
-    // Row 1: Title
-    ws.mergeCells('A1:C1');ws.getCell('A1').value='Eigenschappen AFD-definitie';ws.getCell('A1').font=propBoldFont;
-    ws.getRow(1).height=15.6;
-
-    // Rows 3-8: Properties
-    const props=[['Branche:',meta.branche],['POR maatschappij aanduiding:',meta.porCode],['AFD-definitie naam:',meta.afdNaam],['AFD-definitie versienummer:',meta.afdVersie],['AFD-definitie tag:',meta.afdTag],['Productsegment Particulier/Zakelijk:',meta.segment]];
-    props.forEach(([k,v],i)=>{const r=ws.getRow(3+i);r.getCell(1).value=k;r.getCell(1).font=propFont;if(v){r.getCell(2).value=v;r.getCell(2).font=propFont;}});
-
-    // Row 10: Header
-    const headers=['Pad','Label','Omschrijving','Codelijst','Actuele codelijst','Subset codelijst','Optielijst','Minimum','Maximum','Eigen omschrijving',...FN];
-    const hdrRow=ws.getRow(10);
-    hdrRow.height=141.75;
-    headers.forEach((h,i)=>{
-        const cell=hdrRow.getCell(i+1);cell.value=h;cell.font=hdrFont;cell.alignment=centerAlign;
-        // Column O (15) and P (16) get purple fills
-        if(i===14)cell.fill=fillO;
-        if(i===15)cell.fill=fillPHdr;
-    });
-
-    // Freeze panes at A11
+    [19.66,17.33,44.33,10.33,5.66,15.66,10,10.66,10,30.66,9.66,9.66,9.66,9.66,9.66,9.66].forEach((w,i)=>{ws.getColumn(i+1).width=w;});
+    const ca={horizontal:'center',vertical:'middle',wrapText:true};
+    const fO={type:'pattern',pattern:'solid',fgColor:{argb:'FFE1CCF0'}};
+    const fP={type:'pattern',pattern:'solid',fgColor:{argb:'FFB889DB'}};
+    const fPH={type:'pattern',pattern:'solid',fgColor:{argb:'FF7030A0'}};
+    ws.mergeCells('A1:C1');ws.getCell('A1').value='Eigenschappen AFD-definitie';ws.getCell('A1').font={name:'Calibri',size:12,bold:true};ws.getRow(1).height=15.6;
+    [['Branche:',meta.branche],['POR maatschappij aanduiding:',meta.porCode],['AFD-definitie naam:',meta.afdNaam],['AFD-definitie versienummer:',meta.afdVersie],['AFD-definitie tag:',meta.afdTag],['Productsegment Particulier/Zakelijk:',meta.segment]].forEach(([k,v],i)=>{const r=ws.getRow(3+i);r.getCell(1).value=k;r.getCell(1).font=lf;if(v){r.getCell(2).value=v;r.getCell(2).font=lf;}});
+    const hdr=ws.getRow(10);hdr.height=141.75;
+    ['Pad','Label','Omschrijving','Codelijst','Actuele codelijst','Subset codelijst','Optielijst','Minimum','Maximum','Eigen omschrijving',...FN].forEach((h,i)=>{const c=hdr.getCell(i+1);c.value=h;c.font={name:'Calibri',size:10,bold:true};c.alignment=ca;if(i===14)c.fill=fO;if(i===15)c.fill=fPH;});
     ws.views=[{state:'frozen',xSplit:0,ySplit:10,topLeftCell:'A11'}];
-
-    // Data rows starting at row 11
-    let rowNum=11;
-    let prevPad=null;
-    for(const s of schema){
-        // Insert separator row between entity groups (when pad changes at entity level)
-        if(s.isE&&prevPad!==null&&s.pad!==prevPad){
-            const sepRow=ws.getRow(rowNum);
-            sepRow.height=11.4;
-            // Apply purple fills on separator row too
-            sepRow.getCell(15).fill=fillO;
-            sepRow.getCell(16).fill=fillP;
-            rowNum++;
-        }
-        if(s.isE)prevPad=s.pad;
-
-        const row=ws.getRow(rowNum);
-        const vals=[s.pad,s.label,s.oms,s.cl,s.acl||'',s.scl||'',s.ol||'',s.mn||'',s.mx||'',s.eo||'',...FN.map(f=>s.fn[f]||'')];
-        vals.forEach((v,i)=>{
-            const cell=row.getCell(i+1);
-            cell.value=v||null;
-            cell.font=s.isE&&i===2?dataBoldFont:dataFont;
-            // Function columns (K-P, indices 10-15) centered
-            if(i>=10)cell.alignment={horizontal:'center'};
-            // Purple fills on col O and P
-            if(i===14)cell.fill=fillO;
-            if(i===15)cell.fill=fillP;
-        });
-        rowNum++;
-    }
-
-    // ── Sheet 3: Verbandscontrole ──
+    let rn=11,pp=null;
+    for(const s of schema){if(s.isE&&pp!==null&&s.pad!==pp){const sr=ws.getRow(rn);sr.height=11.4;sr.getCell(15).fill=fO;sr.getCell(16).fill=fP;rn++;}if(s.isE)pp=s.pad;
+    const row=ws.getRow(rn);[s.pad,s.label,s.oms,s.cl,s.acl||'',s.scl||'',s.ol||'',s.mn||'',s.mx||'',s.eo||'',...FN.map(f=>s.fn[f]||'')].forEach((v,i)=>{const c=row.getCell(i+1);c.value=v||null;c.font=s.isE&&i===2?dbf:df;if(i>=10)c.alignment={horizontal:'center'};if(i===14)c.fill=fO;if(i===15)c.fill=fP;});rn++;}
     const wv=wb.addWorksheet(' Verbandscontrole');
     wv.getColumn(1).width=65;wv.getColumn(2).width=40;wv.getColumn(3).width=32;wv.getColumn(5).width=34;wv.getColumn(6).width=23;wv.getColumn(7).width=50;
-    const redFill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFF0000'}};const redHdrFont={name:'Calibri',size:10,bold:true};const greyFont={name:'Calibri',size:10,color:{argb:'FF808080'}};
-    // Template blocks
-    for(let block=0;block<3;block++){
-        const startRow=block*4+(block===0?7:7+block*4-4+3);
-        const baseR=7+block*4;
-        const hdr=wv.getRow(baseR);
-        ['Beschrijving verbandscontrole','Naam','Bron','Conditie',null,'Else','Foutmelding'].forEach((h,i)=>{
-            if(h){hdr.getCell(i+1).value=h;hdr.getCell(i+1).font=redHdrFont;hdr.getCell(i+1).fill=redFill;}
-        });
-        wv.mergeCells(baseR,4,baseR,5);
-        const ifRow=wv.getRow(baseR+1);
-        ifRow.height=26.4;
-        ifRow.getCell(1).value='<Vul hier de conditie in>';ifRow.getCell(1).font=greyFont;
-        ifRow.getCell(2).value='<Naam>';ifRow.getCell(2).font=greyFont;
-        ifRow.getCell(3).value='<Bron>';ifRow.getCell(3).font=greyFont;
-        ifRow.getCell(4).value='If';ifRow.getCell(4).font=dataFont;
-        ifRow.getCell(5).value='<Pseudocode>';ifRow.getCell(5).font=greyFont;
-        ifRow.getCell(6).value='<True/False>';ifRow.getCell(6).font=greyFont;
-        ifRow.getCell(7).value='<Foutmelding>';ifRow.getCell(7).font=greyFont;
-        const thenRow=wv.getRow(baseR+2);
-        thenRow.height=26.4;
-        thenRow.getCell(1).value='<Vul hier de validatie in>';thenRow.getCell(1).font=greyFont;
-        thenRow.getCell(4).value='Then';thenRow.getCell(4).font=dataFont;
-        thenRow.getCell(5).value='<Pseudocode>';thenRow.getCell(5).font=greyFont;
-    }
-
-    // ── Sheet 4: Functielijst ──
-    const wf=wb.addWorksheet('Functielijst');
-    wf.getColumn(1).width=25;
-    wf.getCell('A1').value='Kolom1';wf.getCell('A1').font=dataFont;
-    wf.getCell('A2').value='Functielijst';wf.getCell('A2').font=dataFont;
-    FN.forEach((f,i)=>{wf.getCell(`A${3+i}`).value=f;wf.getCell(`A${3+i}`).font=dataFont;});
-
+    const rf={type:'pattern',pattern:'solid',fgColor:{argb:'FFFF0000'}},gf={name:'Calibri',size:10,color:{argb:'FF808080'}};
+    for(let b=0;b<3;b++){const br=7+b*4;const h=wv.getRow(br);['Beschrijving verbandscontrole','Naam','Bron','Conditie',null,'Else','Foutmelding'].forEach((x,i)=>{if(x){h.getCell(i+1).value=x;h.getCell(i+1).font={name:'Calibri',size:10,bold:true};h.getCell(i+1).fill=rf;}});wv.mergeCells(br,4,br,5);
+    const ir=wv.getRow(br+1);ir.height=26.4;ir.getCell(1).value='<Conditie>';ir.getCell(1).font=gf;ir.getCell(4).value='If';ir.getCell(4).font=df;ir.getCell(5).value='<Pseudocode>';ir.getCell(5).font=gf;
+    const tr=wv.getRow(br+2);tr.height=26.4;tr.getCell(1).value='<Validatie>';tr.getCell(1).font=gf;tr.getCell(4).value='Then';tr.getCell(4).font=df;tr.getCell(5).value='<Pseudocode>';tr.getCell(5).font=gf;}
+    const wf=wb.addWorksheet('Functielijst');wf.getColumn(1).width=25;wf.getCell('A1').value='Kolom1';wf.getCell('A1').font=df;wf.getCell('A2').value='Functielijst';wf.getCell('A2').font=df;FN.forEach((f,i)=>{wf.getCell(`A${3+i}`).value=f;wf.getCell(`A${3+i}`).font=df;});
     return wb;
 }
 
 // ══════════ SUBSET PICKER ══════════
 function SubsetPicker({codes,value,onChange}){
-    const [search,setSearch]=useState('');
-    const [open,setOpen]=useState(false);
-    const selected=useMemo(()=>new Set((value||'').split(';').map(s=>s.trim()).filter(Boolean)),[value]);
-    const filtered=useMemo(()=>{
-        if(!search)return codes;
-        const t=search.toLowerCase();
-        return codes.filter(c=>String(c.code).toLowerCase().includes(t)||String(c.oms).toLowerCase().includes(t));
-    },[codes,search]);
-
-    const toggle=useCallback((code)=>{
-        const s=new Set(selected);
-        if(s.has(code))s.delete(code);else s.add(code);
-        onChange(Array.from(s).join(';'));
-    },[selected,onChange]);
-
-    const selAll=useCallback(()=>{onChange(filtered.map(c=>c.code).join(';'));},[filtered,onChange]);
-    const selNone=useCallback(()=>{onChange('');},[onChange]);
-
-    return <div className="fg">
-        <div className="fl" style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-            <span>Subset codelijst</span>
-            <button className="btn-g" style={{fontSize:11,textTransform:'none',letterSpacing:0}} onClick={()=>setOpen(!open)}>{open?'▲ Inklappen':'▼ Selecteren'}</button>
-        </div>
-        {selected.size>0&&<div style={{display:'flex',flexWrap:'wrap',gap:3,marginBottom:6}}>
-            {Array.from(selected).map(code=><span key={code} style={{display:'inline-flex',alignItems:'center',gap:3,padding:'1px 6px',borderRadius:4,fontSize:11,background:'#dbeafe',color:'#1e40af',cursor:'pointer'}}
-                onClick={()=>toggle(code)}>{code} <span style={{fontSize:9}}>✕</span></span>)}
-        </div>}
-        {selected.size>0&&!open&&<div style={{fontSize:11,color:'var(--tx3)'}}>{selected.size} van {codes.length} geselecteerd</div>}
-        {open&&<div style={{border:'1px solid var(--bdr)',borderRadius:6,overflow:'hidden',marginTop:4}}>
-            <div style={{padding:4,borderBottom:'1px solid var(--bdr)',background:'var(--bg3)'}}>
-                <input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Zoek code..." style={{width:'100%',fontSize:12,padding:'4px 8px'}}/>
-            </div>
-            <div style={{display:'flex',gap:4,padding:'4px 6px',borderBottom:'1px solid var(--bdr)'}}>
-                <button className="btn-g" style={{fontSize:10}} onClick={selAll}>Alles</button>
-                <button className="btn-g" style={{fontSize:10}} onClick={selNone}>Geen</button>
-                <span style={{flex:1}}/>
-                <span style={{fontSize:10,color:'var(--tx3)',alignSelf:'center'}}>{selected.size}/{codes.length}</span>
-            </div>
-            <div style={{maxHeight:200,overflow:'auto'}}>
-                {filtered.map(c=>{
-                    const isSel=selected.has(c.code);
-                    return <div key={c.code} style={{display:'flex',alignItems:'center',gap:6,padding:'3px 8px',cursor:'pointer',background:isSel?'var(--accBg)':'transparent',fontSize:12}}
-                        onClick={()=>toggle(c.code)}>
-                        <span style={{width:16,height:16,borderRadius:3,border:'1.5px solid '+(isSel?'var(--acc)':'var(--bdr)'),background:isSel?'var(--acc)':'var(--bg2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-                            {isSel&&<span style={{color:'#fff',fontSize:10,fontWeight:700}}>✓</span>}
-                        </span>
-                        <code style={{fontSize:11,minWidth:40,color:'var(--acc)'}}>{c.code}</code>
-                        <span style={{flex:1,color:'var(--tx2)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.oms}</span>
-                    </div>;
-                })}
-                {filtered.length===0&&<div style={{padding:12,textAlign:'center',color:'var(--tx3)',fontSize:12}}>Geen codes gevonden</div>}
-            </div>
-        </div>}
+    const [q,setQ]=useState('');const [open,setOpen]=useState(false);
+    const sel=useMemo(()=>new Set((value||'').split(';').map(s=>s.trim()).filter(Boolean)),[value]);
+    const fl=useMemo(()=>{if(!q)return codes;const t=q.toLowerCase();return codes.filter(c=>String(c.code).toLowerCase().includes(t)||String(c.oms).toLowerCase().includes(t));},[codes,q]);
+    const tog=useCallback(code=>{const s=new Set(sel);if(s.has(code))s.delete(code);else s.add(code);onChange(Array.from(s).join(';'));},[sel,onChange]);
+    return <div className="sf">
+        <div className="sl" style={{display:'flex',justifyContent:'space-between'}}><span>Subset codelijst</span>
+            <button className="bg" style={{fontSize:10,textTransform:'none',letterSpacing:0}} onClick={()=>setOpen(!open)}>{open?'▲ Sluiten':'▼ Selecteren'}</button></div>
+        {sel.size>0&&<div style={{display:'flex',flexWrap:'wrap',gap:2,marginBottom:4}}>
+            {Array.from(sel).map(c=><span key={c} style={{display:'inline-flex',alignItems:'center',gap:2,padding:'0 5px',borderRadius:3,fontSize:10,background:'#d6e4ff',color:'#1e40af',cursor:'pointer',lineHeight:'18px'}} onClick={()=>tog(c)}>{c} <span style={{fontSize:8}}>✕</span></span>)}</div>}
+        {sel.size>0&&!open&&<div style={{fontSize:10,color:'var(--tx3)'}}>{sel.size}/{codes.length} geselecteerd</div>}
+        {open&&<div style={{border:'1px solid var(--bdr)',borderRadius:4,overflow:'hidden',marginTop:2}}>
+            <div style={{padding:3,borderBottom:'1px solid var(--bdr)',background:'var(--bg3)'}}><input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek..." style={{width:'100%',fontSize:11,padding:'3px 6px'}}/></div>
+            <div style={{display:'flex',gap:4,padding:'3px 6px',borderBottom:'1px solid var(--bdr)'}}><button className="bg" style={{fontSize:9}} onClick={()=>onChange(fl.map(c=>c.code).join(';'))}>Alles</button><button className="bg" style={{fontSize:9}} onClick={()=>onChange('')}>Geen</button><span style={{flex:1}}/><span style={{fontSize:9,color:'var(--tx3)',alignSelf:'center'}}>{sel.size}/{codes.length}</span></div>
+            <div style={{maxHeight:180,overflow:'auto'}}>{fl.map(c=>{const s=sel.has(c.code);return <div key={c.code} style={{display:'flex',alignItems:'center',gap:5,padding:'2px 6px',cursor:'pointer',background:s?'var(--accBg)':'',fontSize:11}} onClick={()=>tog(c.code)}>
+                <span style={{width:14,height:14,borderRadius:3,border:'1.5px solid '+(s?'var(--acc)':'var(--bdr)'),background:s?'var(--acc)':'var(--bg2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>{s&&<span style={{color:'#fff',fontSize:9,fontWeight:700}}>✓</span>}</span>
+                <code style={{fontSize:10,minWidth:35,color:'var(--acc)'}}>{c.code}</code><span style={{color:'var(--tx2)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.oms}</span></div>;})}
+            </div></div>}
     </div>;
 }
 
+// ══════════ APP ══════════
 function App(){
 const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=useState({});const [ld,setLd]=useState(true);const [de,setDe]=useState(null);
 const [meta,setMeta]=useState({branche:'',porCode:'',afdNaam:'',afdVersie:'',afdTag:'',segment:'Zakelijk',organisatie:'',productnaam:'',contactpersoon:'',email:'',datum:''});
@@ -259,102 +158,129 @@ const dcE=useMemo(()=>dc.filter(d=>d.type==='E'),[dc]);
 const dcA=useMemo(()=>{const m={};dc.forEach(d=>{if(d.type==='A'){if(!m[d.ec])m[d.ec]=[];m[d.ec].push(d);}});return m;},[dc]);
 const dcM=useMemo(()=>{const m={};dcE.forEach(e=>{m[e.ec]=e;});return m;},[dcE]);
 
+// Build tree: [{...entity, at:[...attrs]}, ...]
 const tree=useMemo(()=>{const r=[];let c=null;for(const s of schema){if(s.isE){c={...s,at:[]};r.push(c);}else if(c)c.at.push(s);}return r;},[schema]);
 const si=useMemo(()=>schema.find(s=>s._id===sel),[schema,sel]);
 
+// Build flat display list with separators
+const displayRows=useMemo(()=>{
+    const rows=[];let prevPad=null;
+    for(const ent of tree){
+        if(prevPad!==null&&ent.pad!==prevPad)rows.push({_type:'sep'});
+        rows.push({...ent,_type:'ent'});
+        if(exp.has(ent.pad+'|'+ent.label)){
+            for(const a of ent.at)rows.push({...a,_type:'attr'});
+        }
+        prevPad=ent.pad;
+    }
+    return rows;
+},[tree,exp]);
+
 const upd=useCallback((id,u)=>setSchema(p=>p.map(s=>s._id===id?{...s,...u}:s)),[]);
 const del=useCallback((id)=>{setSchema(prev=>{const it=prev.find(s=>s._id===id);if(!it)return prev;if(!it.isE)return prev.filter(s=>s._id!==id);const idx=prev.indexOf(it);const ep=it.pad;const res=[];let skip=false;for(let i=0;i<prev.length;i++){if(i===idx){skip=true;continue;}if(skip){const s=prev[i];if(!s.isE&&s.pad===ep)continue;if(s.pad.startsWith(ep+'/'))continue;skip=false;}res.push(prev[i]);}return res;});if(sel===id)setSel(null);msg('Verwijderd');},[sel,msg]);
-
 const tgF=useCallback((id,fn,isE)=>{setSchema(p=>p.map(s=>{if(s._id!==id)return s;const c=s.fn[fn]||'';const o=isE?CDS:VOS;return{...s,fn:{...s.fn,[fn]:o[(o.indexOf(c)+1)%o.length]}};}));},[]);
+const addE=useCallback((ec,pp)=>{const e=dcM[ec];if(!e)return;const pad=pp?`${pp}/${ec}`:ec;const it={_id:uid(),pad,label:ec,oms:e.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:true};setSchema(prev=>{if(!pp)return[...prev,it];let idx=prev.length;for(let i=prev.length-1;i>=0;i--){if(prev[i].pad===pp||prev[i].pad.startsWith(pp+'/')){idx=i+1;break;}}const c=[...prev];c.splice(idx,0,it);return c;});setExp(p=>{const n=new Set(p);n.add(pad+'|'+ec);return n;});msg(`${ec} — ${e.nm}`);},[dcM,msg]);
+const addA=useCallback((ec,ac,tp)=>{const a=(dcA[ec]||[]).find(x=>x.ac===ac);if(!a)return;const lb=`${ec}_${ac}`;if(schema.some(s=>s.pad===tp&&s.label===lb)){msg(`${lb} bestaat al`,'warn');return;}const it={_id:uid(),pad:tp,label:lb,oms:a.nm,cl:a.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false};setSchema(prev=>{const c=[...prev];let idx=c.length;for(let i=c.length-1;i>=0;i--){if(c[i].pad===tp){idx=i+1;break;}}c.splice(idx,0,it);return c;});msg(`${lb}`);},[dcA,schema,msg]);
 
-const addE=useCallback((ec,pp)=>{const e=dcM[ec];if(!e)return;const pad=pp?`${pp}/${ec}`:ec;const it={_id:uid(),pad,label:ec,oms:e.nm,cl:'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:true};
-setSchema(prev=>{if(!pp)return[...prev,it];let idx=prev.length;for(let i=prev.length-1;i>=0;i--){if(prev[i].pad===pp||prev[i].pad.startsWith(pp+'/')){idx=i+1;break;}}const c=[...prev];c.splice(idx,0,it);return c;});
-setExp(p=>{const n=new Set(p);n.add(pad+'|'+ec);return n;});msg(`${ec} — ${e.nm} toegevoegd`);},[dcM,msg]);
-
-const addA=useCallback((ec,ac,tp)=>{const a=(dcA[ec]||[]).find(x=>x.ac===ac);if(!a)return;const lb=`${ec}_${ac}`;if(schema.some(s=>s.pad===tp&&s.label===lb)){msg(`${lb} bestaat al`,'warn');return;}
-const it={_id:uid(),pad:tp,label:lb,oms:a.nm,cl:a.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:'',fn:{},isE:false};
-setSchema(prev=>{const c=[...prev];let idx=c.length;for(let i=c.length-1;i>=0;i--){if(c[i].pad===tp){idx=i+1;break;}}c.splice(idx,0,it);return c;});msg(`${lb} toegevoegd`);},[dcA,schema,msg]);
-
-const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg(`"${f.name}" — ${items.length} items geladen`);}catch(err){msg('Import fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
+const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg(`${f.name} — ${items.length} items`);}catch(err){msg('Fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
 const doExp=useCallback(async()=>{try{const wb=expTpl(meta,schema);const buf=await wb.xlsx.writeBuffer();const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${meta.afdNaam||'productdefinitie'}.xlsx`;a.click();URL.revokeObjectURL(url);msg('Geëxporteerd');}catch(err){msg('Fout: '+err.message,'err');}},[meta,schema,msg]);
 const doNew=useCallback(()=>{const b=[{pad:'AL',label:'AL',oms:'BERICHT ALGEMEEN',isE:true,fn:{premieBerekening_aanroep:'1-1',premieBerekening_resultaat:'1-1',acceptatie_aanroep:'1-1',acceptatie_resultaat:'1-1',polisbladGegevens:'1-1',kunnenAanleveren:'1-1'}},{pad:'AL',label:'AL_DATACAT',oms:'Versie datacatalogus',cl:'ADNAFM',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'AL',label:'AL_FUNCTIE',oms:'Berichtfunctie, code',cl:'ADNFUN',isE:false,fn:{}},{pad:'AL',label:'AL_VRWRKCD',oms:'Verwerkingscode entiteit',cl:'ADNVRC',isE:false,fn:{}},{pad:'PP',label:'PP',oms:'CONTRACT POLIS/ONDERDEEL',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP',label:'PP_AFDDEFN',oms:'AFD definitienaam',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_BRANCHE',oms:'ADN branchecode',cl:'ADNBRA',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_INGDAT',oms:'Ingangsdatum',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_NUMMER',oms:'Contractnummer',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP/VP',label:'VP',oms:'PARTIJ VERZEKERINGNEMER',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP/VE',label:'VE',oms:'PARTIJ VOLMACHTNEMER',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP/VL',label:'VL',oms:'PARTIJ VOLMACHTGEVER',isE:true,fn:{kunnenAanleveren:'1-1'}}].map(s=>({...s,_id:uid(),cl:s.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:''}));setSchema(b);setExp(new Set(b.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg('Nieuw project');},[msg]);
 
-if(ld)return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',flexDirection:'column',gap:12}}><div className="sp" style={{width:36,height:36,border:'3px solid var(--bdr)',borderTopColor:'var(--acc)',borderRadius:'50%'}}/><span style={{color:'var(--tx3)'}}>Laden...</span></div>;
+if(ld)return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',gap:10}}><div className="sp" style={{width:28,height:28,border:'2.5px solid var(--bdr)',borderTopColor:'var(--acc)',borderRadius:'50%'}}/><span style={{color:'var(--tx3)',fontSize:13}}>Laden...</span></div>;
 
-if(vw==='start')return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh',padding:20}}><div style={{maxWidth:520,width:'100%',textAlign:'center'}}>
-<div style={{fontSize:36,marginBottom:8}}>📋</div><h1 style={{fontSize:22,fontWeight:700,marginBottom:4}}>AFD Productdefinitie Builder</h1>
-<p style={{color:'var(--tx3)',marginBottom:28,fontSize:13}}>Bouw SIVI AOS productdefinities in AFD 1.0 formaat{dc.length>0&&` • ${dc.length.toLocaleString()} items`}</p>
-{de&&<div style={{background:'#fee2e2',color:'var(--err)',padding:'10px 16px',borderRadius:8,marginBottom:16,fontSize:13}}>⚠️ {de}</div>}
-<div style={{display:'flex',flexDirection:'column',gap:10}}><button className="btn btn-p" style={{justifyContent:'center',padding:'14px 20px',fontSize:15}} onClick={doNew}>🆕 Nieuw project</button>
-<label className="btn btn-s" style={{justifyContent:'center',padding:'14px 20px',fontSize:15,cursor:'pointer'}}>📥 SIVI-template importeren<input type="file" accept=".xlsx" onChange={doImp} style={{display:'none'}}/></label></div>
-<div style={{marginTop:24,fontSize:12,color:'var(--tx3)'}}><a href="https://martinhoog.github.io/afd-datacatalogus/" style={{color:'var(--acc)',textDecoration:'none'}}>🔍 Datacatalogus →</a> • © 2025 Martin Hoogerbrugge</div>
+if(vw==='start')return <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'100vh',padding:20}}><div style={{maxWidth:460,width:'100%',textAlign:'center'}}>
+<div style={{fontSize:32,marginBottom:6}}>📋</div><h1 style={{fontSize:20,fontWeight:700,marginBottom:4}}>AFD Productdefinitie Builder</h1>
+<p style={{color:'var(--tx3)',marginBottom:24,fontSize:12}}>SIVI AOS productdefinities in AFD 1.0{dc.length>0&&` • ${dc.length.toLocaleString()} items`}</p>
+{de&&<div style={{background:'#fee2e2',color:'var(--err)',padding:'8px 14px',borderRadius:6,marginBottom:14,fontSize:12}}>⚠️ {de}</div>}
+<div style={{display:'flex',flexDirection:'column',gap:8}}><button className="b bp" style={{justifyContent:'center',padding:'12px',fontSize:14}} onClick={doNew}>🆕 Nieuw project</button>
+<label className="b bs" style={{justifyContent:'center',padding:'12px',fontSize:14,cursor:'pointer'}}>📥 Template importeren (.xlsx)<input type="file" accept=".xlsx" onChange={doImp} style={{display:'none'}}/></label></div>
+<div style={{marginTop:20,fontSize:11,color:'var(--tx3)'}}><a href="https://martinhoog.github.io/afd-datacatalogus/" style={{color:'var(--acc)',textDecoration:'none'}}>🔍 Datacatalogus</a> • © 2025 Martin Hoogerbrugge</div>
 </div></div>;
 
+// ══════════ EDITOR ══════════
 return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
-<div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-<div style={{padding:'8px 16px',borderBottom:'1px solid var(--bdr)',background:'var(--bg2)',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
-<button className="btn-g" onClick={()=>{if(confirm('Terug?'))setVw('start')}}>←</button>
-<strong style={{fontSize:14}}>{meta.afdNaam||'Nieuw product'}</strong>
-{meta.branche&&<span className="bg" style={{background:'var(--bg3)',color:'var(--tx2)'}}>{meta.branche}</span>}
-<span style={{fontSize:12,color:'var(--tx3)',flex:1}}>{schema.length} items</span>
-<button className="btn btn-s btn-sm" onClick={()=>setMl({t:'meta'})}>⚙ Meta</button>
-<label className="btn btn-s btn-sm" style={{cursor:'pointer'}}>📥<input type="file" accept=".xlsx" onChange={doImp} style={{display:'none'}}/></label>
-<button className="btn btn-p btn-sm" onClick={doExp} disabled={!schema.length}>📤 Export</button>
+<div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minWidth:0}}>
+{/* Toolbar */}
+<div style={{padding:'6px 12px',borderBottom:'1px solid var(--bdr)',background:'var(--bg2)',display:'flex',alignItems:'center',gap:6,flexShrink:0}}>
+<button className="bg" onClick={()=>{if(confirm('Terug?'))setVw('start')}} style={{fontSize:14}}>←</button>
+<strong style={{fontSize:13}}>{meta.afdNaam||'Nieuw product'}</strong>
+{meta.branche&&<span style={{fontSize:10,padding:'1px 6px',background:'var(--bg3)',borderRadius:3,color:'var(--tx2)'}}>{meta.branche}</span>}
+<span style={{fontSize:11,color:'var(--tx3)',flex:1}}>{schema.length} items</span>
+<button className="b bs" style={{padding:'3px 10px'}} onClick={()=>setMl({t:'meta'})}>⚙ Meta</button>
+<label className="b bs" style={{padding:'3px 10px',cursor:'pointer'}}>📥<input type="file" accept=".xlsx" onChange={doImp} style={{display:'none'}}/></label>
+<button className="b bp" style={{padding:'3px 10px'}} onClick={doExp} disabled={!schema.length}>📤 Export</button>
 </div>
 
-<div style={{padding:'4px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',alignItems:'center',background:'var(--bg3)'}}>
-<div style={{flex:1,fontSize:11,fontWeight:600,color:'var(--tx3)'}}>SCHEMA</div>
-<div className="fc" style={{marginRight:40}}>{FS.map((f,i)=><div key={i} style={{fontWeight:700,color:'var(--tx3)',cursor:'default'}} title={FN[i]}>{f}</div>)}</div></div>
-
-<div style={{flex:1,overflow:'auto',padding:'8px 16px 40px'}}>
-{tree.map(ent=>{const key=ent.pad+'|'+ent.label,open=exp.has(key),dk=ent.oms?.toUpperCase().includes('DEKKING'),isSel=sel===ent._id;
-return <div key={ent._id} className={`eb ${dk?'dk':''}`}>
-<div className="eh" style={{background:isSel?'var(--accBg)':''}}>
-<span style={{fontSize:9,color:'var(--tx3)',transition:'transform .1s',transform:open?'rotate(90deg)':'none',cursor:'pointer'}} onClick={e=>{e.stopPropagation();setExp(p=>{const n=new Set(p);n.has(key)?n.delete(key):n.add(key);return n;});}}>▶</span>
-<span className={`bg ${dk?'bg-d':'bg-e'}`} onClick={()=>setSel(isSel?null:ent._id)} style={{cursor:'pointer'}}>{ent.label}</span>
-<span style={{flex:1,fontSize:13,fontWeight:500,cursor:'pointer'}} onClick={()=>setSel(isSel?null:ent._id)}>{ent.oms}</span>
-<code style={{fontSize:10,color:'var(--tx3)'}}>{ent.pad}</code>
-<div className="fc">{FN.map(fn=>{const v=ent.fn[fn]||'';return <div key={fn} className={v?'fk':''} onClick={e=>{e.stopPropagation();tgF(ent._id,fn,true);}}>{v||'·'}</div>;})}</div>
-<button className="btn-g btn-sm" onClick={e=>{e.stopPropagation();setMl({t:'addA',ec:ent.label,pad:ent.pad,eo:ent.oms});}} title="Attribuut toevoegen">+A</button>
-<button className="btn-g btn-sm" style={{color:'var(--err)'}} onClick={e=>{e.stopPropagation();if(confirm(`${ent.label} verwijderen met alle attributen?`))del(ent._id);}} title="Verwijderen">✕</button>
-</div>
-{open&&<div className="ec fi">
-{ent.at.map(a=>{const as=sel===a._id;return <div key={a._id} className={`ar ${as?'sl':''}`} onClick={()=>setSel(as?null:a._id)}>
-<span className="bg bg-a" style={{minWidth:85,justifyContent:'center',fontSize:10}}>{a.label}</span>
-<span style={{flex:1,fontSize:12,color:'var(--tx2)'}}>{a.oms}</span>
-{a.cl&&<code style={{fontSize:10,color:'var(--tx3)'}}>{a.cl}</code>}
-{(a.scl||a.ol||(a.mn!=null&&a.mn!=='')||(a.mx!=null&&a.mx!==''))&&<span style={{fontSize:10,color:'var(--warn)'}}>⚡</span>}
-<div className="fc">{FN.map(fn=>{const v=a.fn[fn]||'';return <div key={fn} className={v==='V'?'fv':v==='O'?'fo':''} onClick={e=>{e.stopPropagation();tgF(a._id,fn,false);}}>{v||'·'}</div>;})}</div>
-<button className="btn-g" style={{color:'var(--err)',fontSize:11,padding:'2px 6px'}} onClick={e=>{e.stopPropagation();del(a._id);}}>✕</button>
-</div>;})}
-{ent.at.length===0&&<div style={{padding:'8px 12px',fontSize:12,color:'var(--tx3)',fontStyle:'italic'}}>Geen attributen — klik +A</div>}
-</div>}
-</div>;})}
-<button className="btn btn-s" style={{marginTop:8,width:'100%',justifyContent:'center'}} onClick={()=>setMl({t:'addE'})}>+ Entiteit toevoegen</button>
+{/* Table */}
+<div style={{flex:1,overflow:'auto'}}>
+<table className="st">
+<thead><tr>
+<th className="l" style={{width:100}}>Pad</th>
+<th className="l" style={{width:110}}>Label</th>
+<th className="l" style={{minWidth:180}}>Omschrijving</th>
+<th style={{width:70}}>Codelijst</th>
+<th style={{width:28}}>⚡</th>
+{FS.slice(0,4).map((f,i)=><th key={i} style={{width:32}} title={FN[i]}>{f}</th>)}
+<th className="pol" style={{width:32}} title={FN[4]}>{FS[4]}</th>
+<th className="ka" style={{width:32}} title={FN[5]}>{FS[5]}</th>
+<th style={{width:50}}></th>
+</tr></thead>
+<tbody>
+{displayRows.map((r,i)=>{
+    if(r._type==='sep')return <tr key={'sep'+i} className="sep"><td colSpan={12}></td></tr>;
+    if(r._type==='ent'){
+        const key=r.pad+'|'+r.label,open=exp.has(key),dk=r.oms?.toUpperCase().includes('DEKKING'),isSel=sel===r._id;
+        return <tr key={r._id} className={`ent ${dk?'dk':''} ${isSel?'sel':''}`} onClick={()=>setSel(isSel?null:r._id)}>
+            <td><span style={{fontSize:9,color:'var(--tx3)',cursor:'pointer',marginRight:4,display:'inline-block',transform:open?'rotate(90deg)':'none',transition:'transform .1s'}} onClick={e=>{e.stopPropagation();setExp(p=>{const n=new Set(p);n.has(key)?n.delete(key):n.add(key);return n;});}}>▶</span><code style={{fontSize:10,background:'none'}}>{r.pad}</code></td>
+            <td><span className={`tg ${dk?'td':'te'}`}>{r.label}</span></td>
+            <td style={{fontWeight:600,fontSize:12}}>{r.oms}</td>
+            <td></td><td></td>
+            {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} style={{textAlign:'center'}}><button className={`fx ${v?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,true);}}>{v||'·'}</button></td>;})}
+            <td className="pol" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[4]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],true);}}>{r.fn[FN[4]]||'·'}</button></td>
+            <td className="ka" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[5]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],true);}}>{r.fn[FN[5]]||'·'}</button></td>
+            <td style={{textAlign:'right'}}><button className="bg" onClick={e=>{e.stopPropagation();setMl({t:'addA',ec:r.label,pad:r.pad,eo:r.oms});}} title="Attribuut toevoegen" style={{fontSize:11}}>+A</button><button className="bd" onClick={e=>{e.stopPropagation();if(confirm(`${r.label} verwijderen?`))del(r._id);}} style={{fontSize:10}}>✕</button></td>
+        </tr>;
+    }
+    // attr
+    const isSel=sel===r._id;const hasCl=!!r.cl;const hasRestr=r.scl||r.ol||(r.mn!=null&&r.mn!=='')||(r.mx!=null&&r.mx!=='');
+    return <tr key={r._id} className={isSel?'sel':''} onClick={()=>setSel(isSel?null:r._id)}>
+        <td></td>
+        <td><code style={{fontSize:10,color:'var(--attr)'}}>{r.label}</code></td>
+        <td style={{color:'var(--tx2)'}}>{r.oms}</td>
+        <td style={{textAlign:'center'}}>{hasCl&&<code style={{fontSize:9,cursor:'pointer',color:'var(--acc)'}} onClick={e=>{e.stopPropagation();setMl({t:'cl',n:r.cl});}}>{r.cl}</code>}</td>
+        <td style={{textAlign:'center'}}>{hasRestr&&<span style={{color:'var(--warn)',fontSize:10}} title="Waardebeperkingen">⚡</span>}</td>
+        {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} style={{textAlign:'center'}}><button className={`fx ${v==='V'?'fv':v==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,false);}}>{v||'·'}</button></td>;})}
+        <td className="pol" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[4]]==='V'?'fv':r.fn[FN[4]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],false);}}>{r.fn[FN[4]]||'·'}</button></td>
+        <td className="ka" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[5]]==='V'?'fv':r.fn[FN[5]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],false);}}>{r.fn[FN[5]]||'·'}</button></td>
+        <td style={{textAlign:'right'}}><button className="bd" onClick={e=>{e.stopPropagation();del(r._id);}} style={{fontSize:10,visibility:'inherit'}}>✕</button></td>
+    </tr>;
+})}
+</tbody>
+</table>
+<div style={{padding:'8px 12px'}}><button className="b bs" style={{width:'100%',justifyContent:'center'}} onClick={()=>setMl({t:'addE'})}>+ Entiteit toevoegen</button></div>
 </div></div>
 
-{/* SIDEBAR */}
+{/* ── SIDEBAR ── */}
 <div className="sb">
-<div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)',fontWeight:600,display:'flex',justifyContent:'space-between'}}><span>{si?si.label:'Detail'}</span>{si&&<button className="btn-g" onClick={()=>setSel(null)}>✕</button>}</div>
-<div style={{flex:1,overflow:'auto',padding:16}}>
-{!si?<div style={{color:'var(--tx3)',textAlign:'center',padding:'40px 16px',fontSize:13}}>Klik op een entiteit of attribuut om te bewerken</div>:
+<div style={{padding:'8px 12px',borderBottom:'1px solid var(--bdr)',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+<span style={{fontWeight:700,fontSize:12}}>{si?si.label:'Detail'}</span>{si&&<button className="bg" onClick={()=>setSel(null)}>✕</button>}</div>
+<div style={{flex:1,overflow:'auto',padding:'10px 12px'}}>
+{!si?<div style={{color:'var(--tx3)',textAlign:'center',padding:'30px 12px',fontSize:12}}>Klik op een rij om te bewerken</div>:
 <div className="fi">
-<div className="fg"><span className={`bg ${si.isE?(si.oms?.toUpperCase().includes('DEKKING')?'bg-d':'bg-e'):'bg-a'}`}>{si.isE?'Entiteit':'Attribuut'}</span></div>
-<div className="fg"><div className="fl">Label</div><code style={{fontSize:13}}>{si.label}</code></div>
-<div className="fg"><div className="fl">Pad</div><code style={{fontSize:12}}>{si.pad}</code></div>
-<div className="fg"><div className="fl">Omschrijving</div><div style={{fontSize:13,color:'var(--tx2)',padding:'6px 0'}}>{si.oms||'—'}</div></div>
-{si.cl?<div className="fg"><div className="fl">Codelijst</div><div style={{display:'flex',gap:6,alignItems:'center'}}><code style={{fontSize:12}}>{si.cl}</code>{cg[si.cl]&&<span style={{fontSize:11,color:'var(--tx3)'}}>({cg[si.cl].length} codes)</span>}{cg[si.cl]&&<button className="btn btn-s btn-sm" onClick={()=>setMl({t:'cl',n:si.cl})}>👁</button>}</div></div>:
-<div className="fg"><div className="fl">Codelijst</div><div style={{fontSize:12,color:'var(--tx3)',padding:'6px 0',fontStyle:'italic'}}>Geen codelijst</div></div>}
-<div className="fg"><div className="fl">Actuele codelijst</div><select value={si.acl||''} onChange={e=>upd(sel,{acl:e.target.value})} style={{width:'100%'}}><option value="">—</option><option value="Ja">Ja</option><option value="Nee">Nee</option></select></div>
+<div className="sf"><span className={`tg ${si.isE?(si.oms?.toUpperCase().includes('DEKKING')?'td':'te'):'ta'}`}>{si.isE?'Entiteit':'Attribuut'}</span> <code style={{fontSize:11,marginLeft:4}}>{si.pad}</code></div>
+<div className="sf"><div className="sl">Omschrijving</div><div style={{fontSize:12,color:'var(--tx2)'}}>{si.oms||'—'}</div></div>
+{si.cl?<div className="sf"><div className="sl">Codelijst</div><div style={{display:'flex',gap:4,alignItems:'center'}}><code style={{fontSize:11}}>{si.cl}</code>{cg[si.cl]&&<span style={{fontSize:10,color:'var(--tx3)'}}>({cg[si.cl].length})</span>}{cg[si.cl]&&<button className="bg" style={{fontSize:10}} onClick={()=>setMl({t:'cl',n:si.cl})}>👁</button>}</div></div>:null}
+<div className="sf"><div className="sl">Actuele codelijst</div><select value={si.acl||''} onChange={e=>upd(sel,{acl:e.target.value})} style={{width:'100%'}}><option value="">—</option><option value="Ja">Ja</option><option value="Nee">Nee</option></select></div>
 {si.cl&&cg[si.cl]?<SubsetPicker codes={cg[si.cl]} value={si.scl||''} onChange={v=>upd(sel,{scl:v})}/>:null}
-<div className="fg"><div className="fl">Optielijst</div><input type="text" value={si.ol||''} onChange={e=>upd(sel,{ol:e.target.value})} style={{width:'100%'}} placeholder="bijv. 250;500;1000"/></div>
-<div className="fg"><div className="fl">Minimum / Maximum</div><div style={{display:'flex',gap:6}}><input type="text" value={si.mn||''} onChange={e=>upd(sel,{mn:e.target.value})} placeholder="Min" style={{flex:1}}/><input type="text" value={si.mx||''} onChange={e=>upd(sel,{mx:e.target.value})} placeholder="Max" style={{flex:1}}/></div></div>
-<div className="fg"><div className="fl">Eigen omschrijving</div><textarea value={si.eo||''} onChange={e=>upd(sel,{eo:e.target.value})} style={{width:'100%',minHeight:50,resize:'vertical',border:'1px solid var(--bdr)',borderRadius:6,padding:'6px 10px',fontSize:13,fontFamily:'inherit'}} placeholder="Eigen omschrijving..."/></div>
-<div className="fg"><div className="fl">Functies</div><div style={{display:'flex',flexDirection:'column',gap:3}}>{FN.map((fn,i)=>{const v=si.fn[fn]||'';return <div key={fn} style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,color:'var(--tx3)',width:34,fontWeight:600}}>{FS[i]}</span><select value={v} onChange={e=>upd(sel,{fn:{...si.fn,[fn]:e.target.value}})} style={{flex:1,fontSize:12}}>{(si.isE?CDS:VOS).map(o=><option key={o} value={o}>{o||'—'}</option>)}</select></div>;})}</div></div>
-<div className="fg" style={{paddingTop:12,borderTop:'1px solid var(--bdr)'}}><button className="btn btn-d btn-sm" style={{width:'100%',justifyContent:'center'}} onClick={()=>{if(confirm(`${si.label} verwijderen?${si.isE?' Inclusief alle attributen!':''}`))del(sel);}}>🗑 {si.label} verwijderen</button></div>
+<div className="sf"><div className="sl">Optielijst</div><input type="text" value={si.ol||''} onChange={e=>upd(sel,{ol:e.target.value})} style={{width:'100%'}} placeholder="bijv. 250;500;1000"/></div>
+<div className="sf"><div className="sl">Min / Max</div><div style={{display:'flex',gap:4}}><input type="text" value={si.mn||''} onChange={e=>upd(sel,{mn:e.target.value})} placeholder="Min" style={{flex:1}}/><input type="text" value={si.mx||''} onChange={e=>upd(sel,{mx:e.target.value})} placeholder="Max" style={{flex:1}}/></div></div>
+<div className="sf"><div className="sl">Eigen omschrijving</div><textarea value={si.eo||''} onChange={e=>upd(sel,{eo:e.target.value})} style={{width:'100%',minHeight:40,resize:'vertical',border:'1px solid var(--bdr)',borderRadius:4,padding:'4px 8px',fontSize:12,fontFamily:'inherit'}} placeholder="Eigen omschrijving..."/></div>
+<div className="sf"><div className="sl">Functies</div><div style={{display:'grid',gridTemplateColumns:'36px 1fr',gap:'2px 6px',alignItems:'center'}}>{FN.map((fn,i)=>{const v=si.fn[fn]||'';return <React.Fragment key={fn}><span style={{fontSize:10,color:'var(--tx3)',fontWeight:700}}>{FS[i]}</span><select value={v} onChange={e=>upd(sel,{fn:{...si.fn,[fn]:e.target.value}})} style={{fontSize:11,padding:'2px 6px'}}>{(si.isE?CDS:VOS).map(o=><option key={o} value={o}>{o||'—'}</option>)}</select></React.Fragment>;})}</div></div>
+<div className="sf" style={{paddingTop:8,borderTop:'1px solid var(--bdr)',marginTop:4}}><button className="b bd" style={{width:'100%',justifyContent:'center',background:'#fee2e2',borderRadius:5,padding:'4px 10px'}} onClick={()=>{if(confirm(`${si.label} verwijderen?${si.isE?' + alle attributen':''}`))del(sel);}}>🗑 Verwijderen</button></div>
 </div>}
 </div></div>
 
+{/* MODALS */}
 {ml?.t==='addE'&&<AEM dc={dcE} schema={schema} onAdd={addE} onClose={()=>setMl(null)}/>}
 {ml?.t==='addA'&&<AAM ec={ml.ec} pad={ml.pad} eo={ml.eo} dcA={dcA} schema={schema} onAdd={addA} onClose={()=>setMl(null)}/>}
 {ml?.t==='meta'&&<MM meta={meta} onSave={m=>{setMeta(m);setMl(null);msg('Opgeslagen');}} onClose={()=>setMl(null)}/>}
@@ -362,61 +288,59 @@ return <div key={ent._id} className={`eb ${dk?'dk':''}`}>
 {tt&&<div className="tt fi" style={{background:tt.t==='ok'?'var(--ok)':tt.t==='warn'?'var(--warn)':'var(--err)'}}>{tt.m}</div>}
 </div>;}
 
+// ══════════ MODALS ══════════
 function AEM({dc,schema,onAdd,onClose}){const [q,setQ]=useState('');const [pp,setPp]=useState('PP');
 const ex=new Set(schema.filter(s=>s.isE).map(s=>s.pad+'|'+s.label));
 const ps=useMemo(()=>{const p=[{v:'',l:'Root'}];schema.filter(s=>s.isE).forEach(s=>{if(!p.some(x=>x.v===s.pad))p.push({v:s.pad,l:s.pad});});return p;},[schema]);
 const fl=useMemo(()=>{const t=q.toLowerCase();return(q?dc.filter(e=>e.ec.toLowerCase().includes(t)||e.nm.toLowerCase().includes(t)):dc).slice(0,80);},[dc,q]);
-return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:750,maxHeight:'90vh'}}>
-<div style={{padding:'14px 20px',borderBottom:'1px solid var(--bdr)',display:'flex',gap:12}}><strong style={{flex:1}}>Entiteit toevoegen</strong><button className="btn-g" onClick={onClose}>✕</button></div>
-<div style={{padding:'8px 20px',borderBottom:'1px solid var(--bdr)',display:'flex',gap:8}}>
+return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:700,maxHeight:'85vh'}}>
+<div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',gap:10,alignItems:'center'}}><strong style={{flex:1,fontSize:13}}>Entiteit toevoegen</strong><button className="bg" onClick={onClose}>✕</button></div>
+<div style={{padding:'6px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',gap:6}}>
 <input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek..." style={{flex:1}} autoFocus/>
-<select value={pp} onChange={e=>setPp(e.target.value)} style={{minWidth:160}}>{ps.map(p=><option key={p.v} value={p.v}>{p.l}</option>)}</select></div>
-<div style={{flex:1,overflow:'auto',padding:'6px 12px',maxHeight:'65vh'}}>
-{fl.map(e=>{const exists=ex.has((pp?pp+'/'+e.ec:e.ec)+'|'+e.ec);return <div key={e.ec} style={{display:'flex',alignItems:'center',gap:8,padding:'5px 10px',borderRadius:6,cursor:exists?'default':'pointer',opacity:exists?.35:1}}
+<select value={pp} onChange={e=>setPp(e.target.value)} style={{minWidth:140}}>{ps.map(p=><option key={p.v} value={p.v}>{p.l}</option>)}</select></div>
+<div style={{flex:1,overflow:'auto',padding:'4px 8px',maxHeight:'65vh'}}>
+{fl.map(e=>{const exists=ex.has((pp?pp+'/'+e.ec:e.ec)+'|'+e.ec);return <div key={e.ec} style={{display:'flex',alignItems:'center',gap:6,padding:'4px 8px',borderRadius:4,cursor:exists?'default':'pointer',opacity:exists?.3:1,fontSize:12}}
 onClick={()=>{if(!exists)onAdd(e.ec,pp);}} onMouseEnter={e=>{if(!exists)e.currentTarget.style.background='var(--bg3)'}} onMouseLeave={e=>{e.currentTarget.style.background=''}}>
-<span className="bg bg-e">{e.ec}</span><span style={{flex:1,fontSize:13}}>{e.nm}</span>
-<span style={{fontSize:11,color:'var(--tx3)',maxWidth:280,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.om}</span>
-{exists&&<span style={{fontSize:11,color:'var(--ok)'}}>✓</span>}</div>;})}
-{fl.length===0&&<p style={{textAlign:'center',color:'var(--tx3)',padding:24}}>Geen gevonden</p>}
+<span className="tg te">{e.ec}</span><span style={{flex:1}}>{e.nm}</span>
+<span style={{fontSize:10,color:'var(--tx3)',maxWidth:250,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.om}</span>
+{exists&&<span style={{fontSize:10,color:'var(--ok)'}}>✓</span>}</div>;})}
 </div></div></div>;}
 
 function AAM({ec,pad,eo,dcA,schema,onAdd,onClose}){const [q,setQ]=useState('');
 const attrs=dcA[ec]||[];const exL=useMemo(()=>new Set(schema.filter(s=>s.pad===pad&&!s.isE).map(s=>s.label)),[schema,pad]);
 const [added,setAdded]=useState(new Set());
 const fl=useMemo(()=>{const t=q.toLowerCase();return q?attrs.filter(a=>a.ac.toLowerCase().includes(t)||a.nm.toLowerCase().includes(t)):attrs;},[attrs,q]);
-return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:750,maxHeight:'90vh'}}>
-<div style={{padding:'14px 20px',borderBottom:'1px solid var(--bdr)'}}>
-<div style={{display:'flex',justifyContent:'space-between'}}><div><strong>Attributen toevoegen — {ec}</strong><div style={{fontSize:12,color:'var(--tx3)'}}>{eo} • {attrs.length} in datacatalogus</div></div><button className="btn-g" onClick={onClose}>✕</button></div></div>
-<div style={{padding:'8px 20px',borderBottom:'1px solid var(--bdr)'}}><input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek attribuut..." style={{width:'100%'}} autoFocus/></div>
-<div style={{flex:1,overflow:'auto',padding:'6px 12px',maxHeight:'65vh'}}>
-{fl.map(a=>{const lb=`${ec}_${a.ac}`;const exists=exL.has(lb)||added.has(lb);return <div key={a.ac} style={{display:'flex',alignItems:'center',gap:8,padding:'5px 10px',borderRadius:6,cursor:exists?'default':'pointer',opacity:exists?.35:1}}
+return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:700,maxHeight:'85vh'}}>
+<div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)'}}>
+<div style={{display:'flex',justifyContent:'space-between'}}><div><strong style={{fontSize:13}}>Attributen — {ec}</strong><div style={{fontSize:11,color:'var(--tx3)'}}>{eo} • {attrs.length} beschikbaar</div></div><button className="bg" onClick={onClose}>✕</button></div></div>
+<div style={{padding:'6px 16px',borderBottom:'1px solid var(--bdr)'}}><input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek attribuut..." style={{width:'100%'}} autoFocus/></div>
+<div style={{flex:1,overflow:'auto',padding:'4px 8px',maxHeight:'65vh'}}>
+{fl.map(a=>{const lb=`${ec}_${a.ac}`;const exists=exL.has(lb)||added.has(lb);return <div key={a.ac} style={{display:'flex',alignItems:'center',gap:6,padding:'3px 8px',borderRadius:4,cursor:exists?'default':'pointer',opacity:exists?.3:1,fontSize:12}}
 onClick={()=>{if(!exists){onAdd(ec,a.ac,pad);setAdded(p=>{const n=new Set(p);n.add(lb);return n;});}}}
 onMouseEnter={e=>{if(!exists)e.currentTarget.style.background='var(--bg3)'}} onMouseLeave={e=>{e.currentTarget.style.background=''}}>
-<code style={{fontSize:11,minWidth:95,color:'var(--attr)'}}>{lb}</code>
-<span style={{flex:1,fontSize:12}}>{a.nm}</span>
-{a.cl&&<code style={{fontSize:10,color:'var(--tx3)'}}>{a.cl}</code>}
-{a.dt&&<span className="bg" style={{background:'var(--bg3)',color:'var(--tx3)',fontSize:10}}>{a.dt}</span>}
-{exists?<span style={{fontSize:11,color:'var(--ok)',fontWeight:600}}>✓</span>:<span style={{fontSize:11,color:'var(--acc)'}}>+ toevoegen</span>}
+<code style={{fontSize:10,minWidth:90,color:'var(--attr)'}}>{lb}</code><span style={{flex:1}}>{a.nm}</span>
+{a.cl&&<code style={{fontSize:9,color:'var(--tx3)'}}>{a.cl}</code>}
+{exists?<span style={{fontSize:10,color:'var(--ok)',fontWeight:600}}>✓</span>:<span style={{fontSize:10,color:'var(--acc)'}}>+</span>}
 </div>;})}
-{fl.length===0&&<p style={{textAlign:'center',color:'var(--tx3)',padding:24}}>{attrs.length===0?`Geen attributen voor ${ec}`:'Geen resultaten'}</p>}
+{fl.length===0&&<div style={{textAlign:'center',color:'var(--tx3)',padding:20,fontSize:12}}>{attrs.length===0?`Geen attributen voor ${ec}`:'Geen resultaten'}</div>}
 </div></div></div>;}
 
 function MM({meta,onSave,onClose}){const [m,setM]=useState({...meta});
 const fds=[['Branche','branche'],['POR code','porCode'],['AFD-definitie naam','afdNaam'],['Versienummer','afdVersie'],['Tag','afdTag'],['Segment','segment'],['Organisatie','organisatie'],['Productnaam','productnaam'],['Contactpersoon','contactpersoon'],['E-mail/Tel','email'],['Datum','datum']];
-return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:500,maxHeight:'70vh'}}>
-<div style={{padding:'14px 20px',borderBottom:'1px solid var(--bdr)',display:'flex',justifyContent:'space-between'}}><strong>Metagegevens</strong><button className="btn-g" onClick={onClose}>✕</button></div>
-<div style={{flex:1,overflow:'auto',padding:20}}>{fds.map(([l,k])=><div className="fg" key={k}><div className="fl">{l}</div>
+return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:440,maxHeight:'70vh'}}>
+<div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',justifyContent:'space-between'}}><strong style={{fontSize:13}}>Metagegevens</strong><button className="bg" onClick={onClose}>✕</button></div>
+<div style={{flex:1,overflow:'auto',padding:'12px 16px'}}>{fds.map(([l,k])=><div className="sf" key={k}><div className="sl">{l}</div>
 {k==='segment'?<select value={m[k]||''} onChange={e=>setM(p=>({...p,[k]:e.target.value}))} style={{width:'100%'}}><option value="">—</option><option value="Particulier">Particulier</option><option value="Zakelijk">Zakelijk</option></select>:<input type="text" value={m[k]||''} onChange={e=>setM(p=>({...p,[k]:e.target.value}))} style={{width:'100%'}}/>}</div>)}</div>
-<div style={{padding:'12px 20px',borderTop:'1px solid var(--bdr)',display:'flex',justifyContent:'flex-end',gap:8}}><button className="btn btn-s" onClick={onClose}>Annuleren</button><button className="btn btn-p" onClick={()=>onSave(m)}>Opslaan</button></div>
+<div style={{padding:'10px 16px',borderTop:'1px solid var(--bdr)',display:'flex',justifyContent:'flex-end',gap:6}}><button className="b bs" onClick={onClose}>Annuleren</button><button className="b bp" onClick={()=>onSave(m)}>Opslaan</button></div>
 </div></div>;}
 
 function CM({n,items,desc,onClose}){const [q,setQ]=useState('');
 const f=useMemo(()=>{if(!q)return items;const t=q.toLowerCase();return items.filter(i=>String(i.code).toLowerCase().includes(t)||String(i.oms).toLowerCase().includes(t));},[items,q]);
-return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:600,maxHeight:'90vh'}}>
-<div style={{padding:'14px 20px',borderBottom:'1px solid var(--bdr)',display:'flex',justifyContent:'space-between'}}><div><strong>{n}</strong>{desc&&<div style={{fontSize:12,color:'var(--tx3)'}}>{desc}</div>}</div><button className="btn-g" onClick={onClose}>✕</button></div>
-<div style={{padding:'8px 20px',borderBottom:'1px solid var(--bdr)'}}><input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek..." style={{width:'100%'}} autoFocus/></div>
-<div style={{flex:1,overflow:'auto',padding:'6px 12px',maxHeight:'65vh'}}><div style={{fontSize:11,color:'var(--tx3)',marginBottom:6}}>{f.length}/{items.length}</div>
-{f.slice(0,300).map((it,i)=><div key={i} style={{display:'flex',gap:8,padding:'3px 10px',fontSize:12}}><code style={{minWidth:50,fontWeight:600,color:'var(--acc)'}}>{it.code}</code><span style={{color:'var(--tx2)'}}>{it.oms}</span></div>)}
+return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:550,maxHeight:'85vh'}}>
+<div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',justifyContent:'space-between'}}><div><strong style={{fontSize:13}}>{n}</strong>{desc&&<div style={{fontSize:11,color:'var(--tx3)'}}>{desc}</div>}</div><button className="bg" onClick={onClose}>✕</button></div>
+<div style={{padding:'6px 16px',borderBottom:'1px solid var(--bdr)'}}><input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek..." style={{width:'100%'}} autoFocus/></div>
+<div style={{flex:1,overflow:'auto',padding:'4px 8px',maxHeight:'65vh'}}><div style={{fontSize:10,color:'var(--tx3)',marginBottom:4,padding:'0 8px'}}>{f.length}/{items.length}</div>
+{f.slice(0,300).map((it,i)=><div key={i} style={{display:'flex',gap:6,padding:'2px 8px',fontSize:11}}><code style={{minWidth:40,fontWeight:600,color:'var(--acc)'}}>{it.code}</code><span style={{color:'var(--tx2)'}}>{it.oms}</span></div>)}
 </div></div></div>;}
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
