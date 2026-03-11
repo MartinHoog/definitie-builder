@@ -217,9 +217,9 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <thead><tr>
 <th className="l" style={{width:100}}>Pad</th>
 <th className="l" style={{width:110}}>Label</th>
-<th className="l" style={{minWidth:180}}>Omschrijving</th>
+<th className="l" style={{minWidth:160}}>Omschrijving</th>
 <th style={{width:70}}>Codelijst</th>
-<th style={{width:28}}>⚡</th>
+<th className="l" style={{minWidth:140}}>Waardebeperkingen</th>
 {FS.slice(0,4).map((f,i)=><th key={i} style={{width:32}} title={FN[i]}>{f}</th>)}
 <th className="pol" style={{width:32}} title={FN[4]}>{FS[4]}</th>
 <th className="ka" style={{width:32}} title={FN[5]}>{FS[5]}</th>
@@ -242,13 +242,26 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
         </tr>;
     }
     // attr
-    const isSel=sel===r._id;const hasCl=!!r.cl;const hasRestr=r.scl||r.ol||(r.mn!=null&&r.mn!=='')||(r.mx!=null&&r.mx!=='');
+    const isSel=sel===r._id;const hasCl=!!r.cl;
+    const restrictions=[];
+    if(r.scl)restrictions.push({type:'subset',val:r.scl});
+    if(r.ol)restrictions.push({type:'optie',val:r.ol});
+    if((r.mn!=null&&r.mn!=='')||(r.mx!=null&&r.mx!==''))restrictions.push({type:'range',mn:r.mn,mx:r.mx});
+    if(r.eo)restrictions.push({type:'eo',val:r.eo});
     return <tr key={r._id} className={isSel?'sel':''} onClick={()=>setSel(isSel?null:r._id)}>
         <td></td>
         <td><code style={{fontSize:10,color:'var(--attr)'}}>{r.label}</code></td>
         <td style={{color:'var(--tx2)'}}>{r.oms}</td>
         <td style={{textAlign:'center'}}>{hasCl&&<code style={{fontSize:9,cursor:'pointer',color:'var(--acc)'}} onClick={e=>{e.stopPropagation();setMl({t:'cl',n:r.cl});}}>{r.cl}</code>}</td>
-        <td style={{textAlign:'center'}}>{hasRestr&&<span style={{color:'var(--warn)',fontSize:10}} title="Waardebeperkingen">⚡</span>}</td>
+        <td style={{whiteSpace:'normal',maxWidth:220}}>{restrictions.length>0&&<div style={{display:'flex',flexWrap:'wrap',gap:2}}>
+            {restrictions.map((re,ri)=>{
+                if(re.type==='subset')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#dbeafe',color:'#1e40af',lineHeight:'16px'}} title={'Subset: '+re.val}>⊂ {re.val.length>30?re.val.slice(0,30)+'…':re.val}</span>;
+                if(re.type==='optie')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#fef3c7',color:'#92400e',lineHeight:'16px'}} title={'Optielijst: '+re.val}>☰ {re.val.length>30?re.val.slice(0,30)+'…':re.val}</span>;
+                if(re.type==='range')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#dcfce7',color:'#166534',lineHeight:'16px'}}>{re.mn!==''&&re.mn!=null?re.mn:'*'} — {re.mx!==''&&re.mx!=null?re.mx:'*'}</span>;
+                if(re.type==='eo')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#f3e8ff',color:'#6b21a8',lineHeight:'16px'}} title={re.val}>✎ {re.val.length>25?re.val.slice(0,25)+'…':re.val}</span>;
+                return null;
+            })}
+        </div>}</td>
         {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} style={{textAlign:'center'}}><button className={`fx ${v==='V'?'fv':v==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,false);}}>{v||'·'}</button></td>;})}
         <td className="pol" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[4]]==='V'?'fv':r.fn[FN[4]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],false);}}>{r.fn[FN[4]]||'·'}</button></td>
         <td className="ka" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[5]]==='V'?'fv':r.fn[FN[5]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],false);}}>{r.fn[FN[5]]||'·'}</button></td>
