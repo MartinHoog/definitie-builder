@@ -40,18 +40,22 @@ code{font-family:'SF Mono',Consolas,monospace;font-size:11px;background:var(--bg
 .md{background:var(--bg2);border-radius:10px;box-shadow:var(--sh2);width:100%;display:flex;flex-direction:column;overflow:hidden}
 
 /* Schema table */
-.st{width:100%;border-collapse:collapse}
-.st th{position:sticky;top:0;z-index:2;background:var(--bg3);padding:3px 6px;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid var(--bdr);white-space:nowrap;text-align:center}
+.st{width:100%;border-collapse:collapse;table-layout:fixed}
+.st th{position:sticky;top:0;z-index:2;background:var(--bg3);padding:4px 6px;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.3px;border-bottom:2px solid var(--bdr);border-right:1px solid var(--bdr);white-space:nowrap;text-align:center}
+.st th:last-child{border-right:none}
 .st th.l{text-align:left}
 .st th.pol{background:var(--polBg);color:#6b21a8}
 .st th.ka{background:var(--kaHdr);color:#fff}
-.st td{padding:2px 6px;border-bottom:1px solid #eef0f3;font-size:12px;vertical-align:middle;white-space:nowrap}
+.st td{padding:3px 6px;border-bottom:1px solid #eef0f3;border-right:1px solid #f0f1f4;font-size:12px;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st td:last-child{border-right:none}
 .st tr:hover td{background:#f8f9fb}
 .st tr.sel td{background:var(--accBg)}
 .st tr.ent td{background:#f0f4fa;font-weight:600;border-bottom:1px solid var(--bdr)}
 .st tr.ent.dk td{background:#f5f0ff}
-.st tr.sep td{padding:0;height:6px;border:none;background:var(--bg)}
-/* Func cells */
+.st tr.sep td{padding:0;height:5px;border:none;background:var(--bg)}
+/* Value columns get subtle background */
+.st td.vc{background:#fafbfd;font-size:10px;color:var(--tx2)}.st tr:hover td.vc{background:#f3f5f9}.st tr.sel td.vc{background:#dde7fd}
+.st tr.ent td.vc{background:transparent}
 .fx{width:28px;height:22px;text-align:center;font-size:10px;font-weight:700;border-radius:3px;cursor:pointer;user-select:none;border:none;background:transparent;padding:0}
 .fx:hover{background:var(--bg4)}
 .fx.fv{background:#dcfce7;color:#166534}.fx.fo{background:#fef9c3;color:#854d0e}.fx.fk{background:#d6e4ff;color:#1e40af}
@@ -215,26 +219,30 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <div style={{flex:1,overflow:'auto'}}>
 <table className="st">
 <thead><tr>
-<th className="l" style={{width:100}}>Pad</th>
-<th className="l" style={{width:110}}>Label</th>
-<th className="l" style={{minWidth:160}}>Omschrijving</th>
-<th style={{width:70}}>Codelijst</th>
-<th className="l" style={{minWidth:140}}>Waardebeperkingen</th>
-{FS.slice(0,4).map((f,i)=><th key={i} style={{width:32}} title={FN[i]}>{f}</th>)}
-<th className="pol" style={{width:32}} title={FN[4]}>{FS[4]}</th>
-<th className="ka" style={{width:32}} title={FN[5]}>{FS[5]}</th>
-<th style={{width:50}}></th>
+<th className="l" style={{width:90}}>Pad</th>
+<th className="l" style={{width:100}}>Label</th>
+<th className="l">Omschrijving</th>
+<th style={{width:65}}>Codelijst</th>
+<th style={{width:100}}>Subset</th>
+<th style={{width:90}}>Optielijst</th>
+<th style={{width:55}}>Min</th>
+<th style={{width:55}}>Max</th>
+<th style={{width:100}}>Eigen oms.</th>
+{FS.slice(0,4).map((f,i)=><th key={i} style={{width:30}} title={FN[i]}>{f}</th>)}
+<th className="pol" style={{width:30}} title={FN[4]}>{FS[4]}</th>
+<th className="ka" style={{width:30}} title={FN[5]}>{FS[5]}</th>
+<th style={{width:44}}></th>
 </tr></thead>
 <tbody>
 {displayRows.map((r,i)=>{
-    if(r._type==='sep')return <tr key={'sep'+i} className="sep"><td colSpan={12}></td></tr>;
+    if(r._type==='sep')return <tr key={'sep'+i} className="sep"><td colSpan={15}></td></tr>;
     if(r._type==='ent'){
         const key=r.pad+'|'+r.label,open=exp.has(key),dk=r.oms?.toUpperCase().includes('DEKKING'),isSel=sel===r._id;
         return <tr key={r._id} className={`ent ${dk?'dk':''} ${isSel?'sel':''}`} onClick={()=>setSel(isSel?null:r._id)}>
             <td><span style={{fontSize:9,color:'var(--tx3)',cursor:'pointer',marginRight:4,display:'inline-block',transform:open?'rotate(90deg)':'none',transition:'transform .1s'}} onClick={e=>{e.stopPropagation();setExp(p=>{const n=new Set(p);n.has(key)?n.delete(key):n.add(key);return n;});}}>▶</span><code style={{fontSize:10,background:'none'}}>{r.pad}</code></td>
             <td><span className={`tg ${dk?'td':'te'}`}>{r.label}</span></td>
             <td style={{fontWeight:600,fontSize:12}}>{r.oms}</td>
-            <td></td><td></td>
+            <td></td><td></td><td></td><td></td><td></td><td></td>
             {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} style={{textAlign:'center'}}><button className={`fx ${v?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,true);}}>{v||'·'}</button></td>;})}
             <td className="pol" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[4]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],true);}}>{r.fn[FN[4]]||'·'}</button></td>
             <td className="ka" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[5]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],true);}}>{r.fn[FN[5]]||'·'}</button></td>
@@ -243,25 +251,16 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
     }
     // attr
     const isSel=sel===r._id;const hasCl=!!r.cl;
-    const restrictions=[];
-    if(r.scl)restrictions.push({type:'subset',val:r.scl});
-    if(r.ol)restrictions.push({type:'optie',val:r.ol});
-    if((r.mn!=null&&r.mn!=='')||(r.mx!=null&&r.mx!==''))restrictions.push({type:'range',mn:r.mn,mx:r.mx});
-    if(r.eo)restrictions.push({type:'eo',val:r.eo});
     return <tr key={r._id} className={isSel?'sel':''} onClick={()=>setSel(isSel?null:r._id)}>
         <td></td>
         <td><code style={{fontSize:10,color:'var(--attr)'}}>{r.label}</code></td>
         <td style={{color:'var(--tx2)'}}>{r.oms}</td>
         <td style={{textAlign:'center'}}>{hasCl&&<code style={{fontSize:9,cursor:'pointer',color:'var(--acc)'}} onClick={e=>{e.stopPropagation();setMl({t:'cl',n:r.cl});}}>{r.cl}</code>}</td>
-        <td style={{whiteSpace:'normal',maxWidth:220}}>{restrictions.length>0&&<div style={{display:'flex',flexWrap:'wrap',gap:2}}>
-            {restrictions.map((re,ri)=>{
-                if(re.type==='subset')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#dbeafe',color:'#1e40af',lineHeight:'16px'}} title={'Subset: '+re.val}>⊂ {re.val.length>30?re.val.slice(0,30)+'…':re.val}</span>;
-                if(re.type==='optie')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#fef3c7',color:'#92400e',lineHeight:'16px'}} title={'Optielijst: '+re.val}>☰ {re.val.length>30?re.val.slice(0,30)+'…':re.val}</span>;
-                if(re.type==='range')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#dcfce7',color:'#166534',lineHeight:'16px'}}>{re.mn!==''&&re.mn!=null?re.mn:'*'} — {re.mx!==''&&re.mx!=null?re.mx:'*'}</span>;
-                if(re.type==='eo')return <span key={ri} style={{fontSize:9,padding:'0 4px',borderRadius:3,background:'#f3e8ff',color:'#6b21a8',lineHeight:'16px'}} title={re.val}>✎ {re.val.length>25?re.val.slice(0,25)+'…':re.val}</span>;
-                return null;
-            })}
-        </div>}</td>
+        <td className="vc" title={r.scl||''}>{r.scl||''}</td>
+        <td className="vc" title={r.ol||''}>{r.ol||''}</td>
+        <td className="vc" style={{textAlign:'center'}}>{r.mn!=null&&r.mn!==''?r.mn:''}</td>
+        <td className="vc" style={{textAlign:'center'}}>{r.mx!=null&&r.mx!==''?r.mx:''}</td>
+        <td className="vc" title={r.eo||''}>{r.eo||''}</td>
         {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} style={{textAlign:'center'}}><button className={`fx ${v==='V'?'fv':v==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,false);}}>{v||'·'}</button></td>;})}
         <td className="pol" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[4]]==='V'?'fv':r.fn[FN[4]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],false);}}>{r.fn[FN[4]]||'·'}</button></td>
         <td className="ka" style={{textAlign:'center'}}><button className={`fx ${r.fn[FN[5]]==='V'?'fv':r.fn[FN[5]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],false);}}>{r.fn[FN[5]]||'·'}</button></td>
