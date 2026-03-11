@@ -1,0 +1,1661 @@
+01               AL             Bericht Algemeen                      VVVVVVVV
+01.001              BY          Bijlage                               FFFFF   
+01.002              NT          Notitie                               FFFFF   
+01.010              MY          Maatschappij specifiek                FFF     
+01.012              MX          Rekenbox gegevens                     FFF     
+01.020              AB          Printer                               FFF     
+01.025              SK          Sleutel                               FFF     
+01.030              SH          Systeemhuis specifiek                 FFF     
+01.040              VI          Vertrouwelijke mededelingen           FFF     
+01.050              FM          Foutmelding                           FFF     
+01.100              TP          Partij Tussenpersoon                  FFFF    
+01.100.001             KP       Partij Contactpersoon                 FFF     
+01.100.001.001            CM    Communicatie                          FFF     
+01.100.002             SA       Partij Subagent                       FFF     
+01.110              AS          Partij Assuradeur                     FFF     
+01.110.001             KP       Partij Contactpersoon                 FFF     
+01.110.001.001            CM    Communicatie                          FFF     
+01.120              VE          Partij Volmachtnemer                  FFFF    
+02               RC             Raamcontract                          FFF     
+02.100              RH          Partij Raamcontracthouder             FFF     
+02.100.001             KP       Partij Contactpersoon                 FFF     
+02.110              TP          Partij Tussenpersoon                  FFF     
+02.110.001             KP       Partij Contactpersoon                 FFF     
+02.110.002             SA       Partij Subagent                       FFF     
+02.120              OG          Partij (Verzekerd) bedrijf            FFF     
+02.200              CH          Contractregel                         FFF     
+03               AI             Arbeidscontract                               
+03.001              IK          Beroep/Inkomen personen                       
+03.010              BC          Boeking pakket                                
+03.020              OU          Output                                        
+03.100              BP          Partij (Bedrijfs) Pensioenfonds               
+03.110              KN          Partij Kind                                   
+03.120              SP          Partij Samenwonende partner                   
+03.130              TP          Partij Tussenpersoon                          
+03.130.001             SA       Partij Subagent                               
+03.140              WG          Partij Werkgever                              
+03.150              WN          Partij Werknemer                              
+04               HP             Contract Hypotheek                    F F     
+04.001              RI          Acceptatievragen                      F F     
+04.010              BC          Boeking pakket                        F F     
+04.020              CL          Clausules                             F F     
+04.030              OU          Output                                F F     
+04.040              VW          Voorwaarden/Clausules                 F F     
+04.100              FI          Partij Bank/Financ.mij.               F F     
+04.110              BL          Partij Borgsteller                    F F     
+04.120              HG          Partij Hypotheekgever                 F F     
+04.130              HN          Partij Hypotheeknemer                 F F     
+04.140              MK          Partij Makelaar                       F F     
+04.140.001             KP       Partij Contactpersoon                 F F     
+04.150              NO          Partij Notaris                        F F     
+04.150.001             KP       Partij Contactpersoon                 F F     
+04.160              TP          Partij Tussenpersoon                  F F     
+04.160.001             SA       Partij Subagent                       F F     
+04.200              BB          Object Bijgebouw                      F F     
+04.200.001             SO       Schadehistorie                        F F     
+04.210              BA          Object Opstal                         F F     
+04.210.001             SO       Schadehistorie                        F F     
+04.210.010             WM       Waardemeter                           F F     
+04.210.100             EI       Partij Eigenaar object                F F     
+04.210.110             FA       Partij Fabrikant/Maker/Bouwer         F F     
+04.210.120             TX       Partij Taxateur                       F F     
+04.220              PG          Object Vaartuig                       F F     
+04.220.001             SO       Schadehistorie                        F F     
+04.220.100             EI       Partij Eigenaar object                F F     
+04.220.110             FA       Partij Fabrikant/Maker/Bouwer         F F     
+04.220.120             TX       Partij Taxateur                       F F     
+04.230              VB          Object Volgboot                       F F     
+04.230.001             SO       Schadehistorie                        F F     
+05               PK             Pakket                                 VV     
+05.001              RI          Acceptatievragen                       F      
+05.010              BC          Boeking pakket                         F      
+05.020              CL          Clausules                              F      
+05.030              OU          Output                                 F      
+05.040              PR          Storting/Inleg                         F      
+05.050              VW          Voorwaarden/Clausules                  F      
+05.060              AM          Agendering                             F      
+05.070              WQ          Wijziging soort                        F      
+05.080              US          Uniforme slotvragen                    F      
+05.200              XP          Partij                                 F      
+05.205              KN          Partij Kind                            F      
+05.210              PB          Partij Premiebetaler                   F      
+05.210.001             CW       Communicatieprofiel                    F      
+05.210.001.001            OU    Output                                 F      
+05.210.010             PR       Storting/Inleg                         F      
+05.210.020             IM       Incasso Machtiging                     F      
+05.220              TP          Partij Tussenpersoon                   F      
+05.220.100             KP       Partij Contactpersoon                  F      
+05.220.101             SA       Partij Subagent                        F      
+05.230              SP          Partij Samenwonende partner            F      
+05.230.001             IK       Beroep/Inkomen personen                F      
+05.230.010             CW       Communicatieprofiel                    F      
+05.230.010.001            OU    Output                                 F      
+05.240              VP          Partij Verzekeringnemer                FF     
+05.240.001             IK       Beroep/Inkomen personen                F      
+05.240.010             CW       Communicatieprofiel                    F      
+05.240.010.001            OU    Output                                 F      
+05.240.020             GV       Gezondheid                             F      
+05.240.030             AM       Agendering                             F      
+05.240.100             KP       Partij Contactpersoon                  F      
+05.240.110             KN       Partij Kind                            F      
+05.240.120             SP       Partij Samenwonende partner            F      
+05.240.130             IM       Incasso Machtiging                     F      
+05.250              OG          Partij (Verzekerd) bedrijf             F      
+05.250.001             CW       Communicatieprofiel                    F      
+05.250.001.001            OU    Output                                 F      
+05.250.010             SO       Schadehistorie                         F      
+05.250.020             VA       Validiteitsverklaring                  F      
+05.250.030             WH       Werkzaamheden                          F      
+05.250.100             HO       Partij Aandeelhouder                   F      
+05.250.105             OR       Partij Beroepsorganisatie              F      
+05.250.110             KP       Partij Contactpersoon                  F      
+05.250.120             EB       Partij Eigenaar bedrijf                F      
+05.250.130             ML       Partij Maatschapslid                   F      
+05.250.140             AR       Partij Uitvoeringsinstantie            F      
+05.250.140.001            KP    Partij Contactpersoon                  F      
+05.250.150             WN       Partij Werknemer                       F      
+05.250.150.001            IK    Beroep/Inkomen personen                F      
+05.250.200             OB       Object Motorvoertuig                   F      
+05.250.210             BA       Object Opstal                          F      
+05.260              EH          Bedrijfseenheid                        F      
+06               LD             Contract Lening(deel)                 F F     
+06.001              RI          Acceptatievragen                      F F     
+06.010              BO          Boeking onderdeel                     F F     
+06.020              AE          (Extra)aflossing                      F F     
+06.030              OU          Output                                F F     
+06.100              FI          Partij Bank/Financ.mij.               F F     
+06.110              BT          Partij Betaler (lening)               F F     
+07               PP             Polis/Onderdeel                       F F     
+07.001              RI          Acceptatievragen                      F F     
+07.003              AM          Agendering                            F F     
+07.005              BO          Boeking Onderdeel                     F F     
+07.007              FT          Financiele informatie                 F F     
+07.010              CL          Clausulen                             F F     
+07.015              MD          Documentgegevens                      F F     
+07.015.001             MT       Partij ondertekenaar                  F F     
+07.020              FO          Fonds                                 F F     
+07.020.010             PR       Storting/Inleg                        F F     
+07.020.020             KV       Kosten verrekening                    F F     
+07.020.030             WO       Waardeopbouw                          F F     
+07.022              KV          Kosten verrekening                    F F     
+07.025              OK          Opgebouwd Kapitaal                    F F     
+07.025.001             FO       Fonds                                 F F     
+07.030              OU          Output                                F F     
+07.033              PI          Pensioengegevens individueel          F F     
+07.033.010             BG       Partij begunstigde                    F F     
+07.033.020             AO       Dekking Arbeidsongeschiktheid         F F     
+07.033.020.010            PR    Storting/Inleg                        F F     
+07.033.020.020            UK    Uitkering                             F F     
+07.033.021             DO       Dekking Bij overlijden                F F     
+07.033.021.005            MP    Poolaandeel                           F F     
+07.033.021.010            PR    Storting/Inleg                        F F     
+07.033.021.020            UK    Uitkering                             F F     
+07.033.021.030            WO    Waardeopbouw                          F F     
+07.033.021.040            BG    Partij begunstigde                    F F     
+07.033.022             IL       Dekking Bij leven                     F F     
+07.033.022.005            MP    Poolaandeel                           F F     
+07.033.022.010            PR    Storting/Inleg                        F F     
+07.033.022.020            UK    Uitkering                             F F     
+07.033.022.025            WO    Waardeopbouw                          F F     
+07.033.020.030            BG    Partij Begunstigde                    F F     
+07.033.023             PL       Dekking Premievrijstelling            F F     
+07.033.023.010            PR    Storting/Inleg                        F F     
+07.033.030             KV       Kosten verrekening                    F F     
+07.033.030.010            PR    Storting/Inleg                        F F     
+07.033.035             WR       Waardeoverdracht                      F F     
+07.035              PS          Provisiesysteem                       F F     
+07.037              DX          Verloopschema                         F F     
+07.040              SD          Schade Dossier                        F F     
+07.045              SO          Schadehistorie                        F F     
+07.045.001             AS       Partij Maatschappij                   F F     
+07.050              PR          Storting/Inleg                        F F     
+07.050.001             FO       Fonds                                 F F     
+07.050.002             FI       Partij Financiele Instelling          F F     
+07.055              UK          Uitkering                             F F     
+07.056              US          Uniforme slotvragen                   F F     
+07.057              VT          Voortgang                             F F     
+07.060              VW          Voorwaarden/Clausulen                 F F     
+07.065              WM          Waardemeter                           F F     
+07.070              WO          Waardeopbouw                          F F     
+07.075              WB          Wanbetaling                           F F     
+07.090              XQ          Tabel                                 F F     
+07.090.001             XR       Tabel regel                           F F     
+07.100              XP          Partij                                F F     
+07.105              AF          Partij Administratie                  F F     
+07.110              AV          Partij Advocaat                       F F     
+07.115              BV          Partij Bedrijfsvereniging             F F     
+07.120              BG          Partij Begunstigde                    F F     
+07.120.001             IK       Beroep/Inkomen personen               F F     
+07.120.010             CW       Communicatieprofiel                   F F     
+07.120.010.001            OU    Output                                F F     
+07.125              OR          Partij Beroepsorganisatie             F F     
+07.130              BS          Partij Bestuurder                     F F     
+07.130.001             IK       Beroep/Inkomen personen               F F     
+07.130.010             GV       Gezondheid                            F F     
+07.132              FB          Partij Bewindvoerder                  F F     
+07.135              CT          Partij Controlerende instantie        F F     
+07.140              DI          Partij Diplomahouder                  F F     
+07.145              EB          Partij Eigenaar bedrijf               F F     
+07.145.001             IK       Beroep/Inkomen personen               F F     
+07.145.010             CW       Communicatieprofiel                   F F     
+07.145.010.001            OU    Output                                F F     
+07.150              EI          Partij Eigenaar object                F F     
+07.155              FA          Partij Fabrikant                      F F     
+07.160              FE          Partij Federatie/bond                 F F     
+07.162              FG          Partij Franchisegever                 F F     
+07.165              FI          Partij Financiele Instelling          F F     
+07.170              HA          Partij (Huis) Arts                    F F     
+07.172              HK          Partij Schadeherstel keten            F F     
+07.173              HR          Partij Huurder                        F F     
+07.175              JG          Partij Jager                          F F     
+07.180              LI          Partij Kentekenhouder                 F F     
+07.180.001             IK       Beroep/Inkomen personen               F F     
+07.185              KN          Partij Kind                           F F     
+07.185.001             IK       Beroep/Inkomen personen               F F     
+07.185.002             GV       Gezondheid                            F F     
+07.190              LP          Partij Lease/Fin/Huur                 F F     
+07.190.001             LC       Leasecontract                         F F     
+07.200              LV          Partij Leverancier                    F F     
+07.200.001             KP       Partij Contactpersoon                 F F     
+07.205              ML          Partij Maatschapslid                  F F     
+07.210              MC          Partij Merkenclub                     F F     
+07.215              OM          Partij Ombouwer                       F F     
+07.220              OH          Partij Onderhoudsbedrijf              F F     
+07.225              OW          Partij Onderwijsinstelling            F F     
+07.230              VN          Partij Pandgever                      F F     
+07.235              PA          Partij Pandnemer                      F F     
+07.235.001             KP       Partij Contactpersoon                 F F     
+07.240              PB          Partij Premiebetaler                  F F     
+07.240.001             IK       Beroep/Inkomen personen               F F     
+07.240.010             CW       Communicatieprofiel                   F F     
+07.240.010.001            OU    Output                                F F     
+07.240.020             PR       Storting/Inleg                        F F     
+07.240.020.001            FO    Fonds                                 F F     
+07.240.030             IM       Incasso Machtiging                    F F     
+07.245              PW          Partij Premieschuldige                F F     
+07.245.001             CW       Communicatieprofiel                   F F     
+07.245.001.001            OU    Output                                F F     
+07.250              PU          Partij Publiekstrekker                F F     
+07.255              SP          Partij Samenwonende partner           F F     
+07.255.001             IK       Beroep/Inkomen personen               F F     
+07.255.010             CW       Communicatieprofiel                   F F     
+07.255.010.001            OU    Output                                F F     
+07.255.020             GV       Gezondheid                            F F     
+07.255.100             WG       Partij Werkgever                      F F     
+07.260              PX          Partij Schuldeiser                    F F     
+07.265              SR          Partij Stamrechthouder                F F     
+07.270              TA          Partij Tandarts                       F F     
+07.275              TX          Partij Taxateur                       F F     
+07.280              TS          Partij Transporteur                   F F     
+07.285              TP          Partij Tussenpersoon                  F F     
+07.285.001             KP       Partij Contactpersoon                 F F     
+07.285.002             SA       Partij Subagent                       F F     
+07.290              AR          Partij Uitvoeringsinstantie           F F     
+07.292              UV          Partij Uitvoerder                     F F     
+07.293              VS          Partij Vereniging van eigenaren       F F     
+07.295              VP          Partij Verzekeringnemer               F F     
+07.295.001             IK       Beroep/Inkomen personen               F F     
+07.295.001.001            WH    Werkzaamheden                         F F     
+07.295.010             CW       Communicatieprofiel                   F F     
+07.295.010.001            OU    Output                                F F     
+07.295.020             GV       Gezondheid                            F F     
+07.295.030             SO       Schadehistorie                        F F     
+07.295.040             AC       Uitgaven v/e persoon                  F F     
+07.295.050             AM       Agendering                            F F     
+07.295.100             KP       Partij Contactpersoon                 F F     
+07.295.110             KN       Partij Kind                           F F     
+07.295.110.001            GV    Gezondheid                            F F     
+07.295.120             SP       Partij Samenwonende partner           F F     
+07.295.120.001            IK    Beroep/Inkomen personen               F F     
+07.295.130             VG       Partij Verzorger                      F F     
+07.295.140             WG       Partij Werkgever                      F F     
+07.295.150             IM       Incasso Machtiging                    F F     
+07.295.200             XA       Adres                                 F F     
+07.295.400             QS       Vragenlijst                           F F     
+07.295.400.001            QA    Vraag en antwoord                     F F     
+07.300              VG          Partij Verzorger                      F F     
+07.301              VL          Partij Volmachtgever                  F F     
+07.302              VE          Partij Volmachtnemer                  F F     
+07.302.001             KP       Partij Contactpersoon                 F F     
+07.300.001             IK       Beroep/Inkomen personen               F F     
+07.300.010             GV       Gezondheid                            F F     
+07.305              WN          Partij Werknemer                      F F     
+07.305.001             IK       Beroep/Inkomen personen               F F     
+07.305.010             GV       Gezondheid                            F F     
+07.305.020             VA       Validiteitsverklaring                 F F     
+07.310              WV          Partij Wettelijke Vertegenwoordiger   F F     
+07.315              ZW          Partij Zaakwaarnemer                  F F     
+07.315.001             IK       Beroep/Inkomen personen               F F     
+07.400              AA          Object Aanhanger                      F F     
+07.400.001             SO       Schadehistorie                        F F     
+07.400.100             EI       Partij Eigenaar object                F F     
+07.400.110             FA       Partij Fabrikant                      F F     
+07.400.120             LI       Partij Kentekenhouder                 F F     
+07.400.130             LP       Partij Lease/Fin/Huur                 F F     
+07.400.130.001            LC    Contract Lease                        F F     
+07.400.140             LV       Partij Leverancier                    F F     
+07.400.150             OM       Partij Ombouwer                       F F     
+07.400.160             TX       Partij Taxateur                       F F     
+07.400.300             XD       Dekking Algemeen                      F F     
+07.400.300.010            MP    Poolaandeel                           F F     
+07.400.304             WA       Dekking Wettelijke Aansprakelijkheid  F F     
+07.400.304.010            MP    Poolaandeel                           F F     
+07.400.310             AH       Dekking Casco aanhanger               F F     
+07.400.310.010            MP    Poolaandeel                           F F     
+07.400.320             PH       Dekking (internationale) Pechhulp     F F     
+07.400.320.010            MP    Poolaandeel                           F F     
+07.405              LT          Object Agrarische produkten           F F     
+07.405.300             XD       Dekking Algemeen                      F F     
+07.405.300.010            MP    Poolaandeel                           F F     
+07.410              BF          Object Bromfiets/Rijwiel              F F     
+07.410.001             SO       Schadehistorie                        F F     
+07.410.100             EI       Partij Eigenaar object                F F     
+07.410.100.001            IK    Beroep/Inkomen personen               F F     
+07.410.110             FA       Partij Fabrikant                      F F     
+07.410.120             LI       Partij Kentekenhouder                 F F     
+07.410.120.001            IK    Beroep/Inkomen personen               F F     
+07.410.130             LP       Partij Lease/Fin/Huur                 F F     
+07.410.140             LV       Partij Leverancier                    F F     
+07.410.150             OM       Partij Ombouwer                       F F     
+07.410.160             BS       Partij (regelmatig) Bestuurder        F F     
+07.410.170             TX       Partij Taxateur                       F F     
+07.410.300             XD       Dekking Algemeen                      F F     
+07.410.300.010            MP    Poolaandeel                           F F     
+07.410.310             CA       Dekking Casco voertuigen              F F     
+07.410.310.010            MP    Poolaandeel                           F F     
+07.410.315             CG       Dekking Casco uitbreiding             F F     
+07.410.315.010            MP    Poolaandeel                           F F     
+07.410.320             PH       Dekking (internationale) Pechhulp     F F     
+07.410.320.010            MP    Poolaandeel                           F F     
+07.410.330             PO       Dekking Pers.Ongevallen               F F     
+07.410.330.010            MP    Poolaandeel                           F F     
+07.410.340             RP       Dekking Rechtsbijstand                F F     
+07.410.340.010            MP    Poolaandeel                           F F     
+07.410.360             SV       Dekking Schade Verz. In-/Opzittende   F F     
+07.410.360.010            MP    Poolaandeel                           F F     
+07.410.370             WA       Dekking Wettelijke Aansprakelijkheid  F F     
+07.410.370.010            MP    Poolaandeel                           F F     
+07.415              BB          Object Bijgebouw                      F F     
+07.415.001             SO       Schadehistorie                        F F     
+07.415.100             EI       Partij Eigenaar object                F F     
+07.415.110             FA       Partij Fabrikant/Maker/Bouwer         F F     
+07.415.200             GP       Dekking Glas                          F F     
+07.415.300             OP       Dekking Opstal                        F F     
+07.415.400             OF       Dekking Overstroming                  F F     
+07.420              CR          Object Caravan                        F F     
+07.420.001             SO       Schadehistorie                        F F     
+07.420.100             EI       Partij Eigenaar object                F F     
+07.420.110             FA       Partij Fabrikant                      F F     
+07.420.120             LI       Partij Kentekenhouder                 F F     
+07.420.130             LP       Partij Lease/Fin/Huur                 F F     
+07.420.140             LV       Partij Leverancier                    F F     
+07.420.150             OM       Partij Ombouwer                       F F     
+07.420.160             TX       Partij Taxateur                       F F     
+07.420.300             XD       Dekking Algemeen                      F F     
+07.420.300.010            MP    Poolaandeel                           F F     
+07.420.310             AQ       Dekking Accessoires                   F F     
+07.420.310.010            MP    Poolaandeel                           F F     
+07.420.320             CD       Dekking Casco caravan                 F F     
+07.420.320.010            MP    Poolaandeel                           F F     
+07.420.330             HS       Dekking Hagel- en Stormschade         F F     
+07.420.330.010            MP    Poolaandeel                           F F     
+07.420.340             IP       Dekking Inboedel                      F F     
+07.420.340.010            MP    Poolaandeel                           F F     
+07.420.350             PH       Dekking (internationale) Pechhulp     F F     
+07.420.350.010            MP    Poolaandeel                           F F     
+07.420.360             KB       Dekking Kostbaarheden                 F F     
+07.420.360.010            MP    Poolaandeel                           F F     
+07.420.370             LF       Dekking Luifel                        F F     
+07.420.370.010            MP    Poolaandeel                           F F     
+07.420.380             BW       Dekking Op- / Aanbouw                 F F     
+07.420.380.010            MP    Poolaandeel                           F F     
+07.420.390             RP       Dekking Rechtsbijstand                F F     
+07.420.390.010            MP    Poolaandeel                           F F     
+07.420.400             VR       Dekking Verhuur                       F F     
+07.420.400.010            MP    Poolaandeel                           F F     
+07.420.410             DT       Dekking Voortent                      F F     
+07.420.410.010            MP    Poolaandeel                           F F     
+07.420.420             WA       Dekking Wettelijke Aansprakelijkheid  F F     
+07.420.420.010            MP    Poolaandeel                           F F     
+07.420.430             CG       Dekking Casco Uitbreiding             F F     
+07.420.430.010            MP    Poolaandeel                           F F     
+07.425              CP          Object Computer                       F F     
+07.425.001             SO       Schadehistorie                        F F     
+07.425.100             EI       Partij Eigenaar object                F F     
+07.425.110             FA       Partij Fabrikant                      F F     
+07.425.120             LP       Partij Lease/Fin/Huur                 F F     
+07.425.130             LV       Partij Leverancier                    F F     
+07.425.300             XD       Dekking Algemeen                      F F     
+07.425.300.010            MP    Poolaandeel                           F F     
+07.425.310             PD       Dekking Computer                      F F     
+07.425.310.010            MP    Poolaandeel                           F F     
+07.425.320             NG       Dekking Eigen gebrek/Uitval           F F     
+07.425.320.010            MP    Poolaandeel                           F F     
+07.430              LH          Object Dier                           F F     
+07.430.001             SO       Schadehistorie                        F F     
+07.430.100             EI       Partij Eigenaar object                F F     
+07.430.200             HA       Partij (huis)arts                     F F     
+07.430.210             GV       Gezondheid                            F F     
+07.430.300             DA       Dekking Aansprakelijkheid             F F     
+07.430.300.010            MP    Poolaandeel                           F F     
+07.430.310             ZK       Dekking Ziektekosten                  F F     
+07.430.310.010            MP    Poolaandeel                           F F     
+07.430.320             DR       Dekking Reis                          F F     
+07.430.320.010            MP    Poolaandeel                           F F     
+07.430.330             DO       Dekking Bij Overlijden                F F     
+07.430.330.010            MP    Poolaandeel                           F F     
+07.430.340             XD       Dekking Algemeen                      F F     
+07.430.340.010            MP    Poolaandeel                           F F     
+07.435              HE          Object Electronica                    F F     
+07.435.001             SO       Schadehistorie                        F F     
+07.435.100             EI       Partij Eigenaar object                F F     
+07.435.110             FA       Partij Fabrikant                      F F     
+07.435.120             LP       Partij Lease/Fin/Huur                 F F     
+07.435.130             LV       Partij Leverancier                    F F     
+07.435.140             TX       Partij Taxateur                       F F     
+07.435.300             XD       Dekking Algemeen                      F F     
+07.435.300.010            MP    Poolaandeel                           F F     
+07.435.310             EC       Dekking Electronica                   F F     
+07.435.310.010            MP    Poolaandeel                           F F     
+07.435.315             NG       Dekking Eigen gebrek/Uitval           F F     
+07.435.315.010            MP    Poolaandeel                           F F     
+07.440              OT          Object Evenement                      F F     
+07.440.001             SO       Schadehistorie                        F F     
+07.440.100             EI       Partij Eigenaar object                F F     
+07.440.110             PU       Partij Publiekstrekker                F F     
+07.440.300             XD       Dekking Algemeen                      F F     
+07.440.300.010            MP    Poolaandeel                           F F     
+07.440.310             TD       Dekking Evenement                     F F     
+07.440.310.010            MP    Poolaandeel                           F F     
+07.442              GS          Object Gevaarlijke stof               F F     
+07.445              GL          Object Glas                           F F     
+07.445.001             SO       Schadehistorie                        F F     
+07.445.300             XD       Dekking Algemeen                      F F     
+07.445.300.010            MP    Poolaandeel                           F F     
+07.445.310             GP       Dekking Glas                          F F     
+07.445.310.010            MP    Poolaandeel                           F F     
+07.450              IT          Object Inventaris                     F F     
+07.450.001             SO       Schadehistorie                        F F     
+07.450.100             EI       Partij Eigenaar object                F F     
+07.450.110             TX       Partij Taxateur                       F F     
+07.450.300             XD       Dekking Algemeen                      F F     
+07.450.300.010            MP    Poolaandeel                           F F     
+07.450.310             IV       Dekking Inventaris/goederen           F F     
+07.450.310.010            MP    Poolaandeel                           F F     
+07.450.315             NG       Dekking Eigen gebrek/Uitval           F F     
+07.450.315.010            MP    Poolaandeel                           F F     
+07.455              GI          Object Garage                         F F     
+07.455.001             SO       Schadehistorie                        F F     
+07.455.100             EI       Partij Eigenaar object                F F     
+07.455.300             XD       Dekking Algemeen                      F F     
+07.455.300.010            MP    Poolaandeel                           F F     
+07.455.310             GA       Dekking Garantie                      F F     
+07.455.310.010            MP    Poolaandeel                           F F     
+07.460              GF          Object Geld/cheques/waardepapieren    F F     
+07.462              GR          Object Goederen                       F F     
+07.465              GO          Object Kluis                          F F     
+07.465.001             SO       Schadehistorie                        F F     
+07.465.100             EI       Partij Eigenaar object                F F     
+07.465.110             FA       Partij Fabrikant                      F F     
+07.465.120             LV       Partij Leverancier                    F F     
+07.465.300             XD       Dekking Algemeen                      F F     
+07.465.300.010            MP    Poolaandeel                           F F     
+07.465.310             GD       Dekking Geld                          F F     
+07.465.310.010            MP    Poolaandeel                           F F     
+07.466              IB          Object Inboedel                       F F     
+07.466.100             BA       Object Opstal                         F F     
+07.470              KH          Object Kostbaarheden                  F F     
+07.470.001             SO       Schadehistorie                        F F     
+07.470.100             EI       Partij Eigenaar object                F F     
+07.470.110             FA       Partij Fabrikant                      F F     
+07.470.120             LP       Partij Lease/Fin/Huur                 F F     
+07.470.130             LV       Partij Leverancier                    F F     
+07.470.140             TX       Partij Taxateur                       F F     
+07.470.300             XD       Dekking Algemeen                      F F     
+07.470.300.010            MP    Poolaandeel                           F F     
+07.470.310             KB       Dekking Kostbaarheden                 F F     
+07.470.310.010            MP    Poolaandeel                           F F     
+07.471              KU          Object Kunst / Antiquiteiten          F F     
+07.471.001             SO       Schadehistorie                        F F     
+07.471.100             EI       Partij Eigenaar object                F F     
+07.471.110             FA       Partij Fabrikant                      F F     
+07.471.120             LP       Partij Lease/Fin/Huur                 F F     
+07.471.130             LV       Partij Leverancier                    F F     
+07.471.140             TX       Partij Taxateur                       F F     
+07.471.300             XD       Dekking Algemeen                      F F     
+07.471.300.010            MP    Poolaandeel                           F F     
+07.471.310             KA       Dekking Kunst / Antiquiteiten         F F     
+07.471.310.010            MP    Poolaandeel                           F F     
+07.475              MA          Object Machine                        F F     
+07.475.200             XD       Dekking Algemeen                      F F     
+07.475.200.010            MP    Poolaandeel                           F F     
+07.475.300             NG       Dekking Eigen gebrek/Uitval           F F     
+07.475.300.010            MP    Poolaandeel                           F F     
+07.475.310             WK       Dekking Casco Werkmaterieel           F F     
+07.475.310.010            MP    Poolaandeel                           F F     
+07.480              MU          Object Milieurisico                   F F     
+07.480.001             SO       Schadehistorie                        F F     
+07.480.300             XD       Dekking Algemeen                      F F     
+07.480.300.010            MP    Poolaandeel                           F F     
+07.480.310             MS       Dekking Milieu                        F F     
+07.480.310.010            MP    Poolaandeel                           F F     
+07.485              MH          Object Vaartuigmotor                  F F     
+07.485.001             SO       Schadehistorie                        F F     
+07.485.100             EI       Partij Eigenaar object                F F     
+07.485.110             FA       Partij Fabrikant                      F F     
+07.485.120             LV       Partij Leverancier                    F F     
+07.490              OB          Object Motorvoertuig                  F F     
+07.490.001             SO       Schadehistorie                        F F     
+07.490.100             EI       Partij Eigenaar object                F F     
+07.490.110             FA       Partij Fabrikant                      F F     
+07.490.120             LI       Partij Kentekenhouder                 F F     
+07.490.120.001            IK    Beroep/Inkomen personen               F F     
+07.490.130             LP       Partij Lease/Fin/Huur                 F F     
+07.490.130.001            LC    Contract Lease                        F F     
+07.490.140             LV       Partij Leverancier                    F F     
+07.490.150             OM       Partij Ombouwer                       F F     
+07.490.160             BS       Partij (regelmatig) Bestuurder        F F     
+07.490.160.001            IK    Beroep/Inkomen personen               F F     
+07.490.160.002            GV    Gezondheid                            F F     
+07.490.170             TX       Partij Taxateur                       F F     
+07.490.300             AQ       Dekking Accessoires                   F F     
+07.490.300.010            MP    Poolaandeel                           F F     
+07.490.310             XD       Dekking Algemeen                      F F     
+07.490.310.010            MP    Poolaandeel                           F F     
+07.490.320             DG       Dekking B/M Noclaim garantie          F F     
+07.490.320.010            MP    Poolaandeel                           F F     
+07.490.322             BH       Dekking Bedrijfsschade                F F     
+07.490.322.010            MP    Poolaandeel                           F F     
+07.490.330             AH       Dekking Casco aanhanger               F F     
+07.490.330.010            MP    Poolaandeel                           F F     
+07.490.340             CA       Dekking Casco voertuigen              F F     
+07.490.340.010            MP    Poolaandeel                           F F     
+07.490.345             CG       Dekking Casco uitbreiding             F F     
+07.490.345.010            MP    Poolaandeel                           F F     
+07.490.347             GA       Dekking Garantie                      F F     
+07.490.347.010            MP    Poolaandeel                           F F     
+07.490.350             IP       Dekking Inboedel                      F F     
+07.490.350.010            MP    Poolaandeel                           F F     
+07.490.360             PH       Dekking (internationale) Pechhulp     F F     
+07.490.360.010            MP    Poolaandeel                           F F     
+07.490.370             IV       Dekking Inventaris/goederen           F F     
+07.490.370.010            MP    Poolaandeel                           F F     
+07.490.380             LF       Dekking Luifel                        F F     
+07.490.380.010            MP    Poolaandeel                           F F     
+07.490.390             PO       Dekking Pers.Ongevallen               F F     
+07.490.390.010            MP    Poolaandeel                           F F     
+07.490.400             RP       Dekking Rechtsbijstand                F F     
+07.490.400.010            MP    Poolaandeel                           F F     
+07.490.410             SV       Dekking Schade Verz. In-/Opzittende   F F     
+07.490.410.010            MP    Poolaandeel                           F F     
+07.490.420             TR       Dekking Transport                     F F     
+07.490.420.010            MP    Poolaandeel                           F F     
+07.490.430             VV       Dekking Vervangend Vervoer            F F     
+07.490.430.010            MP    Poolaandeel                           F F     
+07.490.436             DT       Dekking Voortent                      F F     
+07.490.436.010            MP    Poolaandeel                           F F     
+07.490.440             VD       Dekking VSV                           F F     
+07.490.440.010            MP    Poolaandeel                           F F     
+07.490.450             WA       Dekking Wettelijke Aansprakelijkheid  F F     
+07.490.450.010            MP    Poolaandeel                           F F     
+07.490.460             WK       Dekking Casco Werkmaterieel           F F     
+07.490.460.010            MP    Poolaandeel                           F F     
+07.495              BA          Object Opstal                         F F     
+07.495.001             SO       Schadehistorie                        F F     
+07.495.010             WM       Waardemeter                           F F     
+07.495.100             EI       Partij Eigenaar object                F F     
+07.495.110             LP       Partij Lease/Fin/Huur                 F F     
+07.495.120             FA       Partij Fabrikant/Maker/Bouwer         F F     
+07.495.130             HR       Partij Huurder                        F F     
+07.495.140             TX       Partij Taxateur                       F F     
+07.495.200             BB       Object Bijgebouw                      F F     
+07.495.200.010            IP    Dekking Inboedel                      F F     
+07.495.200.010.01            MP Poolaandeel                           F F     
+07.495.210             GO       Object Kluis                          F F     
+07.495.220             KH       Object Kostbaarheden                  F F     
+07.495.300             XD       Dekking Algemeen                      F F     
+07.495.300.010            MP    Poolaandeel                           F F     
+07.495.305             EU       Dekking Extra uitkering               F F     
+07.495.305.010            MP    Poolaandeel                           F F     
+07.495.310             GP       Dekking Glas                          F F     
+07.495.310.010            MP    Poolaandeel                           F F     
+07.495.320             IP       Dekking Inboedel                      F F     
+07.495.320.010            MP    Poolaandeel                           F F     
+07.495.330             IV       Dekking Inventaris/goederen           F F     
+07.495.330.010            MP    Poolaandeel                           F F     
+07.495.340             KB       Dekking Kostbaarheden                 F F     
+07.495.340.010            MP    Poolaandeel                           F F     
+07.495.345             KA       Dekking Kunst / Antiquiteiten         F F     
+07.495.345.010            MP    Poolaandeel                           F F     
+07.495.350             OP       Dekking Opstal                        F F     
+07.495.350.010            MP    Poolaandeel                           F F     
+07.495.355             OF       Dekking Overstroming                  F F     
+07.495.355.010            MP    Poolaandeel                           F F     
+07.495.360             RP       Dekking Rechtsbijstand                F F     
+07.495.360.010            MP    Poolaandeel                           F F     
+07.495.365             VR       Dekking Verhuur                       F F     
+07.495.365.010            MP    Poolaandeel                           F F     
+07.495.400             WH       Werkzaamheden                         F F     
+07.500              ON          Object Optie/Accessoire               F F     
+07.500.300             AQ       Dekking Accessoires                   F F     
+07.500.300.010            MP    Poolaandeel                           F F     
+07.500.310             XD       Dekking Algemeen                      F F     
+07.500.310.010            MP    Poolaandeel                           F F     
+07.505              OZ          Object Overig zakelijk                F F     
+07.505.300             XD       Dekking Algemeen                      F F     
+07.505.300.010            MP    Poolaandeel                           F F     
+07.505.310             DA       Dekking Aansprakelijkheid             F F     
+07.505.310.010            MP    Poolaandeel                           F F     
+07.510              RS          Object Reis                           F F     
+07.510.300             XD       Dekking Algemeen                      F F     
+07.510.300.010            MP    Poolaandeel                           F F     
+07.510.310             AN       Dekking Annulering                    F F     
+07.510.310.010            MP    Poolaandeel                           F F     
+07.510.315             BR       Dekking Bagage                        F F     
+07.510.315.010            MP    Poolaandeel                           F F     
+07.510.320             DA       Dekking Aansprakelijkheid             F F     
+07.510.320.010            MP    Poolaandeel                           F F     
+07.510.325             DR       Dekking (doorlopende) Reis            F F     
+07.510.325.010            MP    Poolaandeel                           F F     
+07.510.330             GD       Dekking Geld                          F F     
+07.510.330.010            MP    Poolaandeel                           F F     
+07.510.335             KS       Dekking Extra kosten                  F F     
+07.510.335.010            MP    Poolaandeel                           F F     
+07.510.340             OD       Dekking Ongevallen                    F F     
+07.510.340.010            MP    Poolaandeel                           F F     
+07.510.350             PH       Dekking (internationale) Pechhulp     F F     
+07.510.350.010            MP    Poolaandeel                           F F     
+07.510.360             RP       Dekking Rechtsbijstand                F F     
+07.510.360.010            MP    Poolaandeel                           F F     
+07.510.370             SG       Dekking Samengestelde Reis            F F     
+07.510.370.010            MP    Poolaandeel                           F F     
+07.510.380             DW       Dekking Zaakwaarnemer                 F F     
+07.510.380.010            MP    Poolaandeel                           F F     
+07.510.390             VV       Dekking Vervangend Vervoer            F F     
+07.510.390.010            MP    Poolaandeel                           F F     
+07.510.400             ZK       Dekking Ziektekosten                  F F     
+07.510.400.010            MP    Poolaandeel                           F F     
+07.510.410             CA       Dekking Casco voertuigen              F F     
+07.510.410.010            MP    Poolaandeel                           F F     
+07.510.420             WS       Dekking Wintersporten                 F F     
+07.510.420.010            MP    Poolaandeel                           F F     
+07.510.430             BQ       Dekking Buitengewone kosten reis      F F     
+07.510.430.010            MP    Poolaandeel                           F F     
+07.510.440             AP       Dekking Afkoop eigen risico huurauto  F F     
+07.510.440.010            MP    Poolaandeel                           F F     
+07.512              SC          Object Service                        F F     
+07.515              SW          Object Software                       F F     
+07.515.001             SO       Schadehistorie                        F F     
+07.515.100             EI       Partij Eigenaar object                F F     
+07.515.110             FA       Partij Fabrikant                      F F     
+07.515.120             LP       Partij Lease/Fin/Huur                 F F     
+07.515.130             LV       Partij Leverancier                    F F     
+07.520              PT          Object Transport                      F F     
+07.520.001             SO       Schadehistorie                        F F     
+07.520.100             EI       Partij Eigenaar object                F F     
+07.520.110             LV       Partij Leverancier                    F F     
+07.520.120             TS       Partij Transporteur                   F F     
+07.520.300             XD       Dekking Algemeen                      F F     
+07.520.300.010            MP    Poolaandeel                           F F     
+07.520.310             TR       Dekking Transport                     F F     
+07.520.310.010            MP    Poolaandeel                           F F     
+07.525              PG          Object Vaartuig                       F F     
+07.525.001             SO       Schadehistorie                        F F     
+07.525.100             EI       Partij Eigenaar object                F F     
+07.525.110             FA       Partij Fabrikant                      F F     
+07.525.120             LP       Partij Lease/Fin/Huur                 F F     
+07.525.130             LV       Partij Leverancier                    F F     
+07.525.140             OM       Partij Ombouwer                       F F     
+07.525.150             BS       Partij (regelmatig) Bestuurder        F F     
+07.525.160             TX       Partij Taxateur                       F F     
+07.525.200             MH       Object Vaartuigmotor                  F F     
+07.525.300             XD       Dekking Algemeen                      F F     
+07.525.300.010            MP    Poolaandeel                           F F     
+07.525.305             AQ       Dekking Accessoires                   F F     
+07.525.305.010            MP    Poolaandeel                           F F     
+07.525.310             PV       Dekking Casco vaartuig                F F     
+07.525.310.010            MP    Poolaandeel                           F F     
+07.525.320             IP       Dekking Inboedel                      F F     
+07.525.320.010            MP    Poolaandeel                           F F     
+07.525.330             PH       Dekking (internationale) Pechhulp     F F     
+07.525.330.010            MP    Poolaandeel                           F F     
+07.525.340             KB       Dekking Kostbaarheden                 F F     
+07.525.340.010            MP    Poolaandeel                           F F     
+07.525.350             PO       Dekking Pers.Ongevallen               F F     
+07.525.350.010            MP    Poolaandeel                           F F     
+07.525.360             RP       Dekking Rechtsbijstand                F F     
+07.525.360.010            MP    Poolaandeel                           F F     
+07.525.370             WA       Dekking Wettelijke Aansprakelijkheid  F F     
+07.525.370.010            MP    Poolaandeel                           F F     
+07.527              VF          Object Vliegtuig                      F F     
+07.530              VB          Object Volgboot                       F F     
+07.530.001             SO       Schadehistorie                        F F     
+07.530.100             EI       Partij Eigenaar object                F F     
+07.530.110             FA       Partij Fabrikant                      F F     
+07.530.120             LV       Partij Leverancier                    F F     
+07.530.130             MH       Object Vaartuigmotor                  F F     
+07.531              VC          Object VvE-Complex                    F F     
+07.531.100             BA       Object Opstal                         F F     
+07.531.100.001            OP    Dekking Opstal                        F F     
+07.531.100.005            WH    Werkzaamheden                         F F     
+07.531.200             OP       Dekking Opstal                        F F     
+07.535              WP          Object Wagenpark                      F F     
+07.537              WT          Object Werkmaterieel                  F F     
+07.537.300             WK       Dekking Casco Werkmaterieel           F F     
+07.537.300.010            MP    Poolaandeel                           F F     
+07.537.310             WA       Dekking Wettelijke Aansprakelijkheid  F F     
+07.537.310.010            MP    Poolaandeel                           F F     
+07.540              OG          Partij (Verzekerd) bedrijf            F F     
+07.540.001             IK       Beroep/Inkomen personen               F F     
+07.540.010             CW       Communicatieprofiel                   F F     
+07.540.010.001            OU    Output                                F F     
+07.540.020             SO       Schadehistorie                        F F     
+07.540.030             AC       Uitgaven v/e partij                   F F     
+07.540.040             VA       Validiteitsverklaring                 F F     
+07.540.050             WH       Werkzaamheden                         F F     
+07.540.050.001            ZO    Partij Zakelijke omgeving             F F     
+07.540.100             HO       Partij Aandeelhouder                  F F     
+07.540.110             AF       Partij Administratie                  F F     
+07.540.120             AV       Partij Advocaat                       F F     
+07.540.130             BV       Partij Bedrijfsvereniging             F F     
+07.540.140             OR       Partij Beroepsorganisatie             F F     
+07.540.150             KP       Partij Contactpersoon                 F F     
+07.540.160             CT       Partij Controlerende instantie        F F     
+07.540.170             DI       Partij Diplomahouder                  F F     
+07.540.180             EB       Partij Eigenaar bedrijf               F F     
+07.540.190             FE       Partij Federatie                      F F     
+07.540.200             HC       Partij Holding                        F F     
+07.540.210             ML       Partij Maatschapslid                  F F     
+07.540.220             OH       Partij Onderhoudsbedrijf              F F     
+07.540.230             OW       Partij Onderwijsinstelling            F F     
+07.540.240             AR       Partij Uitvoeringsinstantie           F F     
+07.540.240.001            IK    Beroep/Inkomen personen               F F     
+07.540.250             WN       Partij Werknemer                      F F     
+07.540.250.001            VA    Validiteitsverklaring                 F F     
+07.540.260             ZW       Partij Zaakwaarnemer                  F F     
+07.540.270             ZO       Partij Zakelijke omgeving             F F     
+07.540.280             VZ       Verzekerd persoon                     F F     
+07.540.300             LT       Object Agrarische produkten           F F     
+07.540.310             LH       Object Dier                           F F     
+07.540.315             GI       Object Garage                         F F     
+07.540.320             MA       Object Machine                        F F     
+07.540.330             OB       Object Motorrijtuig                   F F     
+07.540.340             BA       Object Opstal                         F F     
+07.540.350             PT       Object Transport                      F F     
+07.540.350.001            ZO    Partij Zakelijke omgeving             F F     
+07.540.500             DA       Dekking Aansprakelijkheid             F F     
+07.540.500.010            MP    Poolaandeel                           F F     
+07.540.510             XD       Dekking Algemeen                      F F     
+07.540.510.010            MP    Poolaandeel                           F F     
+07.540.520             BH       Dekking Bedrijfsschade                F F     
+07.540.520.010            MP    Poolaandeel                           F F     
+07.540.530             DC       Dekking CAR                           F F     
+07.540.530.010            MP    Poolaandeel                           F F     
+07.540.540             DR       Dekking (Doorlopende) Reis            F F     
+07.540.540.010            MP    Poolaandeel                           F F     
+07.540.550             GA       Dekking Garantie                      F F     
+07.540.550.010            MP    Poolaandeel                           F F     
+07.540.560             GD       Dekking Geld                          F F     
+07.540.560.010            MP    Poolaandeel                           F F     
+07.540.570             HB       Dekking Herstartkosten bedrijf        F F     
+07.540.570.010            MP    Poolaandeel                           F F     
+07.540.580             IV       Dekking Inventaris/goederen           F F     
+07.540.580.010            MP    Poolaandeel                           F F     
+07.540.590             DL       Dekking Loonsom                       F F     
+07.540.590.010            MP    Poolaandeel                           F F     
+07.540.600             MS       Dekking Milieu                        F F     
+07.540.600.010            MP    Poolaandeel                           F F     
+07.540.610             MO       Dekking Montage                       F F     
+07.540.610.010            MP    Poolaandeel                           F F     
+07.540.620             OP       Dekking Opstal                        F F     
+07.540.620.010            MP    Poolaandeel                           F F     
+07.540.630             RP       Dekking Rechtsbijstand                F F     
+07.540.630.010            MP    Poolaandeel                           F F     
+07.542              EH          Bedrijfseenheid                       F F     
+07.542.010             AO       Dekking Arbeidsongeschiktheid         F F     
+07.542.010.010            MP    Poolaandeel                           F F     
+07.542.020             DL       Dekking Loonsom                       F F     
+07.542.020.010            MP    Poolaandeel                           F F     
+07.542.030             OD       Dekking Ongevallen                    F F     
+07.542.030.010            MP    Poolaandeel                           F F     
+07.542.040             RA       Dekking Reintegratie                  F F     
+07.542.040.010            MP    Poolaandeel                           F F     
+07.542.050             SC       Object Service                        F F     
+07.542.050.010            UV    Partij Uitvoerder                     F F     
+07.543              OL          Gelieerde onderneming                 F F     
+07.545              VZ          Verzekerd persoon                     F F     
+07.545.001             IK       Beroep/Inkomen personen               F F     
+07.545.001.001            WH    Werkzaamheden                         F F     
+07.545.010             CL       Clausules                             F F     
+07.545.020             CW       Communicatieprofiel                   F F     
+07.545.020.001            OU    Output                                F F     
+07.545.030             GV       Gezondheid                            F F     
+07.545.040             MG       Medicijngebruik                       F F     
+07.545.050             SO       Schadehistorie                        F F     
+07.545.060             AC       Uitgaven v/e persoon                  F F     
+07.545.070             VW       Voorwaarden/Clausules                 F F     
+07.545.080             WH       Werkzaamheden                         F F     
+07.545.090             AW       Arbeidsvoorwaarden                    F F     
+07.545.100             HA       Partij (Huis) Arts                    F F     
+07.545.110             JG       Partij Jager                          F F     
+07.545.115             SP       Partij Samenwonende Partner           F F     
+07.545.117             KN       Partij Kind                           F F     
+07.545.117.001            GV    Gezondheid                            F F     
+07.545.120             TA       Partij Tandarts                       F F     
+07.545.130             VG       Partij Verzorger                      F F     
+07.545.130.001            IK    Beroep/Inkomen personen               F F     
+07.545.140             WG       Partij Werkgever                      F F     
+07.545.150             ZH       Partij Ziekenhuis                     F F     
+07.545.300             DA       Dekking Aansprakelijkheid             F F     
+07.545.300.010            MP    Poolaandeel                           F F     
+07.545.310             XD       Dekking Algemeen                      F F     
+07.545.310.010            MP    Poolaandeel                           F F     
+07.545.320             AN       Dekking Annulering                    F F     
+07.545.320.010            MP    Poolaandeel                           F F     
+07.545.330             AO       Dekking Arbeidsongeschiktheid         F F     
+07.545.330.010            MP    Poolaandeel                           F F     
+07.545.330.020            PR    Storting/Inleg                        F F     
+07.545.330.030            WO    Waardeopbouw                          F F     
+07.545.330.040            DX    Verloopschema                         F F     
+07.545.332             BR       Dekking Bagage                        F F     
+07.545.332.010            MP    Poolaandeel                           F F     
+07.545.340             BZ       Dekking Basis Zorg                    F F     
+07.545.340.010            MP    Poolaandeel                           F F     
+07.545.341             KS       Dekking Extra kosten                  F F     
+07.545.341.010            MP    Poolaandeel                           F F     
+07.545.342             GD       Dekking Geld                          F F     
+07.545.342.010            MP    Poolaandeel                           F F     
+07.545.350             IL       Dekking Bij leven                     F F     
+07.545.350.010            MP    Poolaandeel                           F F     
+07.545.350.020            PR    Storting/Inleg                        F F     
+07.545.350.030            WO    Waardeopbouw                          F F     
+07.545.350.040            BG    Partij begunstigde                    F F     
+07.545.360             DO       Dekking Bij overlijden                F F     
+07.545.360.010            MP    Poolaandeel                           F F     
+07.545.360.020            PR    Storting/Inleg                        F F     
+07.545.360.030            UK    Uitkering                             F F     
+07.545.360.040            WO    Waardeopbouw                          F F     
+07.545.360.050            BG    Partij begunstigde                    F F     
+07.545.370             DR       Dekking (doorlopende) Reis            F F     
+07.545.370.010            MP    Poolaandeel                           F F     
+07.545.380             OD       Dekking Ongevallen                    F F     
+07.545.380.010            MP    Poolaandeel                           F F     
+07.545.385             PH       Dekking (internationale) Pechhulp     F F     
+07.545.385.010            MP    Poolaandeel                           F F     
+07.545.390             PL       Dekking Premievrijstelling            F F     
+07.545.390.010            MP    Poolaandeel                           F F     
+07.545.400             RP       Dekking Rechtsbijstand                F F     
+07.545.400.010            MP    Poolaandeel                           F F     
+07.545.410             RL       Dekking Rente                         F F     
+07.545.410.010            MP    Poolaandeel                           F F     
+07.545.410.020            PR    Storting/Inleg                        F F     
+07.545.410.030            WO    Waardeopbouw                          F F     
+07.545.410.040            BG    Partij begunstigde                    F F     
+07.545.412             SU       Dekking Sportuitrusting               F F     
+07.545.412.010            MP    Poolaandeel                           F F     
+07.545.418             WS       Dekking Wintersporten                 F F     
+07.545.418.010            MP    Poolaandeel                           F F     
+07.545.420             WW       Dekking Werkeloosheid                 F F     
+07.545.420.010            MP    Poolaandeel                           F F     
+07.545.430             ZK       Dekking Ziektekosten                  F F     
+07.545.430.010            MP    Poolaandeel                           F F     
+07.545.440             GA       Dekking Garantie                      F F     
+07.545.440.010            MP    Poolaandeel                           F F     
+07.545.500             XA       Adres                                 F F     
+07.600              AQ          Dekking Accessoires                   F F     
+07.600.010             MP       Poolaandeel                           F F     
+07.602              AY          Dekking Agrarisch risico              F F     
+07.602.010             MP       Poolaandeel                           F F     
+07.605              XD          Dekking Algemeen                      F F     
+07.605.010             MP       Poolaandeel                           F F     
+07.610              AN          Dekking Annulering                    F F     
+07.610.010             MP       Poolaandeel                           F F     
+07.615              AZ          Dekking Antennes/Zonwering/Tuin e.d.  F F     
+07.615.010             MP       Poolaandeel                           F F     
+07.620              AO          Dekking Arbeidsongeschiktheid         F F     
+07.620.010             MP       Poolaandeel                           F F     
+07.620.020             PR       Storting/Inleg                        F F     
+07.620.030             WO       Waardeopbouw                          F F     
+07.620.040             DX       Verloopschema                         F F     
+07.625              AU          Dekking Audio/Visueel/Computer        F F     
+07.625.010             MP       Poolaandeel                           F F     
+07.630              DA          Dekking AVP/AVB                       F F     
+07.630.010             MP       Poolaandeel                           F F     
+07.635              BR          Dekking Bagage                        F F     
+07.635.010             MP       Poolaandeel                           F F     
+07.640              BH          Dekking Bedrijfsschade                F F     
+07.640.010             MP       Poolaandeel                           F F     
+07.645              BK          Dekking Betaald Klussen               F F     
+07.645.010             MP       Poolaandeel                           F F     
+07.650              IL          Dekking Bij leven                     F F     
+07.650.010             MP       Poolaandeel                           F F     
+07.650.020             PR       Storting/Inleg                        F F     
+07.650.030             WO       Waardeopbouw                          F F     
+07.650.040             BG       Partij begunstigde                    F F     
+07.652              CY          Dekking Cyber                         F F     
+07.652.010             MP       Poolaandeel                           F F     
+07.655              DO          Dekking Bij overlijden                F F     
+07.655.010             MP       Poolaandeel                           F F     
+07.655.020             PR       Storting/Inleg                        F F     
+07.655.030             UK       Uitkering                             F F     
+07.655.040             WO       Waardeopbouw                          F F     
+07.655.050             BG       Partij begunstigde                    F F     
+07.660              DZ          Dekking Bijzondere Bezittingen        F F     
+07.660.010             MP       Poolaandeel                           F F     
+07.665              SB          Dekking Bijzondere Sporten            F F     
+07.665.010             MP       Poolaandeel                           F F     
+07.667              BI          Dekking Buitenshuis                   F F     
+07.667.010             MP       Poolaandeel                           F F     
+07.668              BQ          Dekking Buitengewone kosten reis      F F     
+07.668.010             MP       Poolaandeel                           F F     
+07.670              DG          Dekking B/M Noclaim garantie          F F     
+07.670.010             MP       Poolaandeel                           F F     
+07.675              DF          Dekking Camera Apparatuur             F F     
+07.675.010             MP       Poolaandeel                           F F     
+07.680              DC          Dekking CAR                           F F     
+07.680.010             MP       Poolaandeel                           F F     
+07.685              AH          Dekking Casco aanhanger               F F     
+07.685.010             MP       Poolaandeel                           F F     
+07.690              CD          Dekking Casco caravan                 F F     
+07.690.010             MP       Poolaandeel                           F F     
+07.695              PV          Dekking Casco vaartuig                F F     
+07.695.010             MP       Poolaandeel                           F F     
+07.700              CA          Dekking Casco voertuigen              F F     
+07.700.010             MP       Poolaandeel                           F F     
+07.701              WK          Dekking Casco werkmaterieel           F F     
+07.701.010             MP       Poolaandeel                           F F     
+07.702              CG          Dekking Casco uitbreiding             F F     
+07.702.010             MP       Poolaandeel                           F F     
+07.705              PD          Dekking Computer                      F F     
+07.705.010             MP       Poolaandeel                           F F     
+07.710              DD          Dekking Dierenoppas                   F F     
+07.710.010             MP       Poolaandeel                           F F     
+07.715              DR          Dekking (doorlopende) Reis            F F     
+07.715.010             MP       Poolaandeel                           F F     
+07.717              AP          Dekking Afkoop eigen risico huurauto  F F     
+07.717.010             MP       Poolaandeel                           F F     
+07.720              EC          Dekking Electronica                   F F     
+07.720.010             MP       Poolaandeel                           F F     
+07.725              KS          Dekking Extra kosten                  F F     
+07.725.010             MP       Poolaandeel                           F F     
+07.727              EU          Dekking Extra uitkering               F F     
+07.727.010             MP       Poolaandeel                           F F     
+07.730              GA          Dekking Garantie                      F F     
+07.730.010             MP       Poolaandeel                           F F     
+07.735              GD          Dekking Geld                          F F     
+07.735.010             MP       Poolaandeel                           F F     
+07.740              GP          Dekking Glas                          F F     
+07.740.010             MP       Poolaandeel                           F F     
+07.745              HS          Dekking Hagel- en Stormschade         F F     
+07.745.010             MP       Poolaandeel                           F F     
+07.750              HB          Dekking Herstartkosten bedrijf        F F     
+07.750.010             MP       Poolaandeel                           F F     
+07.755              DH          Dekking Huiseigenaar                  F F     
+07.755.010             MP       Poolaandeel                           F F     
+07.760              HU          Dekking Huurdersbelang                F F     
+07.760.010             MP       Poolaandeel                           F F     
+07.765              HD          Dekking Huurderving                   F F     
+07.765.010             MP       Poolaandeel                           F F     
+07.770              IP          Dekking Inboedel                      F F     
+07.770.010             MP       Poolaandeel                           F F     
+07.775              PH          Dekking (internationale) Pechhulp     F F     
+07.775.010             MP       Poolaandeel                           F F     
+07.780              IV          Dekking Inventaris/goederen           F F     
+07.780.010             MP       Poolaandeel                           F F     
+07.785              DJ          Dekking Jagersrisico                  F F     
+07.785.010             MP       Poolaandeel                           F F     
+07.790              DK          Dekking Kinderoppas                   F F     
+07.790.010             MP       Poolaandeel                           F F     
+07.795              KB          Dekking Kostbaarheden                 F F     
+07.795.010             MP       Poolaandeel                           F F     
+07.800              KR          Dekking Kredietrisico                 F F     
+07.800.010             MP       Poolaandeel                           F F     
+07.805              KA          Dekking Kunst / Antiquiteiten         F F     
+07.805.010             MP       Poolaandeel                           F F     
+07.807              LR          Dekking Lichtreclame                  F F     
+07.807.010             MP       Poolaandeel                           F F     
+07.810              DL          Dekking Loonsom                       F F     
+07.810.001             DX       Verloopschema                         F F     
+07.810.010             MP       Poolaandeel                           F F     
+07.815              LF          Dekking Luifel                        F F     
+07.815.010             MP       Poolaandeel                           F F     
+07.820              LG          Dekking Luxe Gebruiksvoorwerpen       F F     
+07.820.010             MP       Poolaandeel                           F F     
+07.825              LS          Dekking Lijfsieraden                  F F     
+07.825.010             MP       Poolaandeel                           F F     
+07.830              MS          Dekking Milieu                        F F     
+07.830.010             MP       Poolaandeel                           F F     
+07.835              MO          Dekking Montage                       F F     
+07.835.010             MP       Poolaandeel                           F F     
+07.840              MI          Dekking Muziekinstrumenten            F F     
+07.840.010             MP       Poolaandeel                           F F     
+07.845              OP          Dekking Opstal                        F F     
+07.845.010             MP       Poolaandeel                           F F     
+07.850              BW          Dekking Op- / Aanbouw                 F F     
+07.850.010             MP       Poolaandeel                           F F     
+07.855              OD          Dekking Ongevallen                    F F     
+07.855.010             MP       Poolaandeel                           F F     
+07.856              OI          Dekking Ontvoering/losgeld/afpersing  F F     
+07.856.010             MP       Poolaandeel                           F F     
+07.857              OF          Dekking Overstroming                  F F     
+07.857.010             MP       Poolaandeel                           F F     
+07.860              PO          Dekking Pers.Ongevallen               F F     
+07.860.010             MP       Poolaandeel                           F F     
+07.865              PL          Dekking Premievrijstelling            F F     
+07.865.010             MP       Poolaandeel                           F F     
+07.870              RP          Dekking Rechtsbijstand                F F     
+07.870.010             MP       Poolaandeel                           F F     
+07.875              WC          Dekking Rechtsbijstand Consument & WonF F     
+07.875.010             MP       Poolaandeel                           F F     
+07.880              FV          Dekking Rechtsbijstand Fiscaal & VermoF F     
+07.880.010             MP       Poolaandeel                           F F     
+07.885              IN          Dekking Rechtsbijstand Inkomen        F F     
+07.885.010             MP       Poolaandeel                           F F     
+07.890              VK          Dekking Rechtbijstand Verkeer         F F     
+07.890.010             MP       Poolaandeel                           F F     
+07.895              RK          Dekking Reconstructie                 F F     
+07.895.010             MP       Poolaandeel                           F F     
+07.900              RA          Dekking Reintegratie                  F F     
+07.900.010             MP       Poolaandeel                           F F     
+07.905              RD          Dekking Reis uitbreiding              F F     
+07.905.010             MP       Poolaandeel                           F F     
+07.910              RL          Dekking Rente                         F F     
+07.910.010             MP       Poolaandeel                           F F     
+07.910.020             PR       Storting/Inleg                        F F     
+07.910.030             WO       Waardeopbouw                          F F     
+07.910.040             UK       Uitkering                             F F     
+07.910.050             BG       Partij begunstigde                    F F     
+07.915              SG          Dekking Samengestelde Reis            F F     
+07.915.010             MP       Poolaandeel                           F F     
+07.920              SV          Dekking Schade Verz. In-/Opzittende   F F     
+07.920.010             MP       Poolaandeel                           F F     
+07.925              SU          Dekking Sportuitrusting               F F     
+07.925.010             MP       Poolaandeel                           F F     
+07.930              TD          Dekking Tentoonstelling               F F     
+07.930.010             MP       Poolaandeel                           F F     
+07.935              TR          Dekking Transport                     F F     
+07.935.010             MP       Poolaandeel                           F F     
+07.940              VR          Dekking Verhuur                       F F     
+07.940.010             MP       Poolaandeel                           F F     
+07.945              VV          Dekking Vervangend Vervoer            F F     
+07.945.010             MP       Poolaandeel                           F F     
+07.950              DV          Dekking Verzamelingen                 F F     
+07.950.010             MP       Poolaandeel                           F F     
+07.955              DT          Dekking Voortent                      F F     
+07.955.010             MP       Poolaandeel                           F F     
+07.960              VD          Dekking VSV                           F F     
+07.960.010             MP       Poolaandeel                           F F     
+07.965              WW          Dekking Werkloosheid                  F F     
+07.965.010             MP       Poolaandeel                           F F     
+07.970              WA          Dekking Wettelijke Aansprakelijkheid  F F     
+07.970.010             MP       Poolaandeel                           F F     
+07.975              WS          Dekking Wintersporten                 F F     
+07.975.010             MP       Poolaandeel                           F F     
+07.980              DW          Dekking Zaakwaarnemer                 F F     
+07.980.010             MP       Poolaandeel                           F F     
+07.985              ZK          Dekking Ziektekosten                  F F     
+07.985.010             MP       Poolaandeel                           F F     
+07.990              NG          Dekking Eigen gebrek/Uitval           F F     
+07.990.010             MP       Poolaandeel                           F F     
+07.999              SQ          Service                               F F     
+08               LC             Leasecontract                         F F     
+08.001              BO          Boeking onderdeel                     F F     
+08.010              OU          Output                                F F     
+08.020              WG          Werkgever                             F F     
+08.030              WN          Werknemer                             F F     
+08.100              LP          Partij Fin./Lease/Verhuurder          F F     
+08.200              AA          Object Aanhanger                      F F     
+08.200.300             AH       Dekking Casco aanhanger               F F     
+08.210              OB          Object Motorvoertuig                  F F     
+08.210.300             CA       Dekking Casco voertuigen              F F     
+08.210.305             CG       Dekking Casco uitbreiding             F F     
+08.210.310             IP       Dekking Inboedel                      F F     
+08.210.320             PH       Dekking (internationale) Pechhulp     F F     
+08.210.330             PO       Dekking Pers.Ongevallen               F F     
+08.210.340             RP       Dekking Rechtsbijstand                F F     
+08.210.350             SV       Dekking Schade Verz. In-/Opzittende   F F     
+08.210.360             VD       Dekking Verkeersschade                F F     
+08.210.370             VV       Dekking Vervangend vervoer            F F     
+08.210.380             WA       Dekking Wettelijke Aansprakelijkheid  F F     
+09               DP             Contract Account/Conto/Depot          F F     
+09.001              AJ          Af-/bijschrijving                     F F     
+09.010              OU          Output                                F F     
+09.020              PR          Storting/Inleg                        F F     
+09.100              BU          Partij Accountbetaler                 F F     
+09.100.100             PR       Storting/Inleg                        F F     
+09.100.100.001            SE    Spaardeel                             F F     
+09.100.200             CW       Communicatieprofiel                   F F     
+09.100.300             IM       Incasso Machtiging                    F F     
+09.110              RF          Partij Rekeninghouder                 F F     
+09.110.100             PR       Storting/Inleg                        F F     
+09.110.100.001            SE    Spaardeel                             F F     
+09.110.200             CW       Communicatieprofiel                   F F     
+09.110.300             IM       Incasso Machtiging                    F F     
+09.120              WV          Partij Wettelijke Vertegenwoordiger   F F     
+09.130              WG          Partij Werkgever                      F F     
+09.130.100             KP       Partij Contactpersoon                 F F     
+09.140              PA          Partij Pandnemer                      F F     
+09.140.100             HP       Contract Hypotheek                    F F     
+09.150              AS          Partij Assuradeur                     F F     
+09.150.100             PP       Contract Polis/Onderdeel              F F     
+09.160              OG          Partij (Verzekerd) bedrijf            F F     
+09.170              NO          Partij Notaris                        F F     
+09.480              UK          Uitkering                             F F     
+09.500              WO          Waardeopbouw                          F F     
+10               EL             Contract (Elders)(af)lopend           F F     
+10.001              FO          Fonds                                 F F     
+10.010              SD          Schade Dossier                        F F     
+10.020              PR          Storting/Inleg                        F F     
+10.030              UK          Uitkering                             F F     
+10.100              AS          Partij Assuradeur                     F F     
+10.110              BP          Partij Bedrijfspensioenfonds          F F     
+10.120              HN          Partij Hypotheeknemer                 F F     
+10.130              NO          Partij Notaris                        F F     
+10.140              PF          Partij Pensioenuitvoerder             F F     
+10.150              AR          Partij Uitvoeringsinstantie           F F     
+10.160              WG          Partij Werkgever                      F F     
+10.300              GL          Object Glas                           F F     
+10.310              KH          Object Kostbaarheden                  F F     
+10.311              KU          Object Kunst / Antiquiteiten          F F     
+10.320              OB          Object Motorvoertuig                  F F     
+10.330              BA          Object Opstal                         F F     
+10.500              EA          Dekking Arbeidsongeschiktheid Elders  F F     
+10.510              AD          Dekking AVP/AVB Elders                F F     
+10.520              BE          Dekking Bedrijfsschade Elders         F F     
+10.530              LE          Dekking Bij leven Elders              F F     
+10.540              DE          Dekking Bij overlijden Elders         F F     
+10.550              CS          Dekking CAR Elders                    F F     
+10.560              PE          Dekking Casco vaartuig Elders         F F     
+10.570              CE          Dekking Computer Elders               F F     
+10.580              ER          Dekking (doorlopende) Reis Elders     F F     
+10.590              EE          Dekking Electronica Elders            F F     
+10.600              IE          Dekking Inboedel Elders               F F     
+10.610              IW          Dekking Inventaris/goederen Elders    F F     
+10.620              GQ          Dekking Geld Elders                   F F     
+10.630              GE          Dekking Glas Elders                   F F     
+10.640              EK          Dekking Kostbaarheden Elders          F F     
+10.650              DN          Dekking Kredietrisico Elders          F F     
+10.655              ME          Dekking Milieu Elders                 F F     
+10.660              OE          Dekking Opstal Elders                 F F     
+10.670              EO          Dekking Ongevallen Elders             F F     
+10.680              RE          Dekking Rechtsbijstand Elders         F F     
+10.685              TL          Dekking Transport Elders              F F     
+10.690              ZE          Dekking Ziektekosten Elders           F F     
+11               TE             Vrije Tekst                           FFFFFFF 
+12               XG             Transactie Proces                     FFFFFFF 
+12.001              XM          Status melding                        FFFFFFF 
+12.010              WQ          Wijziging soort                       FFFFFFF 
+12.020              TE          Vrije Tekst                           FFFFFFF 
+13               VP             Partij Verzekeringnemer                  V    
+13.001              IK          Beroep/Inkomen personen                  F    
+13.001.001             WG       Partij Werkgever                         F    
+13.002              AM          Agendering                               F    
+13.010              KP          Partij Contactpersoon                    F    
+14               WG             Partij Werkgever                           V  
+14.001              KP          Partij Contactpersoon                      F  
+14.002              CW          Communicatieprofiel                        F  
+14.002.001             CM       Communicatie                               F  
+14.003              XA          Adres                                      F  
+14.004              WN          Partij Werknemer                           F  
+14.004.001             IK       Inkomen                                    F  
+14.004.001.001            EH    Bedrijfseenheid                            F  
+14.004.001.002            WI    Winst                                      F  
+14.004.001.003            VJ    Verlof                                     F  
+14.004.001.004            LN    Loon periode                               F  
+15               OG             Partij (Verzekerd) bedrijf               F  F 
+16               EH             Bedrijfseenheid                            F  
+16.001              KP          Partij Contactpersoon                      F  
+17               WN             Partij Werknemer                            V 
+17.001              XA          Adres                                       F 
+17.010              AW          Arbeidsvoorwaarden                          F 
+17.015              DQ          Deelname                                    F 
+17.020              IK          Beroep/Inkomen personen                     F 
+17.025              LN          Loon periode                                F 
+17.030              GV          Gezondheid                                  F 
+17.040              MG          Medicijngebruik                             F 
+17.050              CW          Communicatieprofiel                         F 
+17.050.001             CM       Communicatie                                F 
+17.100              KP          Partij Contactpersoon                       F 
+17.110              KN          Partij Kind                                 F 
+17.120              PF          Partij Pensioenuitvoerder                   F 
+17.130              SP          Partij Samenwonende partner                 F 
+17.140              AR          Partij uitvoeringsinstantie                 F 
+17.150              EH          Bedrijfseenheid                             F 
+18               FC             Factuur                                      V
+18.001              BD          BTW gegevens factuur                         F
+18.020              CL          Clausules                                    F
+18.030              PP          Contract Polis/onderdeel                     F
+18.030.100             TP       Partij Tussenpersoon                         F
+18.030.100.001            SA    Partij Subagent                              F
+18.030.110             VP       Partij Verzekeringnemer                      F
+18.030.110.001            AM    Agendering                                   F
+18.040              FR          Factuurregel                                 F
+18.040.001             BJ       BTW gegevens factuurregel                    F
+18.050              OA          Proces opdracht                              F
+18.060              SD          Schadedossier                                F
+18.060.300             OB       Object motorrijtuig                          F
+18.070              VW          Voorwaarden en Clausules                     F
+18.100              CU          Partij Crediteur                             F
+18.100.001             XA       Adres                                        F
+18.100.010             RN       Rekeningnummer gegevens                      F
+18.100.010.001            FI    Partij bank/financieringsmaatschappij        F
+18.110              DB          Partij Debiteur                              F
+18.110.001             XA       Adres                                        F
+18.110.010             RN       Rekeningnummer gegevens                      F
+18.110.010.001            FI    Partij bank/financieringsmaatschappij        F
+18.110.100             KP       Partij contactpersoon                        F
+18.200              OV          Ontvangst betaling                           F
+19               SD             Schadedossier                             V   
+19.001              RI          Acceptatievragen                          F   
+19.002              FT          Financiele informatie                     F   
+19.002.001             MP       Poolaandeel                               F   
+19.003              CN          Afspraak                                  F   
+19.010              BY          Bijlage                                   F   
+19.015              XS          Claim toegepaste dekking                  F   
+19.020              CM          Communicatie                              F   
+19.020.001             BY       Bijlage                                   F   
+19.020.100             RV       Partij Ontvanger                          F   
+19.020.110             SN       Partij Zender                             F   
+19.030              EL          Contract (Elders)(af)lopend               F   
+19.030.100             AS       Partij Assuradeur                         F   
+19.030.300             XD       Dekking Algemeen                          F   
+19.030.400             SO       Schadehistorie                            F   
+19.035              PK          Contract Pakket                           F   
+19.040              PP          Contract Polis/Onderdeel                  F   
+19.040.001             RC       Raamcontract                              F   
+19.040.001.001            RH    Partij Raamcontracthouder                 F   
+19.040.002             CC       Schade calculatie gegevens                F   
+19.040.004             CL       Clausules                                 F   
+19.040.010             VW       Voorwaarden/Clausules                     F   
+19.040.100             AS       Partij Assuradeur                         F   
+19.040.110             VP       Partij Verzekeringnemer                   F   
+19.040.110.001            CW    Communicatieprofiel                       F   
+19.040.110.002            GV    Gezondheid                                F   
+19.040.110.003            IK    Beroep/Inkomen personen                   F   
+19.040.110.004            IR    Schadegegevens partij                     F   
+19.040.110.005            KP    Partij Contactpersoon                     F   
+19.040.110.006            AM    Agendering                                F   
+19.040.120             LI       Partij Kentekenhouder                     F   
+19.040.120.001            KP    Partij Contactpersoon                     F   
+19.040.130             VL       Partij Volmachtgever                      F   
+19.040.140             VE       Partij Volmachtnemer                      F   
+19.040.200             OB       Object Motorrijtuig                       F   
+19.040.300             DA       Dekking Aansprakelijkheid                 F   
+19.040.310             XD       Dekking Algemeen                          F   
+19.040.315             CA       Dekking Casco voertuigen                  F   
+19.040.317             CG       Dekking Casco uitbreiding                 F   
+19.040.320             CD       Dekking Casco Caravan                     F   
+19.040.330             IP       Dekking Inboedel                          F   
+19.040.340             KB       Dekking Kostbaarheden                     F   
+19.040.350             OP       Dekking Opstal                            F   
+19.040.360             DR       Dekking Reis                              F   
+19.040.370             WA       Dekking Wettelijke Aansprakelijkheid      F   
+19.040.400             WG       Partij Werkgever                          F   
+19.040.400.001            AR    Partij Uitvoeringsinstantie               F   
+19.050              MD          Documentgegevens                          F   
+19.050.001             MT       Partij ondertekenaar                      F   
+19.052              FC          Factuur                                   F   
+19.052.001             FR       Factuurregel                              F   
+19.052.010.001            BJ    BTW gegevens factuurregel                 F   
+19.060              EG          Expertise gegevens                        F   
+19.070              KC          Kostencomponent                           F   
+19.070.001             BG       Partij Begunstigde                        F   
+19.080              OC          Opdracht                                  F   
+19.080.001             XA       Adres                                     F   
+19.080.010             KC       Kostencomponent                           F   
+19.080.020             VT       Voortgang                                 F   
+19.080.023             PN       Taak                                      F   
+19.080.100             KP       Partij Contactpersoon                     F   
+19.080.110             OY       Partij Opdrachtgever                      F   
+19.080.120             UV       Partij Uitvoerder                         F   
+19.080.130             UK       Uitkering                                 F   
+19.080.130.001            BG    Partij Begunstigde                        F   
+19.090              SO          Schadehistorie                            F   
+19.100              IC          Schadeincident                            F   
+19.100.001             XA       Adres                                     F   
+19.100.010             IQ       Vragen schade-incident                    F   
+19.100.100             AG       Partij Aangifte instantie                 F   
+19.100.110             BS       Partij Bestuurder                         F   
+19.100.110.001            IR    Schadegegevens partij                     F   
+19.100.120             GT       Partij Getuige                            F   
+19.100.130             VO       Partij Schade Veroorzaker                 F   
+19.100.135             PX       Partij Schuldeiser                        F   
+19.100.140             SL       Partij Slachtoffer                        F   
+19.100.150             TY       Partij Tegenpartij                        F   
+19.100.150.001            PP    Contract Polis/onderdeel                  F   
+19.100.150.001.01            AS Partij Assuradeur                         F   
+19.100.150.001.02            VL Partij Volmachtgever                      F   
+19.100.150.001.03            OB Object Motorrijtuig                       F   
+19.100.150.001.04            BF Object Bromfiets/Rijwiel                  F   
+19.100.150.002            IR    Schadegegevens partij                     F   
+19.100.150.003            KP    Partij Contactpersoon                     F   
+19.110              VH          Schadeverhaal                             F   
+19.110.001             TY       Partij Tegenpartij                        F   
+19.120              XG          Transactie proces                         F   
+19.120.001             XM       Status melding                            F   
+19.130              UK          Uitkering                                 F   
+19.130.001             BG       Partij Begunstigde                        F   
+19.130.002             XS       Claim toegepaste dekking                  F   
+19.140              VT          Voortgang                                 F   
+19.190              XP          Partij                                    F   
+19.200              AK          Partij Aansprakelijke verzekeraar         F   
+19.200.001             KP       Partij Contactpersoon                     F   
+19.210              BN          Partij Belangenbehartiger                 F   
+19.210.001             KP       Partij Contactpersoon                     F   
+19.212              MR          Partij Claimsmanager                      F   
+19.220              KP          Partij Contactpersoon                     F   
+19.230              EX          Partij Schade-expert                      F   
+19.230.001             KP       Partij Contactpersoon                     F   
+19.235              NB          Partij Nabestaande                        F   
+19.237              RB          Partij Rechtsbijstandverzekeraar          F   
+19.240              RT          Partij Schadehersteller                   F   
+19.242              HK          Partij Schadeherstel keten                F   
+19.244              ST          Partij Serviceorganisatie                 F   
+19.250              SL          Partij Slachtoffer                        F   
+19.250.001             DM       Schade/Verlies                            F   
+19.250.002             GV       Gezondheid                                F   
+19.260              TP          Partij Tussenpersoon                      F   
+19.260.001             KP       Partij Contactpersoon                     F   
+19.260.002             SA       Partij Subagent                           F   
+19.270              HA          Partij (Huis) Arts                        F   
+19.270.001             IK       Beroep/Inkomen personen                   F   
+19.280              ZH          Partij Ziekenhuis                         F   
+19.300              AA          Object Aanhangwagen/boottrailer           F   
+19.300.001             KC       Kostencomponent                           F   
+19.300.001.001            BG    Partij Begunstigde                        F   
+19.300.010             DM       Schade/Verlies                            F   
+19.300.020             PN       Taak                                      F   
+19.300.020.001            KC    Kostencomponent                           F   
+19.300.020.001.01            BG Partij Begunstigde                        F   
+19.300.020.010            VT    Voortgang                                 F   
+19.300.100             EI       Partij Eigenaar object                    F   
+19.300.110             TX       Partij Taxateur                           F   
+19.300.200             OO       Object onderdeel                          F   
+19.300.200.001            KC    Kostencomponent                           F   
+19.300.200.001.01            BG Partij Begunstigde                        F   
+19.300.200.010            DM    Schade/Verlies                            F   
+19.310              BB          Object Bijgebouw                          F   
+19.310.001             KC       Kostencomponent                           F   
+19.310.001.001            BG    Partij Begunstigde                        F   
+19.310.010             DM       Schade/Verlies                            F   
+19.310.020             PN       Taak                                      F   
+19.310.020.001            KC    Kostencomponent                           F   
+19.310.020.001.01            BG Partij Begunstigde                        F   
+19.310.020.010            VT    Voortgang                                 F   
+19.310.100             EI       Partij Eigenaar object                    F   
+19.310.110             TX       Partij Taxateur                           F   
+19.310.200             OO       Object onderdeel                          F   
+19.310.200.001            KC    Kostencomponent                           F   
+19.310.200.001.01            BG Partij Begunstigde                        F   
+19.310.200.010            DM    Schade/Verlies                            F   
+19.320              BF          Object Bromfiets/Rijwiel                  F   
+19.320.001             KC       Kostencomponent                           F   
+19.320.001.001            BG    Partij Begunstigde                        F   
+19.320.010             DM       Schade/Verlies                            F   
+19.320.020             PN       Taak                                      F   
+19.320.020.001            KC    Kostencomponent                           F   
+19.320.020.001.01            BG Partij Begunstigde                        F   
+19.320.020.010            VT    Voortgang                                 F   
+19.320.100             EI       Partij Eigenaar object                    F   
+19.320.110             TX       Partij Taxateur                           F   
+19.320.200             OO       Object onderdeel                          F   
+19.320.200.001            KC    Kostencomponent                           F   
+19.320.200.001.01            BG Partij Begunstigde                        F   
+19.320.200.010            DM    Schade/Verlies                            F   
+19.330              CR          Object Caravan                            F   
+19.330.001             KC       Kostencomponent                           F   
+19.330.001.001            BG    Partij Begunstigde                        F   
+19.330.010             DM       Schade/Verlies                            F   
+19.330.020             PN       Taak                                      F   
+19.330.020.001            KC    Kostencomponent                           F   
+19.330.020.001.01            BG Partij Begunstigde                        F   
+19.330.020.010            VT    Voortgang                                 F   
+19.330.100             EI       Partij Eigenaar object                    F   
+19.330.110             TX       Partij Taxateur                           F   
+19.330.200             OO       Object onderdeel                          F   
+19.330.200.001            KC    Kostencomponent                           F   
+19.330.200.001.01            BG Partij Begunstigde                        F   
+19.330.200.010            DM    Schade/Verlies                            F   
+19.340              CP          Object Computer                           F   
+19.340.001             KC       Kostencomponent                           F   
+19.340.001.001            BG    Partij Begunstigde                        F   
+19.340.010             DM       Schade/Verlies                            F   
+19.340.020             PN       Taak                                      F   
+19.340.020.001            KC    Kostencomponent                           F   
+19.340.020.001.01            BG Partij Begunstigde                        F   
+19.340.020.010            VT    Voortgang                                 F   
+19.340.100             EI       Partij Eigenaar object                    F   
+19.340.110             TX       Partij Taxateur                           F   
+19.340.200             OO       Object onderdeel                          F   
+19.340.200.001            KC    Kostencomponent                           F   
+19.340.200.001.01            BG Partij Begunstigde                        F   
+19.340.200.010            DM    Schade/Verlies                            F   
+19.350              LH          Object Dier                               F   
+19.350.001             KC       Kostencomponent                           F   
+19.350.001.001            BG    Partij Begunstigde                        F   
+19.350.010             DM       Schade/Verlies                            F   
+19.350.020             PN       Taak                                      F   
+19.350.020.001            KC    Kostencomponent                           F   
+19.350.020.001.01            BG Partij Begunstigde                        F   
+19.350.020.010            VT    Voortgang                                 F   
+19.350.100             EI       Partij Eigenaar object                    F   
+19.350.110             TX       Partij Taxateur                           F   
+19.350.200             OO       Object onderdeel                          F   
+19.350.200.001            KC    Kostencomponent                           F   
+19.350.200.001.01            BG Partij Begunstigde                        F   
+19.350.200.010            DM    Schade/Verlies                            F   
+19.360              HE          Object Elektronica apparatuur             F   
+19.360.001             KC       Kostencomponent                           F   
+19.360.001.001            BG    Partij Begunstigde                        F   
+19.360.010             DM       Schade/Verlies                            F   
+19.360.020             PN       Taak                                      F   
+19.360.020.001            KC    Kostencomponent                           F   
+19.360.020.001.01            BG Partij Begunstigde                        F   
+19.360.020.010            VT    Voortgang                                 F   
+19.360.100             EI       Partij Eigenaar object                    F   
+19.360.110             TX       Partij Taxateur                           F   
+19.360.200             OO       Object onderdeel                          F   
+19.360.200.001            KC    Kostencomponent                           F   
+19.360.200.001.01            BG Partij Begunstigde                        F   
+19.360.200.010            DM    Schade/Verlies                            F   
+19.370              GL          Object Glas                               F   
+19.370.001             KC       Kostencomponent                           F   
+19.370.001.001            BG    Partij Begunstigde                        F   
+19.370.010             DM       Schade/Verlies                            F   
+19.370.020             PN       Taak                                      F   
+19.370.020.001            KC    Kostencomponent                           F   
+19.370.020.001.01            BG Partij Begunstigde                        F   
+19.370.020.010            VT    Voortgang                                 F   
+19.370.100             EI       Partij Eigenaar object                    F   
+19.370.110             TX       Partij Taxateur                           F   
+19.370.200             OO       Object onderdeel                          F   
+19.370.200.001            KC    Kostencomponent                           F   
+19.370.200.001.01            BG Partij Begunstigde                        F   
+19.370.200.010            DM    Schade/Verlies                            F   
+19.380              GR          Object Goederen                           F   
+19.380.001             KC       Kostencomponent                           F   
+19.380.001.001            BG    Partij Begunstigde                        F   
+19.380.010             DM       Schade/Verlies                            F   
+19.380.020             PN       Taak                                      F   
+19.380.020.001            KC    Kostencomponent                           F   
+19.380.020.001.01            BG Partij Begunstigde                        F   
+19.380.020.010            VT    Voortgang                                 F   
+19.380.100             EI       Partij Eigenaar object                    F   
+19.380.110             TX       Partij Taxateur                           F   
+19.380.200             OO       Object onderdeel                          F   
+19.380.200.001            KC    Kostencomponent                           F   
+19.380.200.001.01            BG Partij Begunstigde                        F   
+19.380.200.002            DM    Schade/Verlies                            F   
+19.390              IB          Object Inboedel                           F   
+19.390.001             KC       Kostencomponent                           F   
+19.390.001.001            BG    Partij Begunstigde                        F   
+19.390.010             DM       Schade/Verlies                            F   
+19.390.020             PN       Taak                                      F   
+19.390.020.001            KC    Kostencomponent                           F   
+19.390.020.001.01            BG Partij Begunstigde                        F   
+19.390.020.010            VT    Voortgang                                 F   
+19.390.100             EI       Partij Eigenaar object                    F   
+19.390.110             TX       Partij Taxateur                           F   
+19.390.200             OO       Object onderdeel                          F   
+19.390.200.001            KC    Kostencomponent                           F   
+19.390.200.001.01            BG Partij Begunstigde                        F   
+19.390.200.010            DM    Schade/Verlies                            F   
+19.400              IT          Object Inventaris                         F   
+19.400.001             KC       Kostencomponent                           F   
+19.400.001.001            BG    Partij Begunstigde                        F   
+19.400.010             DM       Schade/Verlies                            F   
+19.400.020             PN       Taak                                      F   
+19.400.020.001            KC    Kostencomponent                           F   
+19.400.020.001.01            BG Partij Begunstigde                        F   
+19.400.020.010            VT    Voortgang                                 F   
+19.400.100             EI       Partij Eigenaar object                    F   
+19.400.110             TX       Partij Taxateur                           F   
+19.400.200             OO       Object onderdeel                          F   
+19.400.200.001            KC    Kostencomponent                           F   
+19.400.200.001.01            BG Partij Begunstigde                        F   
+19.400.200.010            DM    Schade/Verlies                            F   
+19.410              KH          Object Kostbaarheden                      F   
+19.410.001             KC       Kostencomponent                           F   
+19.410.001.001            BG    Partij Begunstigde                        F   
+19.410.010             DM       Schade/Verlies                            F   
+19.410.020             PN       Taak                                      F   
+19.410.020.001            KC    Kostencomponent                           F   
+19.410.020.001.01            BG Partij Begunstigde                        F   
+19.410.020.010            VT    Voortgang                                 F   
+19.410.100             EI       Partij Eigenaar object                    F   
+19.410.110             TX       Partij Taxateur                           F   
+19.410.200             OO       Object onderdeel                          F   
+19.410.200.001            KC    Kostencomponent                           F   
+19.410.200.001.01            BG Partij Begunstigde                        F   
+19.410.200.010            DM    Schade/Verlies                            F   
+19.411              KU          Kunst / Antiquiteiten                     F   
+19.411.001             KC       Kostencomponent                           F   
+19.411.001.001            BG    Partij Begunstigde                        F   
+19.411.010             DM       Schade/Verlies                            F   
+19.411.020             PN       Taak                                      F   
+19.411.020.001            KC    Kostencomponent                           F   
+19.411.020.001.01            BG Partij Begunstigde                        F   
+19.411.020.010            VT    Voortgang                                 F   
+19.411.100             EI       Partij Eigenaar object                    F   
+19.411.110             TX       Partij Taxateur                           F   
+19.411.200             OO       Object onderdeel                          F   
+19.411.200.001            KC    Kostencomponent                           F   
+19.411.200.001.01            BG Partij Begunstigde                        F   
+19.411.200.010            DM    Schade/Verlies                            F   
+19.420              MU          Object Milieurisico                       F   
+19.420.001             KC       Kostencomponent                           F   
+19.420.001.001            BG    Partij Begunstigde                        F   
+19.420.010             DM       Schade/Verlies                            F   
+19.420.020             PN       Taak                                      F   
+19.420.020.001            KC    Kostencomponent                           F   
+19.420.020.001.01            BG Partij Begunstigde                        F   
+19.420.020.010            VT    Voortgang                                 F   
+19.420.100             EI       Partij Eigenaar object                    F   
+19.420.110             TX       Partij Taxateur                           F   
+19.420.200             OO       Object onderdeel                          F   
+19.420.200.001            KC    Kostencomponent                           F   
+19.420.200.001.01            BG Partij Begunstigde                        F   
+19.420.200.010            DM    Schade/Verlies                            F   
+19.430              OB          Object Motorrijtuigen                     F   
+19.430.001             KC       Kostencomponent                           F   
+19.430.001.001            BG    Partij Begunstigde                        F   
+19.430.010             DM       Schade/Verlies                            F   
+19.430.020             PN       Taak                                      F   
+19.430.020.001            KC    Kostencomponent                           F   
+19.430.020.001.01            BG Partij Begunstigde                        F   
+19.430.020.010            VT    Voortgang                                 F   
+19.430.080             DY       Partij Dealer                             F   
+19.430.100             EI       Partij Eigenaar object                    F   
+19.430.110             LP       Partij Lease/Fin/Huur                     F   
+19.430.120             TX       Partij Taxateur                           F   
+19.430.200             OO       Object onderdeel                          F   
+19.430.200.001            KC    Kostencomponent                           F   
+19.430.200.001.01            BG Partij Begunstigde                        F   
+19.430.200.010            DM    Schade/Verlies                            F   
+19.440              BA          Object Opstal                             F   
+19.440.001             KC       Kostencomponent                           F   
+19.440.001.001            BG    Partij Begunstigde                        F   
+19.440.010             DM       Schade/Verlies                            F   
+19.440.020             PN       Taak                                      F   
+19.440.020.001            KC    Kostencomponent                           F   
+19.440.020.001.01            BG Partij Begunstigde                        F   
+19.440.020.010            VT    Voortgang                                 F   
+19.440.100             EI       Partij Eigenaar object                    F   
+19.440.110             TX       Partij Taxateur                           F   
+19.440.200             OO       Object onderdeel                          F   
+19.440.200.001            KC    Kostencomponent                           F   
+19.440.200.001.01            BG Partij Begunstigde                        F   
+19.440.200.010            DM    Schade/Verlies                            F   
+19.450              RS          Object Reis                               F   
+19.450.001             KC       Kostencomponent                           F   
+19.450.001.001            BG    Partij Begunstigde                        F   
+19.450.010             DM       Schade/Verlies                            F   
+19.450.020             PN       Taak                                      F   
+19.450.020.001            KC    Kostencomponent                           F   
+19.450.020.001.01            BG Partij Begunstigde                        F   
+19.450.020.010            VT    Voortgang                                 F   
+19.450.200             OO       Object onderdeel                          F   
+19.450.200.001            KC    Kostencomponent                           F   
+19.450.200.001.01            BG Partij Begunstigde                        F   
+19.450.200.010            DM    Schade/Verlies                            F   
+19.460              SW          Object Software                           F   
+19.460.001             KC       Kostencomponent                           F   
+19.460.001.001            BG    Partij Begunstigde                        F   
+19.460.010             DM       Schade/Verlies                            F   
+19.460.020             PN       Taak                                      F   
+19.460.020.001            KC    Kostencomponent                           F   
+19.460.020.001.01            BG Partij Begunstigde                        F   
+19.460.020.010            VT    Voortgang                                 F   
+19.460.100             EI       Partij Eigenaar object                    F   
+19.460.110             TX       Partij Taxateur                           F   
+19.460.200             OO       Object onderdeel                          F   
+19.460.200.001            KC    Kostencomponent                           F   
+19.460.200.001.01            BG Partij Begunstigde                        F   
+19.460.200.010            DM    Schade/Verlies                            F   
+19.470              PT          Object Transport                          F   
+19.470.001             KC       Kostencomponent                           F   
+19.470.001.001            BG    Partij Begunstigde                        F   
+19.470.010             DM       Schade/Verlies                            F   
+19.470.020             PN       Taak                                      F   
+19.470.020.001            KC    Kostencomponent                           F   
+19.470.020.001.01            BG Partij Begunstigde                        F   
+19.470.020.010            VT    Voortgang                                 F   
+19.470.100             EI       Partij Eigenaar object                    F   
+19.470.110             TX       Partij Taxateur                           F   
+19.470.200             OO       Object onderdeel                          F   
+19.470.200.001            KC    Kostencomponent                           F   
+19.470.200.001.01            BG Partij Begunstigde                        F   
+19.470.200.010            DM    Schade/Verlies                            F   
+19.480              PG          Object Vaartuig                           F   
+19.480.001             KC       Kostencomponent                           F   
+19.480.001.001            BG    Partij Begunstigde                        F   
+19.480.010             DM       Schade/Verlies                            F   
+19.480.020             PN       Taak                                      F   
+19.480.020.001            KC    Kostencomponent                           F   
+19.480.020.001.01            BG Partij Begunstigde                        F   
+19.480.020.010            VT    Voortgang                                 F   
+19.480.100             EI       Partij Eigenaar object                    F   
+19.480.110             TX       Partij Taxateur                           F   
+19.480.200             OO       Object onderdeel                          F   
+19.480.200.001            KC    Kostencomponent                           F   
+19.480.200.001.01            BG Partij Begunstigde                        F   
+19.480.200.010            DM    Schade/Verlies                            F   
+19.490              MH          Object Vaartuigmotor                      F   
+19.490.001             KC       Kostencomponent                           F   
+19.490.001.001            BG    Partij Begunstigde                        F   
+19.490.010             DM       Schade/Verlies                            F   
+19.490.020             PN       Taak                                      F   
+19.490.020.001            KC    Kostencomponent                           F   
+19.490.020.001.01            BG Partij Begunstigde                        F   
+19.490.020.010            VT    Voortgang                                 F   
+19.490.100             EI       Partij Eigenaar object                    F   
+19.490.110             TX       Partij Taxateur                           F   
+19.490.200             OO       Object onderdeel                          F   
+19.490.200.001            KC    Kostencomponent                           F   
+19.490.200.001.01            BG Partij Begunstigde                        F   
+19.490.200.010            DM    Schade/Verlies                            F   
+19.500              VB          Object Volgboot                           F   
+19.500.001             KC       Kostencomponent                           F   
+19.500.001.001            BG    Partij Begunstigde                        F   
+19.500.010             DM       Schade/Verlies                            F   
+19.500.020             PN       Taak                                      F   
+19.500.020.001            KC    Kostencomponent                           F   
+19.500.020.001.01            BG Partij Begunstigde                        F   
+19.500.020.010            VT    Voortgang                                 F   
+19.500.100             EI       Partij Eigenaar object                    F   
+19.500.110             TX       Partij Taxateur                           F   
+19.500.200             OO       Object onderdeel                          F   
+19.500.200.001            KC    Kostencomponent                           F   
+19.500.200.001.01            BG Partij Begunstigde                        F   
+19.500.200.010            DM    Schade/Verlies                            F   
+19.510              OS          Object Overig Schade                      F   
+19.510.001             KC       Kostencomponent                           F   
+19.510.001.001            BG    Partij Begunstigde                        F   
+19.510.010             DM       Schade/Verlies                            F   
+19.510.020             PN       Taak                                      F   
+19.510.020.001            KC    Kostencomponent                           F   
+19.510.020.001.01            BG Partij Begunstigde                        F   
+19.510.020.010            VT    Voortgang                                 F   
+19.510.100             EI       Partij Eigenaar object                    F   
+19.510.110             TX       Partij Taxateur                           F   
+19.510.200             OO       Object onderdeel                          F   
+19.510.200.001            KC    Kostencomponent                           F   
+19.510.200.001.01            BG Partij Begunstigde                        F   
+19.510.200.010            DM    Schade/Verlies                            F   
+19.590              OG          Partij (Verzekerd) bedrijf                F   
+19.590.001             KC       Kostencomponent                           F   
+19.590.001.001            BG    Partij Begunstigde                        F   
+19.590.010             DM       Schade/Verlies                            F   
+19.590.020             PN       Taak                                      F   
+19.590.020.001            KC    Kostencomponent                           F   
+19.590.020.001.01            BG Partij Begunstigde                        F   
+19.590.020.010            VT    Voortgang                                 F   
+19.590.100             TX       Partij Taxateur                           F   
+19.600              VZ          (Verzekerd) Persoon                       F   
+19.600.100             MG       Medicijngebruik                           F   
+19.600.200             VM       Verzuim                                   F   
+20               SP             Partij Samenwonende Partner              F    
+20.001              IK          Beroep/Inkomen personen                  F    
+20.001.001             WG       Partij Werkgever                         F    
+21               KN             Partij Kind                              F    
+22               BX             Berichtdrager                         F       

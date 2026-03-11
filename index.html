@@ -147,11 +147,11 @@ function SubsetPicker({codes,value,onChange}){
 
 // ══════════ APP ══════════
 function App(){
-const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=useState({});const [ld,setLd]=useState(true);const [de,setDe]=useState(null);
+const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=useState({});const [hier,setHier]=useState({});const [ld,setLd]=useState(true);const [de,setDe]=useState(null);
 const [meta,setMeta]=useState({branche:'',porCode:'',afdNaam:'',afdVersie:'',afdTag:'',segment:'Zakelijk',organisatie:'',productnaam:'',contactpersoon:'',email:'',datum:''});
 const [schema,setSchema]=useState([]);const [sel,setSel]=useState(null);const [vw,setVw]=useState('start');const [tt,setTt]=useState(null);const [exp,setExp]=useState(new Set());const [ml,setMl]=useState(null);
 
-useEffect(()=>{(async()=>{try{const r=await fetch('Datacat.afm');if(!r.ok)throw new Error('Datacat.afm niet gevonden');setDc(parseDC(await r.text()));try{const r2=await fetch('Codelist.afm');if(r2.ok){const{g,d}=parseCL(await r2.text());setCg(g);setCd(d);}}catch(e){}setLd(false);}catch(e){setDe(e.message);setLd(false);}})();},[]);
+useEffect(()=>{(async()=>{try{const r=await fetch('Datacat.afm');if(!r.ok)throw new Error('Datacat.afm niet gevonden');setDc(parseDC(await r.text()));try{const r2=await fetch('Codelist.afm');if(r2.ok){const{g,d}=parseCL(await r2.text());setCg(g);setCd(d);}}catch(e){}try{const r3=await fetch('Hierarchie.json');if(r3.ok)setHier(await r3.json());}catch(e){console.warn('Hierarchie.json niet geladen');}setLd(false);}catch(e){setDe(e.message);setLd(false);}})();},[]);
 
 const msg=useCallback((m,t='ok')=>{setTt({m,t});setTimeout(()=>setTt(null),2500);},[]);
 const dcE=useMemo(()=>dc.filter(d=>d.type==='E'),[dc]);
@@ -281,7 +281,7 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 </div></div>
 
 {/* MODALS */}
-{ml?.t==='addE'&&<AEM dc={dcE} schema={schema} onAdd={addE} onClose={()=>setMl(null)}/>}
+{ml?.t==='addE'&&<AEM dc={dcE} dcM={dcM} hier={hier} schema={schema} onAdd={addE} onClose={()=>setMl(null)}/>}
 {ml?.t==='addA'&&<AAM ec={ml.ec} pad={ml.pad} eo={ml.eo} dcA={dcA} schema={schema} onAdd={addA} onClose={()=>setMl(null)}/>}
 {ml?.t==='meta'&&<MM meta={meta} onSave={m=>{setMeta(m);setMl(null);msg('Opgeslagen');}} onClose={()=>setMl(null)}/>}
 {ml?.t==='cl'&&<CM n={ml.n} items={cg[ml.n]||[]} desc={cd[ml.n]||''} onClose={()=>setMl(null)}/>}
@@ -289,21 +289,63 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 </div>;}
 
 // ══════════ MODALS ══════════
-function AEM({dc,schema,onAdd,onClose}){const [q,setQ]=useState('');const [pp,setPp]=useState('PP');
-const ex=new Set(schema.filter(s=>s.isE).map(s=>s.pad+'|'+s.label));
-const ps=useMemo(()=>{const p=[{v:'',l:'Root'}];schema.filter(s=>s.isE).forEach(s=>{if(!p.some(x=>x.v===s.pad))p.push({v:s.pad,l:s.pad});});return p;},[schema]);
-const fl=useMemo(()=>{const t=q.toLowerCase();return(q?dc.filter(e=>e.ec.toLowerCase().includes(t)||e.nm.toLowerCase().includes(t)):dc).slice(0,80);},[dc,q]);
+function AEM({dc,dcM,hier,schema,onAdd,onClose}){const [q,setQ]=useState('');const [parentPath,setParentPath]=useState('');
+// Get existing entities by pad
+const existing=new Set(schema.filter(s=>s.isE).map(s=>s.pad+'|'+s.label));
+// Build parent options from current schema entities
+const parentOpts=useMemo(()=>{
+    const opts=[{v:'',l:'Root (top-level)',code:'ROOT'}];
+    schema.filter(s=>s.isE).forEach(s=>{
+        // Each entity can be a parent
+        const fullPad=s.pad;
+        if(!opts.some(o=>o.v===fullPad))
+            opts.push({v:fullPad,l:fullPad+' — '+s.oms,code:s.label});
+    });
+    return opts;
+},[schema]);
+// Determine which entities can be added under the selected parent
+const validChildren=useMemo(()=>{
+    if(!hier||Object.keys(hier).length===0){
+        // Fallback: show all entities from datacatalogus
+        return dc.map(e=>({code:e.ec,naam:e.nm}));
+    }
+    // Find the parent entity code
+    const parentOpt=parentOpts.find(o=>o.v===parentPath);
+    const parentCode=parentOpt?parentOpt.code:'ROOT';
+    // Get valid children from hierarchy
+    const children=hier[parentCode]||[];
+    // Enrich with DC data (naam)
+    return children.map(ch=>{
+        const dcEnt=dcM[ch.c];
+        return {code:ch.c,naam:dcEnt?dcEnt.nm:ch.n};
+    });
+},[hier,parentPath,parentOpts,dc,dcM]);
+// Filter by search
+const fl=useMemo(()=>{
+    const t=q.toLowerCase();
+    return q?validChildren.filter(e=>e.code.toLowerCase().includes(t)||e.naam.toLowerCase().includes(t)):validChildren;
+},[validChildren,q]);
+
 return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:700,maxHeight:'85vh'}}>
-<div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',gap:10,alignItems:'center'}}><strong style={{flex:1,fontSize:13}}>Entiteit toevoegen</strong><button className="bg" onClick={onClose}>✕</button></div>
+<div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',gap:10,alignItems:'center'}}><strong style={{flex:1,fontSize:13}}>Entiteit toevoegen (volgens hiërarchie)</strong><button className="bg" onClick={onClose}>✕</button></div>
 <div style={{padding:'6px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',gap:6}}>
-<input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek..." style={{flex:1}} autoFocus/>
-<select value={pp} onChange={e=>setPp(e.target.value)} style={{minWidth:140}}>{ps.map(p=><option key={p.v} value={p.v}>{p.l}</option>)}</select></div>
-<div style={{flex:1,overflow:'auto',padding:'4px 8px',maxHeight:'65vh'}}>
-{fl.map(e=>{const exists=ex.has((pp?pp+'/'+e.ec:e.ec)+'|'+e.ec);return <div key={e.ec} style={{display:'flex',alignItems:'center',gap:6,padding:'4px 8px',borderRadius:4,cursor:exists?'default':'pointer',opacity:exists?.3:1,fontSize:12}}
-onClick={()=>{if(!exists)onAdd(e.ec,pp);}} onMouseEnter={e=>{if(!exists)e.currentTarget.style.background='var(--bg3)'}} onMouseLeave={e=>{e.currentTarget.style.background=''}}>
-<span className="tg te">{e.ec}</span><span style={{flex:1}}>{e.nm}</span>
-<span style={{fontSize:10,color:'var(--tx3)',maxWidth:250,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{e.om}</span>
+<input type="text" value={q} onChange={e=>setQ(e.target.value)} placeholder="Zoek entiteit..." style={{flex:1}} autoFocus/>
+<select value={parentPath} onChange={e=>setParentPath(e.target.value)} style={{minWidth:180,fontSize:11}}>
+{parentOpts.map(p=><option key={p.v} value={p.v}>{p.l}</option>)}
+</select></div>
+<div style={{padding:'2px 16px',borderBottom:'1px solid var(--bdr)',fontSize:10,color:'var(--tx3)'}}>
+{validChildren.length} geldige {validChildren.length===1?'entiteit':'entiteiten'} voor {parentPath||'root'}
+</div>
+<div style={{flex:1,overflow:'auto',padding:'4px 8px',maxHeight:'60vh'}}>
+{fl.map(e=>{const targetPad=parentPath?parentPath+'/'+e.code:e.code;const exists=existing.has(targetPad+'|'+e.code);
+return <div key={e.code} style={{display:'flex',alignItems:'center',gap:6,padding:'4px 8px',borderRadius:4,cursor:exists?'default':'pointer',opacity:exists?.3:1,fontSize:12}}
+onClick={()=>{if(!exists)onAdd(e.code,parentPath);}} onMouseEnter={e=>{if(!exists)e.currentTarget.style.background='var(--bg3)'}} onMouseLeave={e=>{e.currentTarget.style.background=''}}>
+<span className="tg te">{e.code}</span><span style={{flex:1}}>{e.naam}</span>
+<code style={{fontSize:10,color:'var(--tx3)'}}>{targetPad}</code>
 {exists&&<span style={{fontSize:10,color:'var(--ok)'}}>✓</span>}</div>;})}
+{fl.length===0&&<div style={{textAlign:'center',color:'var(--tx3)',padding:20,fontSize:12}}>
+{q?'Geen resultaten':'Geen geldige sub-entiteiten voor deze parent'}
+</div>}
 </div></div></div>;}
 
 function AAM({ec,pad,eo,dcA,schema,onAdd,onClose}){const [q,setQ]=useState('');
