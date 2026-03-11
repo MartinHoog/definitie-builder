@@ -58,6 +58,9 @@ code{font-family:'SF Mono',Consolas,monospace;font-size:11px;background:var(--bg
 .st tr.ent td.vc{background:transparent}
 /* Func columns compact */
 .st th.fc-h{padding:4px 2px;width:34px;min-width:34px;max-width:34px}
+.st th.fc-h:hover{background:var(--bg4)}
+.st th.fc-act{background:var(--acc)!important;color:#fff!important}
+.st th.fc-act.pol{background:#5b21b6!important}.st th.fc-act.ka{background:#4c1d95!important}
 .st td.fc-c{padding:1px 0;text-align:center;width:34px;min-width:34px;max-width:34px}
 .fx{width:28px;height:22px;text-align:center;font-size:10px;font-weight:700;border-radius:3px;cursor:pointer;user-select:none;border:none;background:transparent;padding:0}
 .fx:hover{background:var(--bg4)}
@@ -157,6 +160,7 @@ function App(){
 const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=useState({});const [hier,setHier]=useState({});const [ld,setLd]=useState(true);const [de,setDe]=useState(null);
 const [meta,setMeta]=useState({branche:'',porCode:'',afdNaam:'',afdVersie:'',afdTag:'',segment:'Zakelijk',organisatie:'',productnaam:'',contactpersoon:'',email:'',datum:''});
 const [schema,setSchema]=useState([]);const [sel,setSel]=useState(null);const [vw,setVw]=useState('start');const [tt,setTt]=useState(null);const [exp,setExp]=useState(new Set());const [ml,setMl]=useState(null);
+const [fFilt,setFFilt]=useState(null); // {fn:'premieBerekening_aanroep',val:'V'} or null
 
 useEffect(()=>{(async()=>{try{const r=await fetch('Datacat.afm');if(!r.ok)throw new Error('Datacat.afm niet gevonden');setDc(parseDC(await r.text()));try{const r2=await fetch('Codelist.afm');if(r2.ok){const{g,d}=parseCL(await r2.text());setCg(g);setCd(d);}}catch(e){}try{const r3=await fetch('Hierarchie.json');if(r3.ok)setHier(await r3.json());}catch(e){console.warn('Hierarchie.json niet geladen');}setLd(false);}catch(e){setDe(e.message);setLd(false);}})();},[]);
 
@@ -169,19 +173,28 @@ const dcM=useMemo(()=>{const m={};dcE.forEach(e=>{m[e.ec]=e;});return m;},[dcE])
 const tree=useMemo(()=>{const r=[];let c=null;for(const s of schema){if(s.isE){c={...s,at:[]};r.push(c);}else if(c)c.at.push(s);}return r;},[schema]);
 const si=useMemo(()=>schema.find(s=>s._id===sel),[schema,sel]);
 
-// Build flat display list with separators
+// Build flat display list with separators + apply function filter
 const displayRows=useMemo(()=>{
     const rows=[];let prevPad=null;
     for(const ent of tree){
+        // If filter active, skip entities that don't match and have no matching children
+        if(fFilt){
+            const entMatch=!!(ent.fn[fFilt.fn]);
+            const childMatch=ent.at.some(a=>a.fn[fFilt.fn]===fFilt.val);
+            if(!entMatch&&!childMatch)continue;
+        }
         if(prevPad!==null&&ent.pad!==prevPad)rows.push({_type:'sep'});
         rows.push({...ent,_type:'ent'});
         if(exp.has(ent.pad+'|'+ent.label)){
-            for(const a of ent.at)rows.push({...a,_type:'attr'});
+            for(const a of ent.at){
+                if(fFilt&&!a.fn[fFilt.fn])continue; // hide attrs without value in filtered column
+                rows.push({...a,_type:'attr'});
+            }
         }
         prevPad=ent.pad;
     }
     return rows;
-},[tree,exp]);
+},[tree,exp,fFilt]);
 
 const upd=useCallback((id,u)=>setSchema(p=>p.map(s=>s._id===id?{...s,...u}:s)),[]);
 const del=useCallback((id)=>{setSchema(prev=>{const it=prev.find(s=>s._id===id);if(!it)return prev;if(!it.isE)return prev.filter(s=>s._id!==id);const idx=prev.indexOf(it);const ep=it.pad;const res=[];let skip=false;for(let i=0;i<prev.length;i++){if(i===idx){skip=true;continue;}if(skip){const s=prev[i];if(!s.isE&&s.pad===ep)continue;if(s.pad.startsWith(ep+'/'))continue;skip=false;}res.push(prev[i]);}return res;});if(sel===id)setSel(null);msg('Verwijderd');},[sel,msg]);
@@ -433,6 +446,13 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <button className="b bp" style={{padding:'3px 10px'}} onClick={doExp} disabled={!schema.length}>📤 Export</button>
 </div>
 
+{/* Filter bar */}
+{fFilt&&<div style={{padding:'4px 12px',borderBottom:'1px solid var(--bdr)',background:'#fef9c3',display:'flex',alignItems:'center',gap:8,fontSize:11}}>
+<span style={{color:'#92400e',fontWeight:600}}>Filter actief:</span>
+<span style={{color:'#78350f'}}>{FN[FS.indexOf(fFilt.val)]||fFilt.fn} — toon alleen rijen met waarde</span>
+<button className="bg" style={{fontSize:10,marginLeft:'auto',color:'var(--err)'}} onClick={()=>setFFilt(null)}>✕ Filter wissen</button>
+</div>}
+
 {/* Table */}
 <div style={{flex:1,overflow:'auto'}}>
 <table className="st">
@@ -446,9 +466,9 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <th style={{width:46}}>Min</th>
 <th style={{width:46}}>Max</th>
 <th style={{width:110}}>Eigen oms.</th>
-{FS.slice(0,4).map((f,i)=><th key={i} className="fc-h" title={FN[i]}>{f}</th>)}
-<th className="fc-h pol" title={FN[4]}>{FS[4]}</th>
-<th className="fc-h ka" title={FN[5]}>{FS[5]}</th>
+{FN.slice(0,4).map((fn,i)=>{const active=fFilt&&fFilt.fn===fn;return <th key={i} className={'fc-h'+(active?' fc-act':'')} style={{cursor:'pointer',position:'relative'}} title={fn} onClick={()=>setFFilt(active?null:{fn,val:FS[i]})}><div>{FS[i]}</div><div style={{fontSize:7,fontWeight:400,letterSpacing:0,textTransform:'none',lineHeight:'9px',marginTop:1,opacity:.7}}>{['Premie','Premie','Accept.','Accept.'][i]}</div><div style={{fontSize:7,fontWeight:400,letterSpacing:0,textTransform:'none',lineHeight:'9px',opacity:.7}}>{['aanroep','resultaat','aanroep','resultaat'][i]}</div>{active&&<div style={{position:'absolute',bottom:-2,left:'25%',right:'25%',height:2,background:'var(--acc)',borderRadius:1}}/>}</th>;})}
+<th className={'fc-h pol'+(fFilt&&fFilt.fn===FN[4]?' fc-act':'')} style={{cursor:'pointer',position:'relative'}} title={FN[4]} onClick={()=>setFFilt(fFilt&&fFilt.fn===FN[4]?null:{fn:FN[4],val:FS[4]})}><div>{FS[4]}</div><div style={{fontSize:7,fontWeight:400,letterSpacing:0,textTransform:'none',lineHeight:'10px',marginTop:1,opacity:.8}}>Polisblad</div>{fFilt&&fFilt.fn===FN[4]&&<div style={{position:'absolute',bottom:-2,left:'25%',right:'25%',height:2,background:'var(--acc)',borderRadius:1}}/>}</th>
+<th className={'fc-h ka'+(fFilt&&fFilt.fn===FN[5]?' fc-act':'')} style={{cursor:'pointer',position:'relative'}} title={FN[5]} onClick={()=>setFFilt(fFilt&&fFilt.fn===FN[5]?null:{fn:FN[5],val:FS[5]})}><div>{FS[5]}</div><div style={{fontSize:7,fontWeight:400,letterSpacing:0,textTransform:'none',lineHeight:'10px',marginTop:1,opacity:.9}}>Kunnen</div><div style={{fontSize:7,fontWeight:400,letterSpacing:0,textTransform:'none',lineHeight:'9px',opacity:.9}}>Aanl.</div>{fFilt&&fFilt.fn===FN[5]&&<div style={{position:'absolute',bottom:-2,left:'25%',right:'25%',height:2,background:'#fff',borderRadius:1}}/>}</th>
 <th style={{width:50}}></th>
 </tr></thead>
 <tbody>
