@@ -256,7 +256,62 @@ const addA=useCallback((ec,ac,tp)=>{const a=(dcA[ec]||[]).find(x=>x.ac===ac);if(
 
 const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg(`${f.name} — ${items.length} items`);}catch(err){msg('Fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
 const doExp=useCallback(async()=>{try{const wb=expTpl(meta,schema);const buf=await wb.xlsx.writeBuffer();const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${meta.afdNaam||'productdefinitie'}.xlsx`;a.click();URL.revokeObjectURL(url);msg('Geëxporteerd');}catch(err){msg('Fout: '+err.message,'err');}},[meta,schema,msg]);
-const doNew=useCallback(()=>{const b=[{pad:'AL',label:'AL',oms:'BERICHT ALGEMEEN',isE:true,fn:{premieBerekening_aanroep:'1-1',premieBerekening_resultaat:'1-1',acceptatie_aanroep:'1-1',acceptatie_resultaat:'1-1',polisbladGegevens:'1-1',kunnenAanleveren:'1-1'}},{pad:'AL',label:'AL_DATACAT',oms:'Versie datacatalogus',cl:'ADNAFM',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'AL',label:'AL_FUNCTIE',oms:'Berichtfunctie, code',cl:'ADNFUN',isE:false,fn:{}},{pad:'AL',label:'AL_VRWRKCD',oms:'Verwerkingscode entiteit',cl:'ADNVRC',isE:false,fn:{}},{pad:'PP',label:'PP',oms:'CONTRACT POLIS/ONDERDEEL',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP',label:'PP_AFDDEFN',oms:'AFD definitienaam',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_BRANCHE',oms:'ADN branchecode',cl:'ADNBRA',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_INGDAT',oms:'Ingangsdatum',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP',label:'PP_NUMMER',oms:'Contractnummer',isE:false,fn:{kunnenAanleveren:'V'}},{pad:'PP/VP',label:'VP',oms:'PARTIJ VERZEKERINGNEMER',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP/VE',label:'VE',oms:'PARTIJ VOLMACHTNEMER',isE:true,fn:{kunnenAanleveren:'1-1'}},{pad:'PP/VL',label:'VL',oms:'PARTIJ VOLMACHTGEVER',isE:true,fn:{kunnenAanleveren:'1-1'}}].map(s=>({...s,_id:uid(),cl:s.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:''}));setSchema(b);setExp(new Set(b.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg('Nieuw project');},[msg]);
+const doNew=useCallback(()=>{
+// Short aliases for function names
+const [A,B,C,D,E,F]=FN;
+const b=[
+// AL
+{pad:'AL',label:'AL',oms:'BERICHT ALGEMEEN',isE:true,fn:{[A]:'1-1',[B]:'1-1',[C]:'1-1',[D]:'1-1',[E]:'1-1',[F]:'1-1'}},
+{pad:'AL',label:'AL_DATACAT',oms:'Versie datacatalogus',cl:'ADNAFM',isE:false,fn:{[F]:'V'}},
+{pad:'AL',label:'AL_FUNCTIE',oms:'Berichtfunctie, code',cl:'ADNFUN',isE:false,fn:{}},
+{pad:'AL',label:'AL_VRWRKCD',oms:'Verwerkingscode entiteit',cl:'ADNVRC',isE:false,fn:{}},
+// PP
+{pad:'PP',label:'PP',oms:'CONTRACT POLIS/ONDERDEEL',isE:true,fn:{[F]:'1-1'}},
+{pad:'PP',label:'PP_AFDDEFN',oms:'AFD definitienaam',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_BRANCHE',oms:'ADN branchecode',cl:'ADNBRA',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_INGDAT',oms:'Ingangsdatum',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_NUMMER',oms:'Contractnummer',isE:false,fn:{[F]:'V'}},
+// PP/TP
+{pad:'PP/TP',label:'TP',oms:'PARTIJ TUSSENPERSOON',isE:true,fn:{[F]:'0-1'}},
+{pad:'PP/TP',label:'TP_ANAAM',oms:'Naam',isE:false,fn:{[F]:'O'}},
+{pad:'PP/TP',label:'TP_AFMVRGN',oms:'AFM vergunningnummer',isE:false,fn:{[F]:'O'}},
+{pad:'PP/TP',label:'TP_IDNR',oms:'Identificatienummer',isE:false,fn:{[F]:'V'}},
+// PP/VE
+{pad:'PP/VE',label:'VE',oms:'PARTIJ VOLMACHTNEMER',isE:true,fn:{[A]:'1-1',[B]:'1-1',[C]:'1-1',[D]:'1-1',[F]:'1-1'}},
+{pad:'PP/VE',label:'VE_ANAAM',oms:'Naam',isE:false,fn:{[F]:'V'}},
+{pad:'PP/VE',label:'VE_MYAAND',oms:'POR Maatschappij aanduiding, code',cl:'PORMAA',isE:false,fn:{[A]:'V',[B]:'V',[C]:'V',[D]:'V',[F]:'V'}},
+{pad:'PP/VE',label:'VE_TELNUM',oms:'Telefoonnummer',isE:false,fn:{[F]:'V'}},
+{pad:'PP/VE',label:'VE_IDNR',oms:'Identificatienummer',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VE',label:'VE_TWEEDED',oms:'Tweede deel naam',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VE',label:'VE_VOLGNUM',oms:'Volgnummer',isE:false,fn:{[F]:'O'}},
+// PP/VL
+{pad:'PP/VL',label:'VL',oms:'PARTIJ VOLMACHTGEVER',isE:true,fn:{[F]:'1-1'}},
+{pad:'PP/VL',label:'VL_ANAAM',oms:'Naam',isE:false,fn:{[F]:'V'}},
+{pad:'PP/VL',label:'VL_MYAAND',oms:'POR Maatschappij aanduiding, code',cl:'PORMAA',isE:false,fn:{[F]:'V'}},
+{pad:'PP/VL',label:'VL_EMAIL',oms:'E-mailadres',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VL',label:'VL_TELNUM',oms:'Telefoonnummer',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VL',label:'VL_TWEEDED',oms:'Tweede deel naam',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VL',label:'VL_VEIDNR',oms:'Volmachtnemer identificatie',isE:false,fn:{[F]:'O'}},
+// PP/VP
+{pad:'PP/VP',label:'VP',oms:'PARTIJ VERZEKERINGNEMER',isE:true,fn:{[F]:'1-1'}},
+{pad:'PP/VP',label:'VP_GEBDAT',oms:'Geboortedatum',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VP',label:'VP_GESLACH',oms:'Geslacht',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VP',label:'VP_ANAAM',oms:'Naam',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VP',label:'VP_HUISNR',oms:'Huisnummer',isE:false,fn:{[F]:'V'}},
+{pad:'PP/VP',label:'VP_NRHNDRG',oms:'Nummer handelsregister',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VP',label:'VP_PCODE',oms:'Postcode',cl:'ADNGES',isE:false,fn:{[F]:'V'}},
+{pad:'PP/VP',label:'VP_TOEVOEG',oms:'Huisnummer toevoeging',isE:false,fn:{[F]:'O'}},
+{pad:'PP/VP',label:'VP_PARZAKC',oms:'Particulier of zakelijk, code',cl:'ADNSRL',isE:false,fn:{[F]:'V'}},
+{pad:'PP/VP',label:'VP_RELNUM',oms:'Relatienummer',isE:false,fn:{[F]:'V'}},
+// XG
+{pad:'XG',label:'XG',oms:'TRANSACTIE PROCES',isE:true,fn:{[A]:'1-1',[C]:'1-1'}},
+{pad:'XG',label:'XG_STATUS',oms:'Status, code',cl:'ADNSTS',isE:false,fn:{[A]:'V',[C]:'V'}},
+{pad:'XG',label:'XG_STATUST',oms:'Toelichting status',isE:false,fn:{[A]:'O',[C]:'O'}},
+// XG/XM
+{pad:'XG/XM',label:'XM',oms:'OMSCHRIJVING STATUS',isE:true,fn:{[A]:'0-1',[C]:'0-1'}},
+{pad:'XG/XM',label:'XM_STATTXT',oms:'Status, tekst',isE:false,fn:{[A]:'O',[C]:'O'}},
+].map(s=>({...s,_id:uid(),cl:s.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:''}));
+setSchema(b);setExp(new Set(b.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg('Nieuw project');},[msg]);
 
 if(ld)return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',gap:10}}><div className="sp" style={{width:28,height:28,border:'2.5px solid var(--bdr)',borderTopColor:'var(--acc)',borderRadius:'50%'}}/><span style={{color:'var(--tx3)',fontSize:13}}>Laden...</span></div>;
 
