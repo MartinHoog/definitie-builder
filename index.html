@@ -158,7 +158,7 @@ function SubsetPicker({codes,value,onChange}){
 // ══════════ APP ══════════
 function App(){
 const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=useState({});const [hier,setHier]=useState({});const [ld,setLd]=useState(true);const [de,setDe]=useState(null);
-const [meta,setMeta]=useState({branche:'',porCode:'',afdNaam:'',afdVersie:'',afdTag:'',segment:'Zakelijk',organisatie:'',productnaam:'',contactpersoon:'',email:'',datum:''});
+const [meta,setMeta]=useState({branche:'',porCode:'',afdNaam:'',afdVersie:'',afdTag:'SUIV',segment:'Zakelijk',organisatie:'',productnaam:'',contactpersoon:'',email:'',datum:''});
 const [schema,setSchema]=useState([]);const [sel,setSel]=useState(null);const [vw,setVw]=useState('start');const [tt,setTt]=useState(null);const [exp,setExp]=useState(new Set());const [ml,setMl]=useState(null);
 const [fFilt,setFFilt]=useState(null); // {fn:'premieBerekening_aanroep',val:'V'} or null
 const [search,setSearch]=useState('');
@@ -557,7 +557,7 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 {/* MODALS */}
 {ml?.t==='addE'&&<AEM dc={dcE} dcM={dcM} hier={hier} schema={schema} onAdd={addE} onClose={()=>setMl(null)}/>}
 {ml?.t==='addA'&&<AAM ec={ml.ec} pad={ml.pad} eo={ml.eo} dcA={dcA} schema={schema} onAdd={addA} onClose={()=>setMl(null)}/>}
-{ml?.t==='meta'&&<MM meta={meta} onSave={m=>{setMeta(m);setMl(null);msg('Opgeslagen');}} onClose={()=>setMl(null)}/>}
+{ml?.t==='meta'&&<MM meta={meta} cg={cg} onSave={m=>{setMeta(m);setMl(null);msg('Opgeslagen');}} onClose={()=>setMl(null)}/>}
 {ml?.t==='cl'&&<CM n={ml.n} items={cg[ml.n]||[]} desc={cd[ml.n]||''} onClose={()=>setMl(null)}/>}
 {tt&&<div className="tt fi" style={{background:tt.t==='ok'?'var(--ok)':tt.t==='warn'?'var(--warn)':'var(--err)'}}>{tt.m}</div>}
 </div>;}
@@ -661,12 +661,44 @@ onMouseEnter={e=>{if(!exists)e.currentTarget.style.background='var(--bg3)'}} onM
 {fl.length===0&&<div style={{textAlign:'center',color:'var(--tx3)',padding:20,fontSize:12}}>{attrs.length===0?`Geen attributen voor ${ec}`:'Geen resultaten'}</div>}
 </div></div></div>;}
 
-function MM({meta,onSave,onClose}){const [m,setM]=useState({...meta});
-const fds=[['Branche','branche'],['POR code','porCode'],['AFD-definitie naam','afdNaam'],['Versienummer','afdVersie'],['Tag','afdTag'],['Segment','segment'],['Organisatie','organisatie'],['Productnaam','productnaam'],['Contactpersoon','contactpersoon'],['E-mail/Tel','email'],['Datum','datum']];
-return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:440,maxHeight:'70vh'}}>
+function MM({meta,cg,onSave,onClose}){const [m,setM]=useState({...meta});
+const [braQ,setBraQ]=useState('');const [porQ,setPorQ]=useState('');
+const braCodes=cg['ADNBRA']||[];const porCodes=cg['PORMAA']||[];
+const braFilt=useMemo(()=>{const t=braQ.toLowerCase();return braQ?braCodes.filter(c=>c.code.toLowerCase().includes(t)||c.oms.toLowerCase().includes(t)):braCodes;},[braCodes,braQ]);
+const porFilt=useMemo(()=>{const t=porQ.toLowerCase();return porQ?porCodes.filter(c=>c.code.toLowerCase().includes(t)||c.oms.toLowerCase().includes(t)):porCodes;},[porCodes,porQ]);
+const textFields=[['AFD-definitie naam','afdNaam'],['Versienummer','afdVersie'],['Organisatie','organisatie'],['Productnaam','productnaam'],['Contactpersoon','contactpersoon'],['E-mail/Tel','email'],['Datum','datum']];
+return <div className="mo" onClick={onClose}><div className="md" onClick={e=>e.stopPropagation()} style={{maxWidth:500,maxHeight:'85vh'}}>
 <div style={{padding:'10px 16px',borderBottom:'1px solid var(--bdr)',display:'flex',justifyContent:'space-between'}}><strong style={{fontSize:13}}>Metagegevens</strong><button className="bg" onClick={onClose}>✕</button></div>
-<div style={{flex:1,overflow:'auto',padding:'12px 16px'}}>{fds.map(([l,k])=><div className="sf" key={k}><div className="sl">{l}</div>
-{k==='segment'?<select value={m[k]||''} onChange={e=>setM(p=>({...p,[k]:e.target.value}))} style={{width:'100%'}}><option value="">—</option><option value="Particulier">Particulier</option><option value="Zakelijk">Zakelijk</option></select>:<input type="text" value={m[k]||''} onChange={e=>setM(p=>({...p,[k]:e.target.value}))} style={{width:'100%'}}/>}</div>)}</div>
+<div style={{flex:1,overflow:'auto',padding:'12px 16px'}}>
+
+<div className="sf"><div className="sl">Branche (ADNBRA)</div>
+{m.branche&&<div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}><code style={{fontSize:12}}>{m.branche}</code><span style={{fontSize:11,color:'var(--tx2)'}}>{braCodes.find(c=>c.code===m.branche)?.oms||''}</span><button className="bg" style={{fontSize:10,color:'var(--err)'}} onClick={()=>setM(p=>({...p,branche:''}))}>✕</button></div>}
+<input type="text" value={braQ} onChange={e=>setBraQ(e.target.value)} placeholder="Zoek branchecode..." style={{width:'100%',fontSize:11,marginBottom:2}}/>
+{braQ&&<div style={{border:'1px solid var(--bdr)',borderRadius:4,maxHeight:150,overflow:'auto',marginBottom:4}}>
+{braFilt.slice(0,50).map(c=><div key={c.code} style={{display:'flex',gap:6,padding:'3px 8px',cursor:'pointer',fontSize:11,background:m.branche===c.code?'var(--accBg)':''}} onClick={()=>{setM(p=>({...p,branche:c.code}));setBraQ('');}}
+onMouseEnter={e=>e.currentTarget.style.background='var(--bg3)'} onMouseLeave={e=>e.currentTarget.style.background=m.branche===c.code?'var(--accBg)':''}><code style={{fontWeight:600,color:'var(--acc)',minWidth:30}}>{c.code}</code><span style={{color:'var(--tx2)'}}>{c.oms}</span></div>)}
+{braFilt.length===0&&<div style={{padding:8,fontSize:11,color:'var(--tx3)',textAlign:'center'}}>Geen resultaten</div>}
+</div>}
+</div>
+
+<div className="sf"><div className="sl">POR Maatschappij aanduiding (PORMAA)</div>
+{m.porCode&&<div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}><code style={{fontSize:12}}>{m.porCode}</code><span style={{fontSize:11,color:'var(--tx2)'}}>{porCodes.find(c=>c.code===m.porCode)?.oms||''}</span><button className="bg" style={{fontSize:10,color:'var(--err)'}} onClick={()=>setM(p=>({...p,porCode:''}))}>✕</button></div>}
+<input type="text" value={porQ} onChange={e=>setPorQ(e.target.value)} placeholder="Zoek maatschappijcode..." style={{width:'100%',fontSize:11,marginBottom:2}}/>
+{porQ&&<div style={{border:'1px solid var(--bdr)',borderRadius:4,maxHeight:150,overflow:'auto',marginBottom:4}}>
+{porFilt.slice(0,50).map(c=><div key={c.code} style={{display:'flex',gap:6,padding:'3px 8px',cursor:'pointer',fontSize:11,background:m.porCode===c.code?'var(--accBg)':''}} onClick={()=>{setM(p=>({...p,porCode:c.code}));setPorQ('');}}
+onMouseEnter={e=>e.currentTarget.style.background='var(--bg3)'} onMouseLeave={e=>e.currentTarget.style.background=m.porCode===c.code?'var(--accBg)':''}><code style={{fontWeight:600,color:'var(--acc)',minWidth:40}}>{c.code}</code><span style={{color:'var(--tx2)'}}>{c.oms}</span></div>)}
+{porFilt.length===0&&<div style={{padding:8,fontSize:11,color:'var(--tx3)',textAlign:'center'}}>Geen resultaten</div>}
+</div>}
+</div>
+
+<div className="sf"><div className="sl">Productsegment</div>
+<select value={m.segment||''} onChange={e=>setM(p=>({...p,segment:e.target.value}))} style={{width:'100%'}}><option value="">—</option><option value="Particulier">Particulier</option><option value="Zakelijk">Zakelijk</option></select></div>
+
+<div className="sf"><div className="sl">AFD-definitie tag</div>
+<select value={m.afdTag||'SUIV'} onChange={e=>setM(p=>({...p,afdTag:e.target.value}))} style={{width:'100%'}}><option value="SUIV">SUIV</option><option value="SUIV-EP">SUIV-EP</option><option value="SUIV-COMBI">SUIV-COMBI</option></select></div>
+
+{textFields.map(([l,k])=><div className="sf" key={k}><div className="sl">{l}</div><input type="text" value={m[k]||''} onChange={e=>setM(p=>({...p,[k]:e.target.value}))} style={{width:'100%'}}/></div>)}
+</div>
 <div style={{padding:'10px 16px',borderTop:'1px solid var(--bdr)',display:'flex',justifyContent:'flex-end',gap:6}}><button className="b bs" onClick={onClose}>Annuleren</button><button className="b bp" onClick={()=>onSave(m)}>Opslaan</button></div>
 </div></div>;}
 
