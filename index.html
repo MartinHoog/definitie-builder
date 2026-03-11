@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AFD 1.0 Datacatalogus</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --bg-hover: #f1f5f9;
+            --bg-badge: #f1f5f9;
+            --bg-header: #ffffff;
+            --bg-selected: #dbeafe;
+            --border: #e2e8f0;
+            --border-input: #cbd5e1;
+            --border-selected: #3b82f6;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --text-placeholder: #94a3b8;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-light: #eff6ff;
+            --mark-bg: #fef08a;
+            --mark-text: inherit;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 24px rgba(0,0,0,0.08);
+            --entity-color: #2563eb;
+            --attr-color: #059669;
+            --type-jn: #2563eb;
+            --type-an: #059669;
+            --type-dat: #7c3aed;
+            --type-bed: #d97706;
+            --type-tijd: #4f46e5;
+            --type-perc: #ea580c;
+            --type-memo: #64748b;
+            --type-num: #0891b2;
+        }
+
+        .dark {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #1e293b;
+            --bg-hover: #334155;
+            --bg-badge: #334155;
+            --bg-header: #1e293b;
+            --bg-selected: #1e3a5f;
+            --border: #334155;
+            --border-input: #475569;
+            --border-selected: #60a5fa;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --text-placeholder: #64748b;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --accent-light: #1e3a5f;
+            --mark-bg: #854d0e;
+            --mark-text: #fef3c7;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+            --shadow-lg: 0 12px 24px rgba(0,0,0,0.4);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+
+        mark { background: var(--mark-bg); color: var(--mark-text); padding: 1px 2px; border-radius: 2px; }
+        code { font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace; font-size: 0.85em; background: var(--bg-badge); padding: 2px 6px; border-radius: 4px; }
+
+        input, select {
+            appearance: none;
+            background: var(--bg-input);
+            border: 1px solid var(--border-input);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+        input::placeholder { color: var(--text-placeholder); }
+
+        button { background: none; border: none; cursor: pointer; font-family: inherit; }
+        button:disabled { cursor: not-allowed; opacity: 0.5; }
+
+        .selected-item {
+            outline: 2px solid var(--border-selected) !important;
+            outline-offset: -1px;
+            background: var(--bg-selected) !important;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+        .animate-spin { animation: spin 1s linear infinite; }
+        .fade-in { animation: fadeIn 0.2s ease-out; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback, useRef } = React;
+
+        // ═══════════════════════════════════════════════════════
+        //  AFM PARSER — parses raw SIVI AFD 1.0 fixed-width files
+        // ═══════════════════════════════════════════════════════
+
+        function parseDatacatAFM(text) {
+            const lines = text.split(/\r?\n/).filter(l => l.length >= 64);
+            const items = [];
+
+            for (const line of lines) {
+                const type = line[0]; // E or A
+                if (type !== 'E' && type !== 'A') continue;
+
+                const entiteitcode = line.substring(1, 3).trim();
+                const naam = line.substring(28, 64).trim();
+                const omschrijving = line.substring(64).trim();
+
+                if (type === 'E') {
+                    items.push({
+                        'Entiteit/Attribuut': 'E',
+                        Entiteitcode: entiteitcode,
+                        Attribuutcode: '',
+                        Naam: naam,
+                        Omschrijving: omschrijving,
+                        Datatype: '',
+                        Formaat: '',
+                        Codelijst: ''
+                    });
+                } else {
+                    const attribuutcode = line.substring(5, 12).trim();
+                    const primaryDt = line.substring(12, 14).trim();
+                    const format = line.substring(14, 19).trim();
+                    const secondaryDt = line.substring(19, 21).trim();
+                    const codelijst = line.substring(21, 28).trim();
+
+                    // Effective datatype: secondary overrides primary when present
+                    const datatype = secondaryDt || primaryDt;
+
+                    // Build format string
+                    let formaat = '';
+                    if (format) {
+                        formaat = primaryDt + format;
+                    } else if (primaryDt) {
+                        formaat = primaryDt;
+                    }
+
+                    items.push({
+                        'Entiteit/Attribuut': 'A',
+                        Entiteitcode: entiteitcode,
+                        Attribuutcode: attribuutcode,
+                        Naam: naam,
+                        Omschrijving: omschrijving,
+                        Datatype: datatype,
+                        Formaat: formaat,
+                        Codelijst: codelijst
+                    });
+                }
+            }
+            return items;
+        }
+
+        function parseCodelistAFM(text) {
+            const lines = text.split(/\r?\n/).filter(l => l.length >= 8);
+            const groups = {};
+            const descriptions = {};
+
+            for (const line of lines) {
+                const type = line[0]; // L or C
+                const listName = line.substring(1, 7).trim();
+                if (!listName) continue;
+
+                if (type === 'L') {
+                    const rest = line.substring(7).trim();
+                    // Last char is actief flag (J/N)
+                    const desc = rest.length > 1 ? rest.substring(0, rest.length - 1).trim() : '';
+                    descriptions[listName] = desc;
+                    if (!groups[listName]) groups[listName] = [];
+                } else if (type === 'C') {
+                    if (!groups[listName]) groups[listName] = [];
+                    const rawField = line.substring(7);
+
+                    let code, omschrijving;
+                    // Check if pos 11 (index 4 in rawField) is a space → 4-char code
+                    if (rawField.length > 4 && rawField[4] === ' ') {
+                        code = rawField.substring(0, 4).trim();
+                        omschrijving = rawField.substring(5).trim();
+                    } else {
+                        // Overflow: code is the leading digit/alphanum sequence, rest is description
+                        // Split at first space
+                        const spaceIdx = rawField.indexOf(' ');
+                        if (spaceIdx > 0) {
+                            code = rawField.substring(0, spaceIdx).trim();
+                            omschrijving = rawField.substring(spaceIdx + 1).trim();
+                        } else {
+                            code = rawField.trim();
+                            omschrijving = '';
+                        }
+                    }
+
+                    if (code) {
+                        groups[listName].push({ code, omschrijving });
+                    }
+                }
+            }
+            return { groups, descriptions };
+        }
+
+        function parseAnvaExcel(arrayBuffer) {
+            const wb = XLSX.read(arrayBuffer, { type: 'array' });
+            // Try 'CSV-labels' sheet first, then first sheet
+            const sheetName = wb.SheetNames.includes('CSV-labels') ? 'CSV-labels' : wb.SheetNames[0];
+            const rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
+
+            // Group by AFD code, pick OAI=1 when duplicates
+            const byAfd = new Map();
+            for (const row of rows) {
+                const afd = String(row.AFD || '').trim();
+                const anva = String(row.ANVA || '').trim();
+                if (!afd || !anva) continue;
+
+                const entry = {
+                    afd,
+                    anva,
+                    omschrijving: String(row['ANVA Omschrijving'] || ''),
+                    afwijkend: String(row['Afwijkend niet toegestaan'] || ''),
+                    oai: row.OAI
+                };
+
+                if (!byAfd.has(afd)) byAfd.set(afd, []);
+                byAfd.get(afd).push(entry);
+            }
+
+            const mapping = {};
+            for (const [afd, entries] of byAfd) {
+                const chosen = entries.length > 1
+                    ? (entries.find(e => e.oai === 1 || e.oai === '1') || entries[0])
+                    : entries[0];
+
+                mapping[afd] = {
+                    code: chosen.anva,
+                    omschrijving: chosen.omschrijving,
+                    afwijkendNietToegestaan: chosen.afwijkend
+                };
+            }
+            return mapping;
+        }
+
+        // ═══════════════════════════════════════════════════════
+        //  SVG ICONS
+        // ═══════════════════════════════════════════════════════
+
+        const Icon = ({ d, className, viewBox = "0 0 24 24", fill = "none", strokeWidth = 2 }) => (
+            <svg className={className} fill={fill} stroke="currentColor" viewBox={viewBox} width="1em" height="1em" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round">
+                {Array.isArray(d) ? d.map((p, i) => <path key={i} d={p} />) : <path d={d} />}
+            </svg>
+        );
+
+        const Icons = {
+            Search: ({ className }) => <Icon className={className} d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />,
+            Database: ({ className }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" width="1em" height="1em" strokeWidth={2}>
+                    <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="m21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                </svg>
+            ),
+            Package: ({ className }) => <Icon className={className} d={["m7.5 4.27 9 5.15","M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z","m3.3 7 8.7 5 8.7-5","M12 22V12"]} />,
+            Filter: ({ className }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" width="1em" height="1em" strokeWidth={2}>
+                    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/>
+                </svg>
+            ),
+            Copy: ({ className }) => <Icon className={className} d={["M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2","M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"]} />,
+            Check: ({ className }) => <Icon className={className} d="M20 6 9 17l-5-5" />,
+            Sun: ({ className }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" width="1em" height="1em" strokeWidth={2}>
+                    <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+            ),
+            Moon: ({ className }) => <Icon className={className} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />,
+            BookOpen: ({ className }) => <Icon className={className} d={["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z","M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"]} />,
+            X: ({ className }) => <Icon className={className} d={["M18 6 6 18","M6 6l12 12"]} />,
+            ClipboardList: ({ className }) => <Icon className={className} d={["M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2","M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"]} />,
+            Info: ({ className }) => (
+                <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" width="1em" height="1em" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="m12 16v-4"/><path d="m12 8h.01"/>
+                </svg>
+            ),
+            ChevronDown: ({ className }) => <Icon className={className} d="M19 9l-7 7-7-7" />,
+        };
+
+        // ═══════════════════════════════════════════════════════
+        //  SEARCHABLE SELECT
+        // ═══════════════════════════════════════════════════════
+
+        const SearchableSelect = ({ options, value, onChange, placeholder, darkMode }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [term, setTerm] = useState('');
+            const [selIdx, setSelIdx] = useState(-1);
+            const ref = useRef(null);
+            const inputRef = useRef(null);
+
+            const filtered = useMemo(() => {
+                if (!term) return options;
+                const t = term.toLowerCase();
+                return options.filter(o => o.label.toLowerCase().includes(t) || o.value.toLowerCase().includes(t));
+            }, [options, term]);
+
+            const selected = options.find(o => o.value === value);
+
+            useEffect(() => {
+                const handler = (e) => {
+                    if (ref.current && !ref.current.contains(e.target)) {
+                        setIsOpen(false); setTerm(''); setSelIdx(-1);
+                    }
+                };
+                document.addEventListener('mousedown', handler);
+                return () => document.removeEventListener('mousedown', handler);
+            }, []);
+
+            const handleKey = (e) => {
+                if (!isOpen) {
+                    if (['Enter',' ','ArrowDown'].includes(e.key)) { e.preventDefault(); setIsOpen(true); setSelIdx(0); }
+                    return;
+                }
+                if (e.key === 'ArrowDown') { e.preventDefault(); setSelIdx(i => i < filtered.length - 1 ? i + 1 : 0); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); setSelIdx(i => i > 0 ? i - 1 : filtered.length - 1); }
+                else if (e.key === 'Enter') { e.preventDefault(); if (selIdx >= 0 && filtered[selIdx]) { onChange(filtered[selIdx].value); setIsOpen(false); setTerm(''); setSelIdx(-1); } }
+                else if (e.key === 'Escape') { setIsOpen(false); setTerm(''); setSelIdx(-1); }
+            };
+
+            return (
+                <div style={{ position: 'relative' }} ref={ref}>
+                    <button type="button" onClick={() => { setIsOpen(!isOpen); if (!isOpen) setTimeout(() => inputRef.current?.focus(), 50); }} onKeyDown={handleKey}
+                        style={{ width: '100%', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, padding: '8px 12px', border: `1px solid var(--border-input)`, borderRadius: 8, background: 'var(--bg-input)', color: selected ? 'var(--text-primary)' : 'var(--text-placeholder)', fontSize: '0.9rem', minWidth: 140 }}>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selected ? selected.label : placeholder}</span>
+                        <Icons.ChevronDown className="" style={{ width: 14, height: 14, flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
+                    </button>
+                    {isOpen && (
+                        <div style={{ position: 'absolute', zIndex: 50, width: '100%', marginTop: 4, borderRadius: 8, boxShadow: 'var(--shadow-lg)', border: `1px solid var(--border)`, background: 'var(--bg-card)', maxHeight: 260, overflow: 'hidden', minWidth: 240 }}>
+                            <div style={{ padding: 8, borderBottom: `1px solid var(--border)` }}>
+                                <input ref={inputRef} type="text" value={term} onChange={e => { setTerm(e.target.value); setSelIdx(-1); }} placeholder="Type om te zoeken..." onKeyDown={handleKey}
+                                    style={{ width: '100%', fontSize: '0.85rem', padding: '6px 10px' }} />
+                            </div>
+                            <div style={{ maxHeight: 200, overflowY: 'auto' }}>
+                                {filtered.length === 0 ? (
+                                    <div style={{ padding: '8px 12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Geen resultaten</div>
+                                ) : filtered.map((o, i) => (
+                                    <button key={o.value} onClick={() => { onChange(o.value); setIsOpen(false); setTerm(''); setSelIdx(-1); }}
+                                        style={{ width: '100%', textAlign: 'left', padding: '6px 12px', fontSize: '0.85rem', background: i === selIdx ? 'var(--bg-hover)' : 'transparent', fontWeight: o.value === value ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}
+                                        onMouseEnter={() => setSelIdx(i)}>
+                                        {o.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // ═══════════════════════════════════════════════════════
+        //  DATATYPE INFO
+        // ═══════════════════════════════════════════════════════
+
+        const DATATYPE_INFO = {
+            'JN': { label: 'Ja/Nee', color: 'var(--type-jn)' },
+            'A0': { label: 'Alfanumeriek', color: 'var(--type-an)' },
+            'A1': { label: 'Alfanumeriek', color: 'var(--type-an)' },
+            'A2': { label: 'Alfanumeriek', color: 'var(--type-an)' },
+            'A3': { label: 'Alfanumeriek', color: 'var(--type-an)' },
+            'A6': { label: 'Alfanumeriek', color: 'var(--type-an)' },
+            'AN': { label: 'Alfanumeriek', color: 'var(--type-an)' },
+            'D1': { label: 'Datum', color: 'var(--type-dat)' },
+            'D3': { label: 'Datum', color: 'var(--type-dat)' },
+            'D6': { label: 'Datum', color: 'var(--type-dat)' },
+            'B2': { label: 'Bedrag', color: 'var(--type-bed)' },
+            'B5': { label: 'Bedrag', color: 'var(--type-bed)' },
+            'BY': { label: 'Bedrag', color: 'var(--type-bed)' },
+            'T1': { label: 'Tijd', color: 'var(--type-tijd)' },
+            'P3': { label: 'Percentage', color: 'var(--type-perc)' },
+            'P5': { label: 'Percentage', color: 'var(--type-perc)' },
+            'P6': { label: 'Percentage', color: 'var(--type-perc)' },
+            'ME': { label: 'Memo', color: 'var(--type-memo)' },
+            'N.': { label: 'Numeriek', color: 'var(--type-num)' },
+            'RA': { label: 'Ratio', color: 'var(--type-num)' },
+            'RK': { label: 'Rekeningnr', color: 'var(--type-num)' },
+        };
+
+        // ═══════════════════════════════════════════════════════
+        //  MAIN APP
+        // ═══════════════════════════════════════════════════════
+
+        function AFDSearchTool() {
+            const [data, setData] = useState([]);
+            const [codelistData, setCodelistData] = useState({});
+            const [codelistDescriptions, setCodelistDescriptions] = useState({});
+            const [anvaData, setAnvaData] = useState({});
+            const [searchTerm, setSearchTerm] = useState('');
+            const [debouncedSearch, setDebouncedSearch] = useState('');
+            const [typeFilter, setTypeFilter] = useState('all');
+            const [entityFilter, setEntityFilter] = useState('all');
+            const [loading, setLoading] = useState(true);
+            const [loadStatus, setLoadStatus] = useState('Datacatalogus laden...');
+            const [error, setError] = useState(null);
+            const [stats, setStats] = useState({ total: 0, entities: 0, attributes: 0 });
+            const [darkMode, setDarkMode] = useState(false);
+            const [copiedItem, setCopiedItem] = useState(null);
+            const [currentPage, setCurrentPage] = useState(1);
+            const [selectedCodelist, setSelectedCodelist] = useState(null);
+            const [codelistSearch, setCodelistSearch] = useState('');
+            const [selectedIdx, setSelectedIdx] = useState(-1);
+            const [kbActive, setKbActive] = useState(false);
+            const [showInfo, setShowInfo] = useState(false);
+            const [showAdvanced, setShowAdvanced] = useState(false);
+            const [advanced, setAdvanced] = useState({ words: '', entiteit: 'all', datatype: 'all', codelist: '', anva: '' });
+            const searchRef = useRef(null);
+            const itemRefs = useRef([]);
+
+            const ITEMS_PER_PAGE = 25;
+
+            // ── Dark mode persistence ──
+            useEffect(() => {
+                try { setDarkMode(localStorage.getItem('afd-darkmode') === 'true'); } catch(e) {}
+            }, []);
+            useEffect(() => {
+                try { localStorage.setItem('afd-darkmode', darkMode); } catch(e) {}
+                document.documentElement.classList.toggle('dark', darkMode);
+            }, [darkMode]);
+
+            // ── Load data ──
+            useEffect(() => {
+                const load = async () => {
+                    try {
+                        // 1. Load Datacat.afm
+                        setLoadStatus('Datacatalogus laden...');
+                        const dcResp = await fetch('Datacat.afm');
+                        if (!dcResp.ok) throw new Error(`Datacat.afm niet gevonden (${dcResp.status})`);
+                        const dcText = await dcResp.text();
+                        const items = parseDatacatAFM(dcText);
+                        console.log(`✅ Datacatalogus: ${items.length} items geparsed`);
+
+                        setData(items);
+                        const ents = items.filter(r => r['Entiteit/Attribuut'] === 'E').length;
+                        const attrs = items.filter(r => r['Entiteit/Attribuut'] === 'A').length;
+                        setStats({ total: items.length, entities: ents, attributes: attrs });
+
+                        // 2. Load Codelist.afm (optional)
+                        try {
+                            setLoadStatus('Codelijsten laden...');
+                            const clResp = await fetch('Codelist.afm');
+                            if (clResp.ok) {
+                                const clText = await clResp.text();
+                                const { groups, descriptions } = parseCodelistAFM(clText);
+                                setCodelistData(groups);
+                                setCodelistDescriptions(descriptions);
+                                console.log(`✅ Codelijsten: ${Object.keys(groups).length} lijsten`);
+                            }
+                        } catch (e) { console.warn('⚠️ Codelist niet geladen:', e.message); }
+
+                        // 3. Load ANVA Excel (optional)
+                        try {
+                            setLoadStatus('ANVA mapping laden...');
+                            // Try multiple filenames
+                            let anvaResp = await fetch('ANVA_AFD.xlsx').catch(() => null);
+                            if (!anvaResp || !anvaResp.ok) {
+                                // Try pattern matching
+                                const names = ['ANVA_AFD_46B_2026_02.xlsx', 'ANVA_AFD.xlsx', 'anva.xlsx'];
+                                for (const name of names) {
+                                    anvaResp = await fetch(name).catch(() => null);
+                                    if (anvaResp && anvaResp.ok) break;
+                                }
+                            }
+                            if (anvaResp && anvaResp.ok) {
+                                const buf = await anvaResp.arrayBuffer();
+                                const mapping = parseAnvaExcel(buf);
+                                setAnvaData(mapping);
+                                console.log(`✅ ANVA: ${Object.keys(mapping).length} mappings`);
+                            }
+                        } catch (e) { console.warn('⚠️ ANVA niet geladen:', e.message); }
+
+                        setLoading(false);
+                    } catch (err) {
+                        console.error('❌ Fout:', err);
+                        setError(err.message);
+                        setLoading(false);
+                    }
+                };
+                load();
+            }, []);
+
+            // ── Debounce search ──
+            useEffect(() => {
+                const t = setTimeout(() => { setDebouncedSearch(searchTerm); setCurrentPage(1); setSelectedIdx(-1); setKbActive(false); }, 250);
+                return () => clearTimeout(t);
+            }, [searchTerm]);
+
+            // Reset on filter change
+            useEffect(() => { setCurrentPage(1); setSelectedIdx(-1); setKbActive(false); }, [typeFilter, entityFilter]);
+            useEffect(() => { setSelectedIdx(-1); setKbActive(false); itemRefs.current = []; }, [currentPage]);
+
+            // ── Keyboard nav ──
+            useEffect(() => {
+                const handler = (e) => {
+                    if (selectedCodelist || showInfo || showAdvanced || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+                    if (e.key === '/') { e.preventDefault(); searchRef.current?.focus(); return; }
+                    if (e.key === 'Escape') { setSelectedIdx(-1); setKbActive(false); setSearchTerm(''); return; }
+                    if (paginatedData.length > 0) {
+                        if (e.key === 'ArrowDown') { e.preventDefault(); setKbActive(true); setSelectedIdx(i => i >= paginatedData.length - 1 ? 0 : i + 1); }
+                        if (e.key === 'ArrowUp') { e.preventDefault(); setKbActive(true); setSelectedIdx(i => i <= 0 ? paginatedData.length - 1 : i - 1); }
+                        if (e.key === 'Enter' && selectedIdx >= 0) {
+                            e.preventDefault();
+                            const item = paginatedData[selectedIdx];
+                            if (item) {
+                                if (e.shiftKey && item['Entiteit/Attribuut'] !== 'E') copyFullInfo(item, `full-${item.Entiteitcode}_${item.Attribuutcode}`);
+                                else { const id = item['Entiteit/Attribuut'] === 'E' ? item.Entiteitcode : `${item.Entiteitcode}_${item.Attribuutcode}`; copyText(id, id); }
+                            }
+                        }
+                    }
+                };
+                document.addEventListener('keydown', handler);
+                return () => document.removeEventListener('keydown', handler);
+            }, [paginatedData, selectedIdx, selectedCodelist, showInfo, showAdvanced]);
+
+            // Scroll to selected
+            useEffect(() => {
+                if (selectedIdx >= 0 && kbActive && itemRefs.current[selectedIdx]) {
+                    itemRefs.current[selectedIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, [selectedIdx, kbActive]);
+
+            // ── Search filter ──
+            const searchFilter = useCallback((row, term, isAdv) => {
+                const fullCode = row.Entiteitcode && row.Attribuutcode ? `${row.Entiteitcode}_${row.Attribuutcode}` : null;
+                const anvaInfo = fullCode ? anvaData[fullCode] : null;
+                const fields = [row.Entiteitcode, row.Attribuutcode, fullCode, row.Naam, row.Omschrijving, row.Codelijst, anvaInfo?.code, anvaInfo?.omschrijving].filter(Boolean).join(' ').toLowerCase();
+
+                if (isAdv) {
+                    const { words, entiteit, datatype, codelist, anva } = advanced;
+                    if (entiteit !== 'all' && row.Entiteitcode !== entiteit) return false;
+                    if (datatype !== 'all' && row.Datatype !== datatype) return false;
+                    if (codelist && row.Codelijst !== codelist) return false;
+                    if (anva && (!anvaInfo || !anvaInfo.code.toLowerCase().includes(anva.toLowerCase()))) return false;
+                    if (words) {
+                        const ws = words.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+                        if (!ws.every(w => fields.includes(w))) return false;
+                    }
+                    return true;
+                }
+                return fields.includes(term.toLowerCase());
+            }, [anvaData, advanced]);
+
+            const isAdvActive = useMemo(() => {
+                const { words, entiteit, datatype, codelist, anva } = advanced;
+                return words || entiteit !== 'all' || datatype !== 'all' || codelist || anva;
+            }, [advanced]);
+
+            // ── Filtered + paginated data ──
+            const filteredData = useMemo(() => {
+                let f = data;
+                if (typeFilter !== 'all') f = f.filter(r => r['Entiteit/Attribuut'] === typeFilter);
+                if (entityFilter !== 'all') f = f.filter(r => r.Entiteitcode === entityFilter);
+                if (isAdvActive) f = f.filter(r => searchFilter(r, null, true));
+                else if (debouncedSearch) f = f.filter(r => searchFilter(r, debouncedSearch));
+                return f;
+            }, [data, debouncedSearch, typeFilter, entityFilter, searchFilter, isAdvActive]);
+
+            const paginatedData = useMemo(() => {
+                const start = (currentPage - 1) * ITEMS_PER_PAGE;
+                return filteredData.slice(start, start + ITEMS_PER_PAGE);
+            }, [filteredData, currentPage]);
+
+            const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+
+            // Available entities
+            const availableEntities = useMemo(() => {
+                const m = new Map();
+                filteredData.forEach(r => {
+                    if (r.Entiteitcode && !m.has(r.Entiteitcode)) {
+                        const ent = data.find(d => d.Entiteitcode === r.Entiteitcode && d['Entiteit/Attribuut'] === 'E');
+                        m.set(r.Entiteitcode, { code: r.Entiteitcode, naam: ent ? ent.Naam : r.Entiteitcode });
+                    }
+                });
+                return Array.from(m.values()).sort((a, b) => a.code.localeCompare(b.code));
+            }, [filteredData, data]);
+
+            // Available datatypes
+            const availableDatatypes = useMemo(() => {
+                const s = new Set();
+                data.forEach(r => { if (r.Datatype) s.add(r.Datatype); });
+                return Array.from(s).sort();
+            }, [data]);
+
+            // Available codelists
+            const availableCodelists = useMemo(() => {
+                const s = new Set();
+                data.forEach(r => { if (r.Codelijst) s.add(r.Codelijst); });
+                return Array.from(s).sort();
+            }, [data]);
+
+            // Codelist items
+            const codelistItems = useMemo(() => {
+                if (!selectedCodelist || !codelistData[selectedCodelist.codelijst]) return [];
+                let items = codelistData[selectedCodelist.codelijst].filter(it => {
+                    const c = String(it.code || '').trim();
+                    return c !== '' && c.toLowerCase() !== 'code';
+                });
+                if (!codelistSearch) return items;
+                const s = codelistSearch.toLowerCase();
+                return items.filter(it => String(it.code).toLowerCase().includes(s) || String(it.omschrijving).toLowerCase().includes(s));
+            }, [selectedCodelist, codelistData, codelistSearch]);
+
+            // ── Utility ──
+            const copyText = useCallback((text, id) => {
+                navigator.clipboard?.writeText(text) || (() => { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); })();
+                setCopiedItem(id);
+                setTimeout(() => setCopiedItem(null), 2000);
+            }, []);
+
+            const copyFullInfo = useCallback((item, id) => {
+                let ent = item.Entiteitcode || '';
+                if (ent === 'WH') ent = `PP/OG/${ent}`;
+                else if (!['XG','XM','PP','AL'].includes(ent)) ent = `PP/${ent}`;
+                const code = item.Entiteitcode && item.Attribuutcode ? `${item.Entiteitcode}_${item.Attribuutcode}` : item.Entiteitcode || '';
+                copyText(`${ent}\t${code}\t${item.Naam || ''}\t${item.Codelijst || ''}`, id);
+            }, [copyText]);
+
+            const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            const highlight = (text, term) => {
+                if (!text || !term) return text;
+                try {
+                    const parts = text.split(new RegExp(`(${escapeRegex(term)})`, 'gi'));
+                    return parts.map((p, i) => p.toLowerCase() === term.toLowerCase() ? <mark key={i}>{p}</mark> : p);
+                } catch { return text; }
+            };
+
+            // ═══════════════════════════════════════════════════
+            //  RENDER
+            // ═══════════════════════════════════════════════════
+
+            if (loading) {
+                return (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--bg-primary)' }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div className="animate-spin" style={{ width: 40, height: 40, border: '3px solid var(--border)', borderTopColor: 'var(--accent)', borderRadius: '50%', margin: '0 auto' }} />
+                            <p style={{ marginTop: 16, color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{loadStatus}</p>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (error) {
+                return (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--bg-primary)' }}>
+                        <div style={{ textAlign: 'center', maxWidth: 480, padding: 32 }}>
+                            <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
+                            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#dc2626', marginBottom: 8 }}>Fout bij laden</h2>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 16 }}>{error}</p>
+                            <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'left' }}>
+                                <p style={{ fontWeight: 600, marginBottom: 8 }}>Controleer:</p>
+                                <p>• <code>Datacat.afm</code> staat in de root van je repository</p>
+                                <p>• Optioneel: <code>Codelist.afm</code> en <code>ANVA_AFD.xlsx</code></p>
+                                <p style={{ marginTop: 12 }}><a href="Datacat.afm" target="_blank" style={{ color: 'var(--accent)' }}>Test: Datacat.afm openen →</a></p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const activeSearch = debouncedSearch || (isAdvActive ? advanced.words : '');
+
+            return (
+                <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+                    {/* ── Header ── */}
+                    <div style={{ background: 'var(--bg-header)', borderBottom: `1px solid var(--border)`, boxShadow: 'var(--shadow-sm)' }}>
+                        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '14px 20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <span style={{ fontSize: 28, color: 'var(--entity-color)' }}><Icons.Database /></span>
+                                    <div>
+                                        <h1 style={{ fontSize: '1.35rem', fontWeight: 700 }}>AFD 1.0 Datacatalogus</h1>
+                                        <div style={{ display: 'flex', gap: 12, fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                            <span>{stats.total.toLocaleString()} items</span>
+                                            <span>•</span>
+                                            <span>{stats.entities} entiteiten</span>
+                                            <span>•</span>
+                                            <span>{stats.attributes.toLocaleString()} attributen</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: 4 }}>
+                                    <button onClick={() => setShowInfo(true)} title="Help" style={{ padding: 8, borderRadius: 8, color: 'var(--text-muted)', fontSize: 20 }}><Icons.Info /></button>
+                                    <button onClick={() => setDarkMode(!darkMode)} title="Thema" style={{ padding: 8, borderRadius: 8, color: 'var(--text-muted)', fontSize: 20 }}>
+                                        {darkMode ? <Icons.Sun /> : <Icons.Moon />}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ── Search bar ── */}
+                    <div style={{ background: 'var(--bg-header)', borderBottom: `1px solid var(--border)` }}>
+                        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '12px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                            <div style={{ display: 'flex', gap: 8 }}>
+                                <div style={{ position: 'relative', flex: 1 }}>
+                                    <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 18, pointerEvents: 'none' }}><Icons.Search /></span>
+                                    <input ref={searchRef} type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                                        placeholder="Zoek op naam, code, ANVA, codelijst..."
+                                        style={{ width: '100%', paddingLeft: 38, paddingRight: searchTerm ? 36 : 12 }} />
+                                    {searchTerm && (
+                                        <button onClick={() => setSearchTerm('')} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 16 }}>
+                                            <Icons.X />
+                                        </button>
+                                    )}
+                                </div>
+                                <button onClick={() => setShowAdvanced(!showAdvanced)}
+                                    style={{ padding: '8px 14px', borderRadius: 8, fontSize: '0.85rem', fontWeight: 500, background: isAdvActive ? 'var(--accent)' : 'var(--bg-badge)', color: isAdvActive ? '#fff' : 'var(--text-secondary)', border: `1px solid ${isAdvActive ? 'var(--accent)' : 'var(--border)'}`, whiteSpace: 'nowrap' }}>
+                                    <span style={{ fontSize: 14, marginRight: 4 }}><Icons.Filter /></span> Geavanceerd
+                                </button>
+                            </div>
+
+                            {/* Advanced search panel */}
+                            {showAdvanced && (
+                                <div className="fade-in" style={{ background: 'var(--bg-card)', border: `1px solid var(--border)`, borderRadius: 10, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+                                        <div>
+                                            <label style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Zoekwoorden</label>
+                                            <input type="text" value={advanced.words} onChange={e => setAdvanced(a => ({ ...a, words: e.target.value }))} placeholder="Alle woorden moeten voorkomen" style={{ width: '100%', fontSize: '0.85rem' }} />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Entiteit</label>
+                                            <SearchableSelect options={[{ value: 'all', label: 'Alle entiteiten' }, ...availableEntities.map(e => ({ value: e.code, label: `${e.code} - ${e.naam}` }))]} value={advanced.entiteit} onChange={v => setAdvanced(a => ({ ...a, entiteit: v }))} placeholder="Selecteer" darkMode={darkMode} />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Datatype</label>
+                                            <SearchableSelect options={[{ value: 'all', label: 'Alle datatypes' }, ...availableDatatypes.map(d => ({ value: d, label: `${d}${DATATYPE_INFO[d] ? ` - ${DATATYPE_INFO[d].label}` : ''}` }))]} value={advanced.datatype} onChange={v => setAdvanced(a => ({ ...a, datatype: v }))} placeholder="Selecteer" darkMode={darkMode} />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>Codelijst</label>
+                                            <SearchableSelect options={[{ value: '', label: 'Alle codelijsten' }, ...availableCodelists.map(c => ({ value: c, label: c }))]} value={advanced.codelist} onChange={v => setAdvanced(a => ({ ...a, codelist: v }))} placeholder="Selecteer" darkMode={darkMode} />
+                                        </div>
+                                        <div>
+                                            <label style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)', display: 'block', marginBottom: 4 }}>ANVA code</label>
+                                            <input type="text" value={advanced.anva} onChange={e => setAdvanced(a => ({ ...a, anva: e.target.value }))} placeholder="Bijv. 13689" style={{ width: '100%', fontSize: '0.85rem' }} />
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid var(--border)`, paddingTop: 12 }}>
+                                        <button onClick={() => setAdvanced({ words: '', entiteit: 'all', datatype: 'all', codelist: '', anva: '' })} style={{ fontSize: '0.85rem', color: 'var(--text-muted)', padding: '6px 12px' }}>Wis filters</button>
+                                        <button onClick={() => { setCurrentPage(1); setSelectedIdx(-1); }} style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', background: 'var(--accent)', padding: '8px 20px', borderRadius: 8 }}>Zoeken</button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Filters */}
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                    <span style={{ color: 'var(--text-muted)', fontSize: 16 }}><Icons.Filter /></span>
+                                    <SearchableSelect
+                                        options={[{ value: 'all', label: 'Alle types' }, { value: 'E', label: 'Entiteiten' }, { value: 'A', label: 'Attributen' }]}
+                                        value={typeFilter} onChange={setTypeFilter} placeholder="Type" darkMode={darkMode} />
+                                </div>
+                                {availableEntities.length > 0 && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <span style={{ color: 'var(--text-muted)', fontSize: 16 }}><Icons.Database /></span>
+                                        <SearchableSelect
+                                            options={[{ value: 'all', label: `Alle entiteiten (${availableEntities.length})` }, ...availableEntities.map(e => ({ value: e.code, label: `${e.code} - ${e.naam}` }))]}
+                                            value={entityFilter} onChange={setEntityFilter} placeholder="Entiteit" darkMode={darkMode} />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Keyboard hints */}
+                            {paginatedData.length > 0 && (
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                    <strong>Sneltoetsen:</strong> ↑↓ navigeren • Enter kopieer code • Shift+Enter volledige info • / zoeken • Esc wissen
+                                    {kbActive && selectedIdx >= 0 && (
+                                        <span style={{ color: 'var(--accent)', fontWeight: 600, marginLeft: 12 }}>📍 Item {selectedIdx + 1}/{paginatedData.length}</span>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* ── Results ── */}
+                    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '20px 20px 40px' }}>
+                        {!searchTerm && typeFilter === 'all' && entityFilter === 'all' && !isAdvActive ? (
+                            /* Empty state */
+                            <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+                                <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 48, maxWidth: 560, margin: '0 auto', boxShadow: 'var(--shadow-sm)', border: `1px solid var(--border)` }}>
+                                    <span style={{ fontSize: 48, color: 'var(--text-muted)', display: 'block', marginBottom: 16 }}><Icons.Search /></span>
+                                    <h2 style={{ fontSize: '1.3rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8 }}>Begin met zoeken</h2>
+                                    <p style={{ color: 'var(--text-muted)', marginBottom: 20, fontSize: '0.9rem' }}>
+                                        Doorzoek de AFD 1.0 datacatalogus met {stats.total.toLocaleString()} items
+                                    </p>
+                                    <div style={{ textAlign: 'left', color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 2 }}>
+                                        <p>Zoek op: naam, omschrijving, entiteitcode (bijv. OB, XA), attribuutcode (bijv. DA_VERZSOM), ANVA code (bijv. 13689), codelijst (bijv. ADNABS)</p>
+                                    </div>
+                                    <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', gap: 12 }}>
+                                        <kbd style={{ padding: '4px 12px', borderRadius: 6, fontSize: '0.8rem', background: 'var(--bg-badge)', border: `1px solid var(--border)` }}>Druk op / om te typen</kbd>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : filteredData.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+                                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Geen resultaten gevonden</p>
+                                <p style={{ color: 'var(--text-muted)', marginTop: 8, fontSize: '0.9rem' }}>Probeer een andere zoekterm of pas de filters aan</p>
+                            </div>
+                        ) : (
+                            <div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{filteredData.length.toLocaleString()} {filteredData.length === 1 ? "resultaat" : "resultaten"}</p>
+                                    {totalPages > 1 && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Pagina {currentPage} van {totalPages}</p>}
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                    {paginatedData.map((item, index) => {
+                                        const isEntity = item['Entiteit/Attribuut'] === 'E';
+                                        const itemId = isEntity ? item.Entiteitcode : `${item.Entiteitcode}_${item.Attribuutcode}`;
+                                        const isSelected = kbActive && selectedIdx === index;
+                                        const dtInfo = DATATYPE_INFO[item.Datatype];
+                                        const fullCode = `${item.Entiteitcode}_${item.Attribuutcode}`;
+                                        const anvaInfo = !isEntity ? anvaData[fullCode] : null;
+
+                                        return (
+                                            <div key={index} ref={el => itemRefs.current[index] = el}
+                                                className={isSelected ? 'selected-item fade-in' : 'fade-in'}
+                                                style={{ background: 'var(--bg-card)', borderRadius: 10, padding: '14px 16px', boxShadow: 'var(--shadow-sm)', border: `1px solid var(--border)`, transition: 'box-shadow 0.15s', cursor: 'default' }}
+                                                onMouseEnter={e => e.currentTarget.style.boxShadow = 'var(--shadow-md)'}
+                                                onMouseLeave={e => e.currentTarget.style.boxShadow = 'var(--shadow-sm)'}>
+                                                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                                                    <div style={{ display: 'flex', gap: 10, flex: 1, minWidth: 0 }}>
+                                                        <span style={{ fontSize: 18, marginTop: 2, flexShrink: 0, color: isEntity ? 'var(--entity-color)' : 'var(--attr-color)' }}>
+                                                            {isEntity ? <Icons.Database /> : <Icons.Package />}
+                                                        </span>
+                                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                                            {/* Badges row */}
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginBottom: 4 }}>
+                                                                <code style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{itemId}</code>
+                                                                {dtInfo && (
+                                                                    <span style={{ display: 'inline-flex', alignItems: 'center', padding: '1px 8px', borderRadius: 4, fontSize: '0.72rem', fontWeight: 500, color: dtInfo.color, background: 'var(--bg-badge)' }}>
+                                                                        {dtInfo.label}
+                                                                    </span>
+                                                                )}
+                                                                {item.Codelijst && codelistData[item.Codelijst] && (
+                                                                    <button onClick={() => { setSelectedCodelist({ codelijst: item.Codelijst }); setCodelistSearch(''); }}
+                                                                        style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: '0.75rem', color: 'var(--accent)', textDecoration: 'underline', padding: 0 }}
+                                                                        title={`Codelijst ${item.Codelijst} (${codelistData[item.Codelijst].length} items)`}>
+                                                                        <span style={{ fontSize: 12 }}><Icons.BookOpen /></span>
+                                                                        {highlight(item.Codelijst, activeSearch)}
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                            {/* Name */}
+                                                            <h3 style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 2 }}>{highlight(item.Naam, activeSearch)}</h3>
+                                                            {/* Description */}
+                                                            {item.Omschrijving && <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 4 }}>{highlight(item.Omschrijving, activeSearch)}</p>}
+                                                            {/* Attribute details */}
+                                                            {!isEntity && (
+                                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 16px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                                                                    {item.Formaat && <span><strong>Formaat:</strong> <code>{item.Formaat}</code></span>}
+                                                                    {anvaInfo?.code && (
+                                                                        <span>
+                                                                            <strong>ANVA:</strong> <code>{highlight(anvaInfo.code, activeSearch)}</code>
+                                                                            {anvaInfo.afwijkendNietToegestaan === 'J' && <span style={{ color: '#dc2626', marginLeft: 4 }}>⚠️</span>}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    {/* Copy buttons */}
+                                                    <div style={{ display: 'flex', gap: 2, marginLeft: 8, flexShrink: 0 }}>
+                                                        <button onClick={() => copyText(itemId, itemId)} title="Kopieer code"
+                                                            style={{ padding: 6, borderRadius: 6, color: copiedItem === itemId ? '#22c55e' : 'var(--text-muted)', fontSize: 15 }}>
+                                                            {copiedItem === itemId ? <Icons.Check /> : <Icons.Copy />}
+                                                        </button>
+                                                        {!isEntity && (
+                                                            <button onClick={() => copyFullInfo(item, `full-${itemId}`)} title="Kopieer volledige info"
+                                                                style={{ padding: 6, borderRadius: 6, color: copiedItem === `full-${itemId}` ? '#22c55e' : 'var(--text-muted)', fontSize: 15 }}>
+                                                                {copiedItem === `full-${itemId}` ? <Icons.Check /> : <Icons.ClipboardList />}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Pagination */}
+                                {totalPages > 1 && (
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 24 }}>
+                                        <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
+                                            style={{ padding: '6px 14px', borderRadius: 6, border: `1px solid var(--border)`, background: 'var(--bg-card)', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Vorige</button>
+                                        <span style={{ padding: '6px 12px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{currentPage} / {totalPages}</span>
+                                        <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                                            style={{ padding: '6px 14px', borderRadius: 6, border: `1px solid var(--border)`, background: 'var(--bg-card)', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Volgende</button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Copyright */}
+                        <div style={{ marginTop: 40, paddingTop: 16, borderTop: `1px solid var(--border)`, textAlign: 'center' }}>
+                            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                © 2025 Martin Hoogerbrugge • AFD 1.0 Datacatalogus
+                                <span style={{ margin: '0 8px' }}>•</span>
+                                <a href="builder/" style={{ color: 'var(--accent)', textDecoration: 'none' }}>📋 Productdefinitie Builder →</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* ── Info Modal ── */}
+                    {showInfo && (
+                        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: 16 }} onClick={() => setShowInfo(false)}>
+                            <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', borderRadius: 12, boxShadow: 'var(--shadow-lg)', width: '100%', maxWidth: 560, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ padding: '20px 24px', borderBottom: `1px solid var(--border)`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <span style={{ fontSize: 22, color: 'var(--accent)' }}><Icons.Info /></span>
+                                        <h2 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Help & Instructies</h2>
+                                    </div>
+                                    <button onClick={() => setShowInfo(false)} style={{ padding: 6, borderRadius: 6, fontSize: 18, color: 'var(--text-muted)' }}><Icons.X /></button>
+                                </div>
+                                <div style={{ flex: 1, overflow: 'auto', padding: 24, fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.8 }}>
+                                    <h3 style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>🔍 Zoeken</h3>
+                                    <p>Je kunt zoeken op: naam, omschrijving, entiteitcode (bijv. OB, XA), attribuutcode (bijv. DA_VERZSOM), ANVA code (bijv. 13689), codelijst (bijv. ADNABS)</p>
+                                    <h3 style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: 20, marginBottom: 8 }}>🎯 Geavanceerd zoeken</h3>
+                                    <p>Filter op combinaties van entiteit, datatype, codelijst en ANVA code. Zoekwoorden moeten alle voorkomen.</p>
+                                    <h3 style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: 20, marginBottom: 8 }}>⌨️ Sneltoetsen</h3>
+                                    <p><kbd style={{ padding: '2px 8px', borderRadius: 4, background: 'var(--bg-badge)', border: `1px solid var(--border)`, fontSize: '0.8rem' }}>/</kbd> Focus op zoekbalk</p>
+                                    <p><kbd style={{ padding: '2px 8px', borderRadius: 4, background: 'var(--bg-badge)', border: `1px solid var(--border)`, fontSize: '0.8rem' }}>↑↓</kbd> Navigeer resultaten</p>
+                                    <p><kbd style={{ padding: '2px 8px', borderRadius: 4, background: 'var(--bg-badge)', border: `1px solid var(--border)`, fontSize: '0.8rem' }}>Enter</kbd> Kopieer code</p>
+                                    <p><kbd style={{ padding: '2px 8px', borderRadius: 4, background: 'var(--bg-badge)', border: `1px solid var(--border)`, fontSize: '0.8rem' }}>Shift+Enter</kbd> Kopieer volledige info (tab-separated)</p>
+                                    <p><kbd style={{ padding: '2px 8px', borderRadius: 4, background: 'var(--bg-badge)', border: `1px solid var(--border)`, fontSize: '0.8rem' }}>Esc</kbd> Wis zoekopdracht</p>
+                                    <h3 style={{ fontWeight: 600, color: 'var(--text-primary)', marginTop: 20, marginBottom: 8 }}>📁 Databestanden</h3>
+                                    <p>Deze tool leest direct de ruwe AFM-bestanden:</p>
+                                    <p><code>Datacat.afm</code> — Datacatalogus (entiteiten + attributen)</p>
+                                    <p><code>Codelist.afm</code> — Codelijsten met codes en omschrijvingen</p>
+                                    <p><code>ANVA_AFD.xlsx</code> — ANVA-naar-AFD mapping (optioneel)</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ── Codelist Modal ── */}
+                    {selectedCodelist && (
+                        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, padding: 16 }} onClick={() => { setSelectedCodelist(null); setCodelistSearch(''); }}>
+                            <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', borderRadius: 12, boxShadow: 'var(--shadow-lg)', width: '100%', maxWidth: 600, maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ padding: '20px 24px', borderBottom: `1px solid var(--border)` }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Codelijst: {selectedCodelist.codelijst}</h2>
+                                            {codelistDescriptions[selectedCodelist.codelijst] && (
+                                                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 2 }}>{codelistDescriptions[selectedCodelist.codelijst]}</p>
+                                            )}
+                                            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                                                {codelistItems.length} van {codelistData[selectedCodelist.codelijst]?.length || 0} items
+                                            </p>
+                                        </div>
+                                        <button onClick={() => { setSelectedCodelist(null); setCodelistSearch(''); }} style={{ padding: 6, borderRadius: 6, fontSize: 18, color: 'var(--text-muted)', marginLeft: 12 }}><Icons.X /></button>
+                                    </div>
+                                    <div style={{ position: 'relative', marginTop: 12 }}>
+                                        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', fontSize: 14, pointerEvents: 'none' }}><Icons.Search /></span>
+                                        <input type="text" value={codelistSearch} onChange={e => setCodelistSearch(e.target.value)} placeholder="Zoek in codelijst..." autoFocus
+                                            style={{ width: '100%', paddingLeft: 32, fontSize: '0.9rem' }} />
+                                    </div>
+                                </div>
+                                <div style={{ flex: 1, overflow: 'auto', padding: 12, minHeight: 0 }}>
+                                    {codelistItems.length === 0 ? (
+                                        <div style={{ textAlign: 'center', padding: 32, color: 'var(--text-muted)' }}>
+                                            {codelistSearch ? 'Geen items gevonden' : 'Geen items in deze codelijst'}
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                            {codelistItems.map((item, i) => (
+                                                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '8px 12px', borderRadius: 8, background: 'var(--bg-badge)' }}>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <code style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent)' }}>{highlight(String(item.code), codelistSearch)}</code>
+                                                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 2, wordBreak: 'break-word' }}>{highlight(String(item.omschrijving), codelistSearch)}</p>
+                                                    </div>
+                                                    <button onClick={() => copyText(String(item.code), `cl-${i}`)}
+                                                        style={{ padding: 6, borderRadius: 6, color: copiedItem === `cl-${i}` ? '#22c55e' : 'var(--text-muted)', fontSize: 14, flexShrink: 0, marginLeft: 8 }}>
+                                                        {copiedItem === `cl-${i}` ? <Icons.Check /> : <Icons.Copy />}
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<AFDSearchTool />);
+    </script>
+</body>
+</html>
