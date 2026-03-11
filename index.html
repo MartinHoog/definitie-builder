@@ -257,20 +257,71 @@ const addA=useCallback((ec,ac,tp)=>{const a=(dcA[ec]||[]).find(x=>x.ac===ac);if(
 const doImp=useCallback((e)=>{const f=e.target?.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const r=impTpl(ev.target.result);setMeta(m=>({...m,...r.meta}));const items=r.schema.map(s=>({...s,_id:uid()}));setSchema(items);setExp(new Set(items.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg(`${f.name} — ${items.length} items`);}catch(err){msg('Fout: '+err.message,'err');}};rd.readAsArrayBuffer(f);if(e.target)e.target.value='';},[msg]);
 const doExp=useCallback(async()=>{try{const wb=expTpl(meta,schema);const buf=await wb.xlsx.writeBuffer();const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${meta.afdNaam||'productdefinitie'}.xlsx`;a.click();URL.revokeObjectURL(url);msg('Geëxporteerd');}catch(err){msg('Fout: '+err.message,'err');}},[meta,schema,msg]);
 const doNew=useCallback(()=>{
-// Short aliases for function names
 const [A,B,C,D,E,F]=FN;
 const b=[
 // AL
 {pad:'AL',label:'AL',oms:'BERICHT ALGEMEEN',isE:true,fn:{[A]:'1-1',[B]:'1-1',[C]:'1-1',[D]:'1-1',[E]:'1-1',[F]:'1-1'}},
 {pad:'AL',label:'AL_DATACAT',oms:'Versie datacatalogus',cl:'ADNAFM',isE:false,fn:{[F]:'V'}},
-{pad:'AL',label:'AL_FUNCTIE',oms:'Berichtfunctie, code',cl:'ADNFUN',isE:false,fn:{}},
+{pad:'AL',label:'AL_FUNCTIE',oms:'Berichtfunctie, code',cl:'ADNFUN',isE:false,fn:{[A]:'V',[B]:'V',[C]:'V',[D]:'V'}},
 {pad:'AL',label:'AL_VRWRKCD',oms:'Verwerkingscode entiteit',cl:'ADNVRC',isE:false,fn:{}},
+// PK
+{pad:'PK',label:'PK',oms:'CONTRACT PAKKET',isE:true,fn:{[F]:'0-1'}},
+{pad:'PK',label:'PK_NUMMER',oms:'Contractnummer',isE:false,fn:{[F]:'V'}},
+// RC
+{pad:'RC',label:'RC',oms:'CONTRACT RAAMCONTRACT',isE:true,fn:{[F]:'0-1'}},
+{pad:'RC',label:'RC_NUMMER',oms:'Contractnummer',isE:false,fn:{[F]:'V'}},
+{pad:'RC',label:'RC_COLOMS',oms:'Collectiviteit omschrijving',isE:false,fn:{[F]:'O'}},
 // PP
-{pad:'PP',label:'PP',oms:'CONTRACT POLIS/ONDERDEEL',isE:true,fn:{[F]:'1-1'}},
+{pad:'PP',label:'PP',oms:'CONTRACT POLIS/ONDERDEEL',isE:true,fn:{[A]:'1-1',[B]:'1-1',[C]:'1-1',[D]:'1-1',[E]:'1-1',[F]:'1-1'}},
+{pad:'PP',label:'PP_ADEFVRS',oms:'AFD definitieversienummer',isE:false,fn:{[F]:'V'}},
 {pad:'PP',label:'PP_AFDDEFN',oms:'AFD definitienaam',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_AFDDTAG',oms:'AFD-definitie tag',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_AFWAFSP',oms:'Afwijkende afspraken J/N',cl:'ADNLOG',isE:false,fn:{[F]:'V'},scl:'J'},
+{pad:'PP',label:'PP_AFWAFST',oms:'Toelichting afwijkende afspraken',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_BETTERM',oms:'Betaaltermijn in maanden',isE:false,fn:{[A]:'V',[B]:'V',[C]:'V',[D]:'V',[E]:'V',[F]:'V'},ol:'1;3;6;12'},
 {pad:'PP',label:'PP_BRANCHE',oms:'ADN branchecode',cl:'ADNBRA',isE:false,fn:{[F]:'V'}},
-{pad:'PP',label:'PP_INGDAT',oms:'Ingangsdatum',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_BTP',oms:'Termijnbedrag bruto premie',isE:false,fn:{[A]:'O',[B]:'O',[C]:'O',[D]:'O',[F]:'O'}},
+{pad:'PP',label:'PP_CDUUMND',oms:'Contractduur in maanden',isE:false,fn:{[F]:'V'},ol:'12'},
+{pad:'PP',label:'PP_COASSJN',oms:'Polis ond. van verdeling/coass J/N',cl:'ADNLOG',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_CVS',oms:'Contractversiesleutel',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_ENDDATC',oms:'Beeindigingsdatum',isE:false,fn:{[F]:'O'}},
+{pad:'PP',label:'PP_EXTERN',oms:'Extern indicatief',isE:false,fn:{[A]:'O',[B]:'O',[C]:'O',[D]:'O',[F]:'O'}},
+{pad:'PP',label:'PP_GABRA',oms:'Volmacht branchecode',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_GABRAO',oms:'Volmacht branchecode, omschr.',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_GAKBC',oms:'Kantoorcode, bedrijfsnummer portef.',isE:false,fn:{[F]:'O'}},
+{pad:'PP',label:'PP_GAKBCO',oms:'Kantoorcode, bedr.num. portef. oms.',isE:false,fn:{[F]:'O'}},
+{pad:'PP',label:'PP_GASBRA',oms:'Volmacht subbranchecode',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_GASBRAO',oms:'Volmacht subbranchecode, omschr.',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_HANDACC',oms:'Handmatige acceptatie J/N',cl:'ADNLOG',isE:false,fn:{[A]:'O',[B]:'O',[C]:'O',[D]:'O'}},
+{pad:'PP',label:'PP_HVVDAT',oms:'Hoofdvervaldatum',isE:false,fn:{[A]:'O',[B]:'O',[C]:'O',[D]:'O',[F]:'V'}},
+{pad:'PP',label:'PP_INGDAT',oms:'Ingangsdatum',isE:false,fn:{[A]:'V',[B]:'V',[C]:'V',[D]:'V',[E]:'V',[F]:'V'}},
+{pad:'PP',label:'PP_INGDTW',oms:'Ingangsdatum van de wijziging',isE:false,fn:{[A]:'O',[B]:'O',[C]:'O',[D]:'O',[E]:'O',[F]:'O'}},
+{pad:'PP',label:'PP_INTKEY',oms:'Interne sleutel',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_LWYZDAT',oms:'Datum laatste wijziging',isE:false,fn:{[F]:'O'}},
+{pad:'PP',label:'PP_MYAAND',oms:'POR Maatschappij aanduiding, code',cl:'PORMAA',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_NJP',oms:'Netto jaarpremie',isE:false,fn:{[F]:'V'}},
 {pad:'PP',label:'PP_NUMMER',oms:'Contractnummer',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_POLPKJN',oms:'Polis onderdeel van een pakket J/N',cl:'ADNLOG',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_RDNMUT',oms:'Reden aanvraag, mutatie, code',cl:'ADNMUT',isE:false,fn:{[F]:'O'}},
+{pad:'PP',label:'PP_SPECLIM',oms:'Special limit J/N',cl:'ADNLOG',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_STATUS',oms:'Status, code',cl:'ADNSTS',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_STPRV',oms:'Standaard provisie J/N',cl:'ADNLOG',isE:false,fn:{[A]:'V',[B]:'V',[C]:'V',[D]:'V',[F]:'V'}},
+{pad:'PP',label:'PP_TJRPO',oms:'Tekenjaar pool',isE:false,fn:{[F]:'O'}},
+{pad:'PP',label:'PP_TJRPP',oms:'Tekenjaar polis',isE:false,fn:{[F]:'V'}},
+{pad:'PP',label:'PP_VGCODE',oms:'Volmachtgever code',isE:false,fn:{[F]:'V'}},
+// PP/CL
+{pad:'PP/CL',label:'CL',oms:'CLAUSULE',isE:true,fn:{[D]:'0-20',[E]:'0-20',[F]:'0-20'}},
+{pad:'PP/CL',label:'CL_CLAUSNR',oms:'Clausule nummers',isE:false,fn:{[D]:'O',[F]:'O'}},
+{pad:'PP/CL',label:'CL_CLAUSOM',oms:'Clausuletekst',isE:false,fn:{[D]:'O',[E]:'O',[F]:'O'}},
+{pad:'PP/CL',label:'CL_CLAUTXT',oms:'Clausule tekst',isE:false,fn:{[D]:'O',[E]:'O',[F]:'O'}},
+{pad:'PP/CL',label:'CL_VERSIEC',oms:'Clausule versienummer',isE:false,fn:{[D]:'O',[F]:'O'}},
+{pad:'PP/CL',label:'CL_VOLGNUM',oms:'Volgnummer',isE:false,fn:{[D]:'O',[F]:'O'}},
+// PP/VW
+{pad:'PP/VW',label:'VW',oms:'VOORWAARDEN',isE:true,fn:{[D]:'1-10',[E]:'1-10',[F]:'1-10'}},
+{pad:'PP/VW',label:'VW_VOLGNUM',oms:'Volgnummer',isE:false,fn:{[D]:'V'}},
+{pad:'PP/VW',label:'VW_VRWNR',oms:'Voorwaarde nummer',isE:false,fn:{[D]:'V',[E]:'V',[F]:'V'}},
+{pad:'PP/VW',label:'VW_VRWOM',oms:'Voorwaardentekst',isE:false,fn:{[D]:'O'}},
+{pad:'PP/VW',label:'VW_VRWVERS',oms:'Voorwaarde versie',isE:false,fn:{[D]:'O'}},
 // PP/TP
 {pad:'PP/TP',label:'TP',oms:'PARTIJ TUSSENPERSOON',isE:true,fn:{[F]:'0-1'}},
 {pad:'PP/TP',label:'TP_ANAAM',oms:'Naam',isE:false,fn:{[F]:'O'}},
@@ -310,7 +361,7 @@ const b=[
 // XG/XM
 {pad:'XG/XM',label:'XM',oms:'OMSCHRIJVING STATUS',isE:true,fn:{[A]:'0-1',[C]:'0-1'}},
 {pad:'XG/XM',label:'XM_STATTXT',oms:'Status, tekst',isE:false,fn:{[A]:'O',[C]:'O'}},
-].map(s=>({...s,_id:uid(),cl:s.cl||'',acl:'',scl:'',ol:'',mn:'',mx:'',eo:''}));
+].map(s=>({...s,_id:uid(),cl:s.cl||'',acl:'',scl:s.scl||'',ol:s.ol||'',mn:s.mn||'',mx:s.mx||'',eo:'',lk:true}));
 setSchema(b);setExp(new Set(b.filter(s=>s.isE).map(s=>s.pad+'|'+s.label)));setVw('editor');setSel(null);msg('Nieuw project');},[msg]);
 
 if(ld)return <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100vh',gap:10}}><div className="sp" style={{width:28,height:28,border:'2.5px solid var(--bdr)',borderTopColor:'var(--acc)',borderRadius:'50%'}}/><span style={{color:'var(--tx3)',fontSize:13}}>Laden...</span></div>;
@@ -369,7 +420,7 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
             {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} className="fc-c"><button className={`fx ${v?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,true);}}>{v||'·'}</button></td>;})}
             <td className="fc-c pol"><button className={`fx ${r.fn[FN[4]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],true);}}>{r.fn[FN[4]]||'·'}</button></td>
             <td className="fc-c ka"><button className={`fx ${r.fn[FN[5]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],true);}}>{r.fn[FN[5]]||'·'}</button></td>
-            <td style={{textAlign:'right'}}><button className="bg" onClick={e=>{e.stopPropagation();setMl({t:'addA',ec:r.label,pad:r.pad,eo:r.oms});}} title="Attribuut toevoegen" style={{fontSize:11}}>+A</button><button className="bd" onClick={e=>{e.stopPropagation();if(confirm(`${r.label} verwijderen?`))del(r._id);}} style={{fontSize:10}}>✕</button></td>
+            <td style={{textAlign:'right'}}><button className="bg" onClick={e=>{e.stopPropagation();setMl({t:'addA',ec:r.label,pad:r.pad,eo:r.oms});}} title="Attribuut toevoegen" style={{fontSize:11}}>+A</button>{!r.lk&&<button className="bd" onClick={e=>{e.stopPropagation();if(confirm(`${r.label} verwijderen?`))del(r._id);}} style={{fontSize:10}}>✕</button>}</td>
         </tr>;
     }
     // attr
@@ -387,7 +438,7 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
         {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} className="fc-c"><button className={`fx ${v==='V'?'fv':v==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,false);}}>{v||'·'}</button></td>;})}
         <td className="fc-c pol"><button className={`fx ${r.fn[FN[4]]==='V'?'fv':r.fn[FN[4]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],false);}}>{r.fn[FN[4]]||'·'}</button></td>
         <td className="fc-c ka"><button className={`fx ${r.fn[FN[5]]==='V'?'fv':r.fn[FN[5]]==='O'?'fo':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],false);}}>{r.fn[FN[5]]||'·'}</button></td>
-        <td style={{textAlign:'right'}}><button className="bd" onClick={e=>{e.stopPropagation();del(r._id);}} style={{fontSize:10,visibility:'inherit'}}>✕</button></td>
+        <td style={{textAlign:'right'}}>{!r.lk&&<button className="bd" onClick={e=>{e.stopPropagation();del(r._id);}} style={{fontSize:10}}>✕</button>}</td>
     </tr>;
 })}
 </tbody>
@@ -411,7 +462,7 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <div className="sf"><div className="sl">Min / Max</div><div style={{display:'flex',gap:4}}><input type="text" value={si.mn||''} onChange={e=>upd(sel,{mn:e.target.value})} placeholder="Min" style={{flex:1}}/><input type="text" value={si.mx||''} onChange={e=>upd(sel,{mx:e.target.value})} placeholder="Max" style={{flex:1}}/></div></div>
 <div className="sf"><div className="sl">Eigen omschrijving</div><textarea value={si.eo||''} onChange={e=>upd(sel,{eo:e.target.value})} style={{width:'100%',minHeight:40,resize:'vertical',border:'1px solid var(--bdr)',borderRadius:4,padding:'4px 8px',fontSize:12,fontFamily:'inherit'}} placeholder="Eigen omschrijving..."/></div>
 <div className="sf"><div className="sl">Functies</div><div style={{display:'grid',gridTemplateColumns:'36px 1fr',gap:'2px 6px',alignItems:'center'}}>{FN.map((fn,i)=>{const v=si.fn[fn]||'';return <React.Fragment key={fn}><span style={{fontSize:10,color:'var(--tx3)',fontWeight:700}}>{FS[i]}</span><select value={v} onChange={e=>upd(sel,{fn:{...si.fn,[fn]:e.target.value}})} style={{fontSize:11,padding:'2px 6px'}}>{(si.isE?CDS:VOS).map(o=><option key={o} value={o}>{o||'—'}</option>)}</select></React.Fragment>;})}</div></div>
-<div className="sf" style={{paddingTop:8,borderTop:'1px solid var(--bdr)',marginTop:4}}><button className="b bd" style={{width:'100%',justifyContent:'center',background:'#fee2e2',borderRadius:5,padding:'4px 10px'}} onClick={()=>{if(confirm(`${si.label} verwijderen?${si.isE?' + alle attributen':''}`))del(sel);}}>🗑 Verwijderen</button></div>
+{!si.lk&&<div className="sf" style={{paddingTop:8,borderTop:'1px solid var(--bdr)',marginTop:4}}><button className="b bd" style={{width:'100%',justifyContent:'center',background:'#fee2e2',borderRadius:5,padding:'4px 10px'}} onClick={()=>{if(confirm(`${si.label} verwijderen?${si.isE?' + alle attributen':''}`))del(sel);}}>🗑 Verwijderen</button></div>}
 </div>}
 </div></div>
 
