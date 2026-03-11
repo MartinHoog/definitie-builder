@@ -499,7 +499,7 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
             {FN.slice(0,4).map(fn=>{const v=r.fn[fn]||'';return <td key={fn} className="fc-c"><button className={`fx ${v?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,fn,true);}}>{v||'·'}</button></td>;})}
             <td className="fc-c pol"><button className={`fx ${r.fn[FN[4]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[4],true);}}>{r.fn[FN[4]]||'·'}</button></td>
             <td className="fc-c ka"><button className={`fx ${r.fn[FN[5]]?'fk':''}`} onClick={e=>{e.stopPropagation();tgF(r._id,FN[5],true);}}>{r.fn[FN[5]]||'·'}</button></td>
-            <td style={{textAlign:'right'}}><button className="bg" onClick={e=>{e.stopPropagation();setMl({t:'addA',ec:r.label,pad:r.pad,eo:r.oms});}} title="Attribuut toevoegen" style={{fontSize:11}}>+A</button>{!r.lk&&<button className="bd" onClick={e=>{e.stopPropagation();if(confirm(`${r.label} verwijderen?`))del(r._id);}} style={{fontSize:10}}>✕</button>}</td>
+            <td style={{textAlign:'right',whiteSpace:'nowrap'}}><button onClick={e=>{e.stopPropagation();setMl({t:'addA',ec:r.label,pad:r.pad,eo:r.oms});}} title="Attribuut toevoegen" style={{fontSize:10,padding:'2px 8px',borderRadius:4,background:'#dcfce7',color:'#166534',fontWeight:600,border:'1px solid #bbf7d0'}}>+ Attribuut</button>{!r.lk&&<button className="bd" onClick={e=>{e.stopPropagation();if(confirm(`${r.label} verwijderen?`))del(r._id);}} style={{fontSize:10,marginLeft:4}}>✕</button>}</td>
         </tr>;
     }
     // attr
@@ -522,7 +522,7 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 })}
 </tbody>
 </table>
-<div style={{padding:'8px 12px'}}><button className="b bs" style={{width:'100%',justifyContent:'center'}} onClick={()=>setMl({t:'addE'})}>+ Entiteit toevoegen</button></div>
+<div style={{padding:'8px 12px',height:80}}></div>
 </div></div>
 
 {/* ── SIDEBAR ── */}
@@ -545,6 +545,15 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 </div>}
 </div></div>
 
+{/* FAB */}
+<FAB onAddEntity={()=>setMl({t:'addE'})} onAddAttr={()=>{
+    // If an entity is selected, open add attr for that entity
+    if(si&&si.isE){setMl({t:'addA',ec:si.label,pad:si.pad,eo:si.oms});}
+    // If an attr is selected, open add attr for its parent entity
+    else if(si&&!si.isE){const parent=tree.find(e=>e.at.some(a=>a._id===si._id));if(parent)setMl({t:'addA',ec:parent.label,pad:parent.pad,eo:parent.oms});else msg('Selecteer eerst een entiteit','warn');}
+    else msg('Selecteer eerst een entiteit','warn');
+}} selectedEntity={si&&si.isE?si:(!si?null:tree.find(e=>e.at.some(a=>a._id===sel)))}/>
+
 {/* MODALS */}
 {ml?.t==='addE'&&<AEM dc={dcE} dcM={dcM} hier={hier} schema={schema} onAdd={addE} onClose={()=>setMl(null)}/>}
 {ml?.t==='addA'&&<AAM ec={ml.ec} pad={ml.pad} eo={ml.eo} dcA={dcA} schema={schema} onAdd={addA} onClose={()=>setMl(null)}/>}
@@ -552,6 +561,26 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 {ml?.t==='cl'&&<CM n={ml.n} items={cg[ml.n]||[]} desc={cd[ml.n]||''} onClose={()=>setMl(null)}/>}
 {tt&&<div className="tt fi" style={{background:tt.t==='ok'?'var(--ok)':tt.t==='warn'?'var(--warn)':'var(--err)'}}>{tt.m}</div>}
 </div>;}
+
+// ══════════ FAB ══════════
+function FAB({onAddEntity,onAddAttr,selectedEntity}){
+    const [open,setOpen]=useState(false);
+    return <div style={{position:'fixed',bottom:24,right:360,zIndex:50,display:'flex',flexDirection:'column',alignItems:'flex-end',gap:8}}>
+        {open&&<div className="fi" style={{display:'flex',flexDirection:'column',gap:6,marginBottom:4}}>
+            <button onClick={()=>{onAddEntity();setOpen(false);}} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 18px',borderRadius:10,background:'var(--bg2)',border:'1px solid var(--bdr)',boxShadow:'var(--sh2)',fontSize:13,fontWeight:600,color:'var(--ent)',whiteSpace:'nowrap'}}>
+                <span style={{width:28,height:28,borderRadius:7,background:'#dbeafe',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>🏢</span>
+                Entiteit toevoegen
+            </button>
+            <button onClick={()=>{onAddAttr();setOpen(false);}} style={{display:'flex',alignItems:'center',gap:8,padding:'10px 18px',borderRadius:10,background:'var(--bg2)',border:'1px solid var(--bdr)',boxShadow:'var(--sh2)',fontSize:13,fontWeight:600,color:'var(--attr)',whiteSpace:'nowrap'}}>
+                <span style={{width:28,height:28,borderRadius:7,background:'#dcfce7',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>📋</span>
+                Attribuut toevoegen{selectedEntity&&<span style={{fontWeight:400,color:'var(--tx3)',fontSize:11}}>aan {selectedEntity.label}</span>}
+            </button>
+        </div>}
+        <button onClick={()=>setOpen(!open)} style={{width:52,height:52,borderRadius:14,background:open?'var(--tx2)':'var(--acc)',color:'#fff',fontSize:24,display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 4px 16px rgba(26,107,255,.35)',border:'none',transition:'all .15s',transform:open?'rotate(45deg)':'none'}}>
+            +
+        </button>
+    </div>;
+}
 
 // ══════════ MODALS ══════════
 function AEM({dc,dcM,hier,schema,onAdd,onClose}){const [q,setQ]=useState('');const [parentPath,setParentPath]=useState('');
