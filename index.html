@@ -161,6 +161,7 @@ const [dc,setDc]=useState([]);const [cg,setCg]=useState({});const [cd,setCd]=use
 const [meta,setMeta]=useState({branche:'',porCode:'',afdNaam:'',afdVersie:'',afdTag:'',segment:'Zakelijk',organisatie:'',productnaam:'',contactpersoon:'',email:'',datum:''});
 const [schema,setSchema]=useState([]);const [sel,setSel]=useState(null);const [vw,setVw]=useState('start');const [tt,setTt]=useState(null);const [exp,setExp]=useState(new Set());const [ml,setMl]=useState(null);
 const [fFilt,setFFilt]=useState(null); // {fn:'premieBerekening_aanroep',val:'V'} or null
+const [search,setSearch]=useState('');
 
 useEffect(()=>{(async()=>{try{const r=await fetch('Datacat.afm');if(!r.ok)throw new Error('Datacat.afm niet gevonden');setDc(parseDC(await r.text()));try{const r2=await fetch('Codelist.afm');if(r2.ok){const{g,d}=parseCL(await r2.text());setCg(g);setCd(d);}}catch(e){}try{const r3=await fetch('Hierarchie.json');if(r3.ok)setHier(await r3.json());}catch(e){console.warn('Hierarchie.json niet geladen');}setLd(false);}catch(e){setDe(e.message);setLd(false);}})();},[]);
 
@@ -173,28 +174,38 @@ const dcM=useMemo(()=>{const m={};dcE.forEach(e=>{m[e.ec]=e;});return m;},[dcE])
 const tree=useMemo(()=>{const r=[];let c=null;for(const s of schema){if(s.isE){c={...s,at:[]};r.push(c);}else if(c)c.at.push(s);}return r;},[schema]);
 const si=useMemo(()=>schema.find(s=>s._id===sel),[schema,sel]);
 
-// Build flat display list with separators + apply function filter
+// Build flat display list with separators + apply function filter + search
+const searchLow=search.toLowerCase().trim();
 const displayRows=useMemo(()=>{
     const rows=[];let prevPad=null;
     for(const ent of tree){
-        // If filter active, skip entities that don't match and have no matching children
+        // Search: check if entity or any of its attrs match
+        const entMatch=!searchLow||[ent.label,ent.oms,ent.pad].some(v=>(v||'').toLowerCase().includes(searchLow));
+        const childMatches=searchLow?ent.at.filter(a=>[a.label,a.oms,a.cl,a.scl,a.ol,a.eo].some(v=>(v||'').toLowerCase().includes(searchLow))):null;
+        const hasSearchMatch=!searchLow||entMatch||(childMatches&&childMatches.length>0);
+        if(!hasSearchMatch)continue;
+
+        // Function filter
         if(fFilt){
-            const entMatch=!!(ent.fn[fFilt.fn]);
-            const childMatch=ent.at.some(a=>a.fn[fFilt.fn]===fFilt.val);
-            if(!entMatch&&!childMatch)continue;
+            const entFnMatch=!!(ent.fn[fFilt.fn]);
+            const childFnMatch=ent.at.some(a=>a.fn[fFilt.fn]);
+            if(!entFnMatch&&!childFnMatch)continue;
         }
         if(prevPad!==null&&ent.pad!==prevPad)rows.push({_type:'sep'});
         rows.push({...ent,_type:'ent'});
-        if(exp.has(ent.pad+'|'+ent.label)){
+        // Auto-expand when searching, otherwise use manual expand state
+        const isOpen=searchLow?true:exp.has(ent.pad+'|'+ent.label);
+        if(isOpen){
             for(const a of ent.at){
-                if(fFilt&&!a.fn[fFilt.fn])continue; // hide attrs without value in filtered column
+                if(fFilt&&!a.fn[fFilt.fn])continue;
+                if(searchLow&&childMatches&&!entMatch&&!childMatches.includes(a))continue;
                 rows.push({...a,_type:'attr'});
             }
         }
         prevPad=ent.pad;
     }
     return rows;
-},[tree,exp,fFilt]);
+},[tree,exp,fFilt,searchLow]);
 
 const upd=useCallback((id,u)=>setSchema(p=>p.map(s=>s._id===id?{...s,...u}:s)),[]);
 const del=useCallback((id)=>{setSchema(prev=>{const it=prev.find(s=>s._id===id);if(!it)return prev;if(!it.isE)return prev.filter(s=>s._id!==id);const idx=prev.indexOf(it);const ep=it.pad;const res=[];let skip=false;for(let i=0;i<prev.length;i++){if(i===idx){skip=true;continue;}if(skip){const s=prev[i];if(!s.isE&&s.pad===ep)continue;if(s.pad.startsWith(ep+'/'))continue;skip=false;}res.push(prev[i]);}return res;});if(sel===id)setSel(null);msg('Verwijderd');},[sel,msg]);
@@ -438,7 +449,11 @@ return <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
 <button className="bg" onClick={()=>{if(confirm('Terug?'))setVw('start')}} style={{fontSize:14}}>←</button>
 <strong style={{fontSize:13}}>{meta.afdNaam||'Nieuw product'}</strong>
 {meta.branche&&<span style={{fontSize:10,padding:'1px 6px',background:'var(--bg3)',borderRadius:3,color:'var(--tx2)'}}>{meta.branche}</span>}
-<span style={{fontSize:11,color:'var(--tx3)',flex:1}}>{schema.length} items{dirty&&<span style={{color:'var(--warn)',marginLeft:4}}>● niet opgeslagen</span>}</span>
+<span style={{fontSize:11,color:'var(--tx3)'}}>{schema.length} items{dirty&&<span style={{color:'var(--warn)',marginLeft:4}}>● niet opgeslagen</span>}</span>
+<div style={{flex:1,maxWidth:220,position:'relative'}}>
+<input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍 Zoek in schema..." style={{width:'100%',fontSize:11,padding:'3px 24px 3px 8px'}}/>
+{search&&<button className="bg" style={{position:'absolute',right:2,top:'50%',transform:'translateY(-50%)',fontSize:10,padding:'1px 4px'}} onClick={()=>setSearch('')}>✕</button>}
+</div>
 <button className="b bs" style={{padding:'3px 10px'}} onClick={()=>setMl({t:'meta'})}>⚙ Meta</button>
 <button className="b bs" style={{padding:'3px 10px'}} onClick={doSave}>💾 Opslaan</button>
 <label className="b bs" style={{padding:'3px 10px',cursor:'pointer'}}>📂<input type="file" accept=".json" onChange={doLoad} style={{display:'none'}}/></label>
