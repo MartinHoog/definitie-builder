@@ -120,8 +120,8 @@ function expTpl(meta,schema){
     const hdr=ws.getRow(10);hdr.height=141.75;
     ['Pad','Label','Omschrijving','Codelijst','Actuele codelijst','Subset codelijst','Optielijst','Minimum','Maximum','Eigen omschrijving',...FN].forEach((h,i)=>{const c=hdr.getCell(i+1);c.value=h;c.font={name:'Calibri',size:10,bold:true};c.alignment=ca;if(i===14)c.fill=fO;if(i===15)c.fill=fPH;});
     ws.views=[{state:'frozen',xSplit:0,ySplit:10,topLeftCell:'A11'}];
-    let rn=11,pp=null;
-    for(const s of schema){if(s.isE&&pp!==null&&s.pad!==pp){const sr=ws.getRow(rn);sr.height=11.4;sr.getCell(15).fill=fO;sr.getCell(16).fill=fP;rn++;}if(s.isE)pp=s.pad;
+    let rn=11;
+    for(const s of schema){
     const row=ws.getRow(rn);[s.pad,s.label,s.oms,s.cl,s.acl||'',s.scl||'',s.ol||'',s.mn||'',s.mx||'',s.eo||'',...FN.map(f=>s.fn[f]||'')].forEach((v,i)=>{const c=row.getCell(i+1);c.value=v||null;c.font=s.isE&&i===2?dbf:df;if(i>=10)c.alignment={horizontal:'center'};if(i===14)c.fill=fO;if(i===15)c.fill=fP;});rn++;}
     const wv=wb.addWorksheet(' Verbandscontrole');
     wv.getColumn(1).width=65;wv.getColumn(2).width=40;wv.getColumn(3).width=32;wv.getColumn(5).width=34;wv.getColumn(6).width=23;wv.getColumn(7).width=50;
